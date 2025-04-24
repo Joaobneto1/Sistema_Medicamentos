@@ -1,58 +1,67 @@
+/* Estilo global para o corpo da página */
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f9;
+  margin: 0; /* Remove a margem padrão */
+  font-family: Arial, sans-serif; /* Define a fonte padrão */
+  background-color: #f4f4f9; /* Define a cor de fundo */
 }
 
+/* Estilo principal do aplicativo */
 .app {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+  display: flex; /* Define um layout flexível */
+  flex-direction: column; /* Organiza os elementos em coluna */
+  height: 100vh; /* Define a altura como 100% da altura da janela */
 }
 
+/* Estilo do cabeçalho */
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #007bff;
-  color: white;
-  padding: 10px 20px;
-  font-size: 18px;
+  display: flex; /* Define um layout flexível */
+  justify-content: space-between; /* Espaça os elementos igualmente */
+  align-items: center; /* Alinha os itens no centro verticalmente */
+  background-color: #007bff; /* Cor de fundo azul */
+  color: white; /* Cor do texto branca */
+  padding: 10px 20px; /* Espaçamento interno */
+  font-size: 18px; /* Tamanho da fonte */
 }
 
+/* Estilo para o lado esquerdo do cabeçalho */
 .header-left {
-  font-weight: bold;
+  font-weight: bold; /* Define o texto em negrito */
 }
 
+/* Estilo para o lado direito do cabeçalho */
 .header-right {
-  font-size: 16px;
+  font-size: 16px; /* Define o tamanho da fonte */
 }
 
+/* Estilo da barra de navegação */
 .navbar {
-  display: flex;
-  justify-content: space-around;
-  background-color: #f8f9fa;
-  padding: 10px 0;
-  border-bottom: 1px solid #ddd;
+  display: flex; /* Define um layout flexível */
+  justify-content: space-around; /* Espaça os itens igualmente */
+  background-color: #f8f9fa; /* Cor de fundo cinza claro */
+  padding: 10px 0; /* Espaçamento interno vertical */
+  border-bottom: 1px solid #ddd; /* Linha inferior */
 }
 
+/* Estilo dos botões de navegação */
 .nav-button {
-  background: none;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  padding: 10px 20px;
-  color: #007bff;
-  transition: background-color 0.3s;
+  background: none; /* Remove o fundo padrão */
+  border: none; /* Remove a borda padrão */
+  font-size: 16px; /* Define o tamanho da fonte */
+  cursor: pointer; /* Define o cursor como ponteiro */
+  padding: 10px 20px; /* Espaçamento interno */
+  color: #007bff; /* Cor do texto azul */
+  transition: background-color 0.3s; /* Animação na mudança de cor */
 }
 
+/* Estilo ao passar o mouse sobre os botões de navegação */
 .nav-button:hover {
-  background-color: #e9ecef;
-  border-radius: 5px;
+  background-color: #e9ecef; /* Cor de fundo ao passar o mouse */
+  border-radius: 5px; /* Bordas arredondadas */
 }
 
+/* Estilo do conteúdo principal */
 .content {
-  flex: 1;
-  padding: 20px;
-  text-align: center;
+  flex: 1; /* Faz o conteúdo ocupar o espaço restante */
+  padding: 20px; /* Espaçamento interno */
+  text-align: center; /* Centraliza o texto */
 }
