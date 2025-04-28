@@ -7,10 +7,10 @@ import App from './App';
 test('renders learn react link', () => {
   // Renderiza o componente App na tela virtual de teste
   render(<App />);
-  
+
   // Procura por um elemento na tela que contenha o texto 'learn react' (não diferencia maiúsculas de minúsculas)
   const linkElement = screen.getByText(/learn react/i);
-  
+
   // Verifica se o elemento encontrado está presente no documento
   expect(linkElement).toBeInTheDocument();
 });

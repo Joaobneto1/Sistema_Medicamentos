@@ -1,10 +1,8 @@
 {
   "short_name": "React App",
   "description_short_name": "Nome curto do aplicativo, usado em espaços limitados, como ícones na tela inicial.",
-
   "name": "Create React App Sample",
   "description_name": "Nome completo do aplicativo, exibido em contextos com mais espaço.",
-
   "icons": [
     {
       "src": "favicon.ico",
@@ -25,16 +23,12 @@
       "description": "Caminho para o ícone de 512x512 pixels."
     }
   ],
-
   "start_url": ".",
   "description_start_url": "URL inicial do aplicativo quando ele é iniciado.",
-
   "display": "standalone",
   "description_display": "Define como o aplicativo será exibido (standalone, fullscreen, minimal-ui, etc.).",
-
   "theme_color": "#000000",
   "description_theme_color": "Cor do tema usada na barra de status do navegador ou cabeçalho do aplicativo.",
-
   "background_color": "#ffffff",
   "description_background_color": "Cor de fundo usada na tela de carregamento do aplicativo."
 }
