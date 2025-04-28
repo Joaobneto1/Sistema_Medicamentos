@@ -1,25 +1,34 @@
 {
   "short_name": "React App",
+  "description_short_name": "Nome curto do aplicativo, usado em espaços limitados, como ícones na tela inicial.",
   "name": "Create React App Sample",
+  "description_name": "Nome completo do aplicativo, exibido em contextos com mais espaço.",
   "icons": [
     {
       "src": "favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/x-icon",
+      "description": "Caminho para o ícone do favicon."
     },
     {
       "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "description": "Caminho para o ícone de 192x192 pixels."
     },
     {
       "src": "logo512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "description": "Caminho para o ícone de 512x512 pixels."
     }
   ],
   "start_url": ".",
+  "description_start_url": "URL inicial do aplicativo quando ele é iniciado.",
   "display": "standalone",
+  "description_display": "Define como o aplicativo será exibido (standalone, fullscreen, minimal-ui, etc.).",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "description_theme_color": "Cor do tema usada na barra de status do navegador ou cabeçalho do aplicativo.",
+  "background_color": "#ffffff",
+  "description_background_color": "Cor de fundo usada na tela de carregamento do aplicativo."
 }

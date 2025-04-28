@@ -188,7 +188,7 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <div className="header-left">Sistema de Medicamentos</div>
+        <div className="header-left">Sistema de Medicamentos</div> {/* Título do sistema */}
         <div className="header-right">{time}</div> {/* Exibe o horário atualizado em tempo real */}
       </header>
       <nav className="navbar">
