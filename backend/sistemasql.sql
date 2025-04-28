@@ -15,5 +15,6 @@ CREATE TABLE medicamentos (
     dosagem VARCHAR(50) NOT NULL,
     horarios VARCHAR(100) NOT NULL,
     instrucoes TEXT,
+    estoque INT NOT NULL,
     paciente_id INT REFERENCES pacientes(id) ON DELETE CASCADE
 );
