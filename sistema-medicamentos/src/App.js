@@ -3,7 +3,60 @@ import axios from "axios";
 import "./App.css";
 
 function App() {
-  const [time, setTime] = useState("");
+  // Estado inicial para exibir o horário no cabeçalho
+  const [time, setTime] = useState("Carregando...");
+
+  // Estado para armazenar o horário base obtido da API
+  const [baseTime, setBaseTime] = useState(null);
+
+  // Hook para buscar o horário inicial da API
+  useEffect(() => {
+    const fetchTime = async () => {
+      try {
+        const apiKey = "GHQ1EHZZA0FT";
+        const response = await fetch(
+          `http://api.timezonedb.com/v2.1/get-time-zone?key=${apiKey}&format=json&by=zone&zone=America/Sao_Paulo`
+        );
+
+        if (!response.ok) {
+          throw new Error(`Erro ao buscar o horário: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Resposta da API TimeZoneDB:", data); // Log para verificar a resposta
+
+        if (data && data.formatted) {
+          const apiTime = new Date(data.formatted); // Converte o horário da API para um objeto Date
+          setBaseTime(apiTime); // Armazena o horário base no estado
+          setTime(apiTime.toLocaleTimeString()); // Atualiza o estado com o horário formatado
+        } else {
+          throw new Error("Resposta inválida da API");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar o horário:", error);
+        setTime("Erro ao carregar horário");
+      }
+    };
+
+    fetchTime(); // Chama a função para buscar o horário ao montar o componente
+  }, []); // Executa apenas uma vez ao montar o componente
+
+  // Hook para atualizar o horário em tempo real
+  useEffect(() => {
+    if (baseTime) {
+      // Configura um intervalo que incrementa o horário a cada segundo
+      const interval = setInterval(() => {
+        setBaseTime((prevTime) => {
+          const updatedTime = new Date(prevTime.getTime() + 1000); // Incrementa 1 segundo no horário base
+          setTime(updatedTime.toLocaleTimeString()); // Atualiza o estado com o horário formatado
+          return updatedTime; // Retorna o horário atualizado para o estado baseTime
+        });
+      }, 1000); // Executa a cada 1000ms (1 segundo)
+
+      return () => clearInterval(interval); // Limpa o intervalo ao desmontar o componente
+    }
+  }, [baseTime]); // Executa sempre que baseTime for atualizado
+
   const [activeTab, setActiveTab] = useState("Paciente");
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -12,14 +65,6 @@ function App() {
     quarto: "",
   });
   const [pacientes, setPacientes] = useState([]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const now = new Date();
-      setTime(now.toLocaleTimeString());
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     // Buscar pacientes do backend
@@ -60,15 +105,24 @@ function App() {
           <div className="paciente-grid">
             {pacientes.map((paciente) => (
               <div key={paciente.id} className="paciente-card">
-                <p><strong>Nome:</strong> {paciente.nome}</p>
-                <p><strong>Idade:</strong> {paciente.idade}</p>
-                <p><strong>Quarto:</strong> {paciente.quarto}</p>
-                <p><strong>Medicamentos:</strong></p>
+                <p>
+                  <strong>Nome:</strong> {paciente.nome}
+                </p>
+                <p>
+                  <strong>Idade:</strong> {paciente.idade}
+                </p>
+                <p>
+                  <strong>Quarto:</strong> {paciente.quarto}
+                </p>
+                <p>
+                  <strong>Medicamentos:</strong>
+                </p>
                 <ul>
                   {paciente.medicamentos && paciente.medicamentos.length > 0 ? (
                     paciente.medicamentos.map((medicamento) => (
                       <li key={medicamento.id}>
-                        {medicamento.nome} - {medicamento.dosagem} ({medicamento.frequencia})
+                        {medicamento.nome} - {medicamento.dosagem} (
+                        {medicamento.frequencia})
                       </li>
                     ))
                   ) : (
@@ -135,13 +189,16 @@ function App() {
     <div className="app">
       <header className="header">
         <div className="header-left">Sistema de Medicamentos</div>
-        <div className="header-right">{time}</div>
+        <div className="header-right">{time}</div> {/* Exibe o horário atualizado em tempo real */}
       </header>
       <nav className="navbar">
         <button className="nav-button" onClick={() => setActiveTab("Paciente")}>
           Paciente
         </button>
-        <button className="nav-button" onClick={() => setActiveTab("Medicamentos")}>
+        <button
+          className="nav-button"
+          onClick={() => setActiveTab("Medicamentos")}
+        >
           Medicamentos
         </button>
       </nav>
