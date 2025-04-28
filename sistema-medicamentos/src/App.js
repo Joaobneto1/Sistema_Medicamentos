@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { createClient } from "@supabase/supabase-js";
 import "./App.css";
+
+// Configuração do Supabase
+const supabaseUrl = "https://xastpkkudkrmudgyesen.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhhc3Rwa2t1ZGtybXVkZ3llc2VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4NzE1NDIsImV4cCI6MjA2MTQ0NzU0Mn0._zQYhQaYZXYK4V3erdiz7wHVW2d8IAttv8oLVqMc8QY"; // Substitua pela sua chave de API
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 function App() {
   // Estado inicial para exibir o horário no cabeçalho
@@ -66,11 +71,30 @@ function App() {
   });
   const [pacientes, setPacientes] = useState([]);
 
+  // Buscar pacientes do Supabase
   useEffect(() => {
-    // Buscar pacientes do backend
-    axios.get("http://localhost:5000/pacientes").then((response) => {
-      setPacientes(response.data);
-    });
+    const fetchPacientes = async () => {
+      const { data, error } = await supabase.from("pacientes").select(`
+        id, 
+        nome, 
+        idade, 
+        quarto, 
+        medicamentos (
+          id, 
+          nome, 
+          frequencia, 
+          dosagem
+        )
+      `);
+
+      if (error) {
+        console.error("Erro ao buscar pacientes:", error);
+      } else {
+        setPacientes(data);
+      }
+    };
+
+    fetchPacientes();
   }, []);
 
   const handleInputChange = (e) => {
@@ -78,18 +102,20 @@ function App() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    axios
-      .post("http://localhost:5000/pacientes", formData)
-      .then((response) => {
-        setPacientes([...pacientes, response.data]);
-        setShowForm(false);
-        setFormData({ nome: "", idade: "", quarto: "" });
-      })
-      .catch((error) => {
-        console.error("Erro ao criar paciente:", error);
-      });
+    const { data, error } = await supabase
+      .from("pacientes")
+      .insert([formData])
+      .select(); // Garante que os dados inseridos sejam retornados
+
+    if (error) {
+      console.error("Erro ao criar paciente:", error);
+    } else {
+      setPacientes([...pacientes, data[0]]);
+      setShowForm(false);
+      setFormData({ nome: "", idade: "", quarto: "" });
+    }
   };
 
   const renderContent = () => {

@@ -1,14 +1,10 @@
-require("dotenv").config(); // Carregar variáveis de ambiente do .env
-const { Pool } = require("pg");
+const postgres = require("postgres");
 
-// Configuração do banco de dados PostgreSQL usando variáveis de ambiente
-const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT,
-});
+// Carregar variáveis de ambiente do .env
+const connectionString = process.env.DATABASE_URL;
 
-// Exportar o pool para ser usado em outros arquivos
+// Criar a conexão com o Supabase
+const pool = postgres(connectionString);
+
+// Exportar a conexão para ser usada em outros arquivos
 module.exports = pool;
