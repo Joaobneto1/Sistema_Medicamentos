@@ -14,6 +14,24 @@ function App() {
   // Estado para armazenar o horário base obtido da API
   const [baseTime, setBaseTime] = useState(null);
 
+  // Estado para armazenar o usuário logado
+  const [user, setUser] = useState(null);
+
+  // Estado para os dados de login
+  const [loginData, setLoginData] = useState({ email: "", password: "" });
+
+  // Estado para exibir erros de login
+  const [loginError, setLoginError] = useState("");
+
+  // Estado para alternar entre login e cadastro
+  const [isSignUp, setIsSignUp] = useState(false);
+
+  // Estado para os dados de cadastro
+  const [signUpData, setSignUpData] = useState({ email: "", password: "", nome: "" });
+
+  // Estado para exibir erros de cadastro
+  const [signUpError, setSignUpError] = useState("");
+
   // Hook para buscar o horário inicial da API
   useEffect(() => {
     const fetchTime = async () => {
@@ -104,9 +122,21 @@ function App() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !userData.user) {
+      console.error("Erro ao obter usuário logado:", userError);
+      return;
+    }
+
     const { data, error } = await supabase
       .from("pacientes")
-      .insert([formData])
+      .insert([
+        {
+          ...formData,
+          usuario_id: userData.user.id, // Adiciona o ID do usuário logado
+        },
+      ])
       .select(); // Garante que os dados inseridos sejam retornados
 
     if (error) {
@@ -118,7 +148,138 @@ function App() {
     }
   };
 
+  const handleLoginChange = (e) => {
+    const { name, value } = e.target;
+    setLoginData({ ...loginData, [name]: value });
+  };
+
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: loginData.email,
+      password: loginData.password,
+    });
+
+    if (error) {
+      setLoginError("Erro ao logar: " + error.message);
+    } else {
+      setUser(data.user);
+      setLoginError("");
+    }
+  };
+
+  const handleSignUpChange = (e) => {
+    const { name, value } = e.target;
+    setSignUpData({ ...signUpData, [name]: value });
+  };
+
+  const handleSignUpSubmit = async (e) => {
+    e.preventDefault();
+    const { data, error } = await supabase.auth.signUp({
+      email: signUpData.email,
+      password: signUpData.password,
+    });
+
+    if (error) {
+      setSignUpError("Erro ao cadastrar: " + error.message);
+    } else {
+      // Adiciona o nome do usuário na tabela "usuario"
+      const { error: insertError } = await supabase.from("usuario").insert([
+        { email: signUpData.email, nome: signUpData.nome },
+      ]);
+
+      if (insertError) {
+        setSignUpError("Erro ao salvar dados do usuário: " + insertError.message);
+      } else {
+        setSignUpError("");
+        setIsSignUp(false); // Volta para a tela de login após o cadastro
+      }
+    }
+  };
+
+  const renderSignUp = () => (
+    <div className="signup-container">
+      <h2>Cadastro</h2>
+      <form onSubmit={handleSignUpSubmit}>
+        <label>
+          Nome:
+          <input
+            type="text"
+            name="nome"
+            value={signUpData.nome}
+            onChange={handleSignUpChange}
+            required
+          />
+        </label>
+        <label>
+          Email:
+          <input
+            type="email"
+            name="email"
+            value={signUpData.email}
+            onChange={handleSignUpChange}
+            required
+          />
+        </label>
+        <label>
+          Senha:
+          <input
+            type="password"
+            name="password"
+            value={signUpData.password}
+            onChange={handleSignUpChange}
+            required
+          />
+        </label>
+        <button type="submit">Cadastrar</button>
+      </form>
+      {signUpError && <p className="error">{signUpError}</p>}
+      <p>
+        Já tem uma conta?{" "}
+        <button onClick={() => setIsSignUp(false)}>Faça login</button>
+      </p>
+    </div>
+  );
+
+  const renderLogin = () => (
+    <div className="login-container">
+      <h2>Login</h2>
+      <form onSubmit={handleLoginSubmit}>
+        <label>
+          Email:
+          <input
+            type="email"
+            name="email"
+            value={loginData.email}
+            onChange={handleLoginChange}
+            required
+          />
+        </label>
+        <label>
+          Senha:
+          <input
+            type="password"
+            name="password"
+            value={loginData.password}
+            onChange={handleLoginChange}
+            required
+          />
+        </label>
+        <button type="submit">Entrar</button>
+      </form>
+      {loginError && <p className="error">{loginError}</p>}
+      <p>
+        Não tem uma conta?{" "}
+        <button onClick={() => setIsSignUp(true)}>Cadastre-se</button>
+      </p>
+    </div>
+  );
+
   const renderContent = () => {
+    if (!user) {
+      return isSignUp ? renderSignUp() : renderLogin(); // Alterna entre login e cadastro
+    }
+
     if (activeTab === "Paciente") {
       return (
         <div className="paciente-container">
@@ -215,7 +376,8 @@ function App() {
     <div className="app">
       <header className="header">
         <div className="header-left">Sistema de Medicamentos</div> {/* Título do sistema */}
-        <div className="header-right">{time}</div> {/* Exibe o horário atualizado em tempo real */}
+        <div className="header-center">{time}</div> {/* Exibe o horário no centro */}
+        <div className="header-right">{user ? `Olá, ${user.email}` : "Não logado"}</div> {/* Exibe o usuário logado ou mensagem de não logado */}
       </header>
       <nav className="navbar">
         <button className="nav-button" onClick={() => setActiveTab("Paciente")}>
