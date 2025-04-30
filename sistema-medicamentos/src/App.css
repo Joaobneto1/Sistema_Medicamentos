@@ -19,31 +19,30 @@ body {
 
 .header {
   display: flex;
-  /* Define um layout flexível */
   justify-content: space-between;
-  /* Espaça os elementos igualmente */
   align-items: center;
-  /* Alinha os itens no centro verticalmente */
-  background-color: #007bff;
-  /* Cor de fundo azul */
-  color: white;
-  /* Cor do texto branca */
   padding: 10px 20px;
-  /* Espaçamento interno */
-  font-size: 18px;
-  /* Tamanho da fonte */
+  background-color: #007bff;
+  /* Cor azul */
+  color: white;
+  /* Texto branco para contraste */
+  border-bottom: 1px solid #0056b3;
+  /* Linha inferior mais escura */
 }
 
-/* Estilo para o lado esquerdo do cabeçalho */
-.header-left {
-  font-weight: bold;
-  /* Define o texto em negrito */
-}
-
-/* Estilo para o lado direito do cabeçalho */
+.header-left,
+.header-center,
 .header-right {
-  font-weight: bold;
-  /* Define o texto em negrito */
+  flex: 1;
+  text-align: center;
+}
+
+.header-left {
+  text-align: left;
+}
+
+.header-right {
+  text-align: right;
 }
 
 /* Estilo da barra de navegação */
