@@ -235,3 +235,60 @@ body {
 .auth-page ~ .navbar {
   display: none;
 }
+
+/* Estilo para a sobreposição de detalhes do paciente */
+.paciente-details-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.paciente-details {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: left;
+}
+
+.paciente-details h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+}
+
+.paciente-details p {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #555;
+}
+
+/* Estilo para o botão de fechar na janela de detalhes */
+.close-button {
+  display: block;
+  margin-left: auto;
+  margin-bottom: 10px;
+  background-color: white;
+  color: #dc3545;
+  border: 2px solid #dc3545;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  position: relative; /* Permite posicionamento relativo */
+  top: -10px; /* Move o botão para cima */
+}
+
+.close-button:hover {
+  background-color: #dc3545;
+  color: white;
+}
