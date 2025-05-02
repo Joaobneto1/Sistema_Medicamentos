@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function PacienteCard({ paciente }) {
+function PacienteCard({ paciente, handleEdit, handleDelete }) {
     const [showDetails, setShowDetails] = useState(false);
 
     const handleCardClick = () => {
@@ -37,6 +37,14 @@ function PacienteCard({ paciente }) {
                         <li>Nenhum medicamento cadastrado</li>
                     )}
                 </ul>
+                <div className="card-buttons">
+                    <button onClick={() => handleEdit(paciente)} className="edit-button">
+                        Editar
+                    </button>
+                    <button onClick={() => handleDelete(paciente.id)} className="delete-button">
+                        Deletar
+                    </button>
+                </div>
             </div>
 
             {showDetails && (
