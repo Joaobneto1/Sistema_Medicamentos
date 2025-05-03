@@ -1,17 +1,22 @@
 import React from "react";
-// Importando o arquivo CSS para estilização do formulário
-import "./pacienteForm.css"; 
+import "./pacienteForm.css"; // Reutilizando o mesmo CSS do formulário de criação
 
-// Componente funcional PacienteForm que recebe props para manipulação do formulário
-function PacienteForm({ formData, handleInputChange, handleFormSubmit, setShowForm }) {
+function PacienteEdit({ formData, handleInputChange, handleEditSubmit, setShowEditForm }) {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        await handleEditSubmit(e); // Chama a função de edição passada como prop
+        setShowEditForm(false); // Fecha o formulário após salvar
+        window.location.reload(); // Recarrega a página para refletir as alterações
+    };
+
     return (
         <>
             {/* Overlay modal para fechar o formulário ao clicar fora */}
-            <div className="modal-overlay" onClick={() => setShowForm(false)}></div>
+            <div className="modal-overlay" onClick={() => setShowEditForm(false)}></div>
             
-            {/* Formulário para criação de um novo paciente */}
-            <form className="paciente-form" onSubmit={handleFormSubmit}>
-                <h3>Criar Paciente</h3>
+            {/* Formulário para edição de um paciente existente */}
+            <form className="paciente-form" onSubmit={handleSubmit}>
+                <h3>Editar Paciente</h3>
                 
                 {/* Campo de entrada para o nome do paciente */}
                 <label>
@@ -57,7 +62,7 @@ function PacienteForm({ formData, handleInputChange, handleFormSubmit, setShowFo
                     <button
                         type="button"
                         className="cancel-button"
-                        onClick={() => setShowForm(false)} // Fecha o formulário ao clicar
+                        onClick={() => setShowEditForm(false)} // Fecha o formulário ao clicar
                     >
                         Cancelar
                     </button>
@@ -67,5 +72,4 @@ function PacienteForm({ formData, handleInputChange, handleFormSubmit, setShowFo
     );
 }
 
-// Exportando o componente para ser utilizado em outras partes do sistema
-export default PacienteForm;
+export default PacienteEdit;

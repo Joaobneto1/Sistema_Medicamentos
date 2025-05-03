@@ -23,33 +23,65 @@
     margin-top: 10px;
 }
 
-.edit-button,
-.delete-button {
-    background-color: transparent;
+/* Estilo base para os botões */
+.styled-button {
+    padding: 10px 15px;
+    font-size: 14px;
+    font-weight: bold;
     border: none;
-    padding: 10px;
-    font-size: 1.5rem;
+    border-radius: 5px;
     cursor: pointer;
-    transition: color 0.3s ease, transform 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
+/* Botão de editar */
 .edit-button {
-    color: #2196f3;
-}
-
-.delete-button {
-    color: #f44336;
+    background-color: #4caf50; /* Verde */
+    color: white;
 }
 
 .edit-button:hover {
-    color: #1769aa; /* Azul mais escuro no hover */
-    transform: scale(1.2);
+    background-color: #45a049; /* Verde mais escuro */
+    transform: scale(1.05); /* Leve aumento no hover */
+}
+
+/* Botão de deletar */
+.delete-button {
+    background-color: #f44336; /* Vermelho */
+    color: white;
+    margin-left: 10px;
 }
 
 .delete-button:hover {
-    color: #d32f2f; /* Vermelho mais escuro no hover */
-    transform: scale(1.2);
+    background-color: #d32f2f; /* Vermelho mais escuro */
+    transform: scale(1.05); /* Leve aumento no hover */
+}
+
+.success-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    z-index: 1000;
+    animation: fadeInOut 3s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    10%, 90% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
 }

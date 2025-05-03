@@ -34,9 +34,13 @@ function Login({ loginData, handleLoginChange, handleLoginSubmit, loginError, se
                 {loginError && <p className="error">{loginError}</p>}
                 <p>
                     Não tem uma conta?{" "}
-                    <a onClick={() => setIsSignUp(true)} className="link">
+                    <button
+                        onClick={() => setIsSignUp(true)}
+                        className="link"
+                        style={{ background: "none", border: "none", color: "blue", textDecoration: "underline", cursor: "pointer" }}
+                    >
                         Cadastre-se
-                    </a>
+                    </button>
                 </p>
             </div>
         </div>

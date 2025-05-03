@@ -1,5 +1,5 @@
 import "./App.css";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import HorarioAtual from "./components/Horario/horarioAtual";
 import Login from "./components/Auth/login";
 import PacienteList from "./components/Pacientes/pacientList";
@@ -30,8 +30,42 @@ function App() {
     setShowForm,
   } = useAppLogic();
 
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    // Inicializa o estado com base no localStorage
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    return storedUser ? true : false;
+  });
+
+  const restoredUser = useState(() => {
+    // Restaura o usuário do localStorage
+    return JSON.parse(localStorage.getItem("user")) || null;
+  })[0]; // Removido `setRestoredUser`
+
+  useEffect(() => {
+    // Restaura o estado de login e usuário ao carregar o aplicativo
+    if (!user && restoredUser) {
+      setIsLoggedIn(true);
+    }
+  }, [user, restoredUser]);
+
+  useEffect(() => {
+    // Atualiza o localStorage sempre que o estado de login ou usuário mudar
+    if (isLoggedIn && user) {
+      // Salva apenas os dados necessários do usuário
+      const { email } = user; // Salva apenas o email ou outros dados simples
+      localStorage.setItem("user", JSON.stringify({ email }));
+    } else {
+      localStorage.removeItem("user");
+    }
+  }, [isLoggedIn, user]);
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    localStorage.removeItem("user");
+  };
+
   const renderContent = () => {
-    if (!user) {
+    if (!isLoggedIn) {
       return isSignUp ? (
         <SignUp
           signUpData={signUpData}
@@ -44,7 +78,15 @@ function App() {
         <Login
           loginData={loginData}
           handleLoginChange={handleLoginChange}
-          handleLoginSubmit={handleLoginSubmit}
+          handleLoginSubmit={(data) => {
+            const loginSuccessful = handleLoginSubmit(data);
+            if (loginSuccessful) {
+              setIsLoggedIn(true);
+              // Salva apenas os dados necessários no localStorage
+              const { email } = data; // Salva apenas o email ou outros dados simples
+              localStorage.setItem("user", JSON.stringify({ email }));
+            }
+          }}
           loginError={loginError}
           setIsSignUp={setIsSignUp}
         />
@@ -74,7 +116,16 @@ function App() {
           <HorarioAtual /> {/* Exibe o horário atualizado no centro */}
         </div>
         <div className="header-right">
-          {user ? `Olá, ${user.email}` : "Não logado"} {/* Exibe o usuário logado ou mensagem de não logado */}
+          {isLoggedIn && user ? (
+            <>
+              {`Olá, ${user.email}`} {/* Exibe o usuário logado */}
+              <button onClick={handleLogout} className="logout-button">
+                Logout
+              </button>
+            </>
+          ) : (
+            "Não logado"
+          )}
         </div>
       </header>
       <nav className="navbar">
