@@ -42,7 +42,18 @@ body {
 }
 
 .header-right {
-  text-align: right;
+  display: flex;
+  /* Exibe o conteúdo em linha */
+  align-items: center;
+  /* Alinha verticalmente */
+  justify-content: flex-end;
+  /* Alinha horizontalmente no lado direito */
+  gap: 10px;
+  /* Espaçamento entre o nome e o botão */
+  flex: 1;
+  /* Faz com que ocupe o espaço restante no cabeçalho */
+  padding-right: 20px;
+  /* Adiciona um espaçamento à direita */
 }
 
 /* Estilo da barra de navegação */
@@ -232,7 +243,7 @@ body {
 }
 
 /* Ocultar barra de navegação na tela de login */
-.auth-page ~ .navbar {
+.auth-page~.navbar {
   display: none;
 }
 
@@ -284,11 +295,50 @@ body {
   padding: 5px 10px;
   font-size: 14px;
   cursor: pointer;
-  position: relative; /* Permite posicionamento relativo */
-  top: -10px; /* Move o botão para cima */
+  position: relative;
+  /* Permite posicionamento relativo */
+  top: -10px;
+  /* Move o botão para cima */
 }
 
 .close-button:hover {
   background-color: #dc3545;
   color: white;
+}
+
+.logout-button {
+  background-color: #ff4d4d;
+  /* Cor de fundo */
+  color: white;
+  /* Cor do ícone */
+  border: none;
+  /* Remove a borda */
+  border-radius: 50%;
+  /* Torna o botão redondo */
+  width: 30px;
+  /* Largura do botão */
+  height: 30px;
+  /* Altura do botão */
+  display: flex;
+  /* Centraliza o conteúdo */
+  justify-content: center;
+  /* Centraliza horizontalmente */
+  align-items: center;
+  /* Centraliza verticalmente */
+  cursor: pointer;
+  /* Mostra o cursor de clique */
+  transition: background-color 0.3s ease;
+  /* Animação suave ao passar o mouse */
+  margin-left: 10px;
+  /* Espaçamento entre o nome e o botão */
+}
+
+.logout-button:hover {
+  background-color: #e60000;
+  /* Cor ao passar o mouse */
+}
+
+.logout-button:active {
+  background-color: #cc0000;
+  /* Cor ao clicar */
 }

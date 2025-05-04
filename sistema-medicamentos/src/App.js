@@ -1,15 +1,20 @@
 import "./App.css";
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import HorarioAtual from "./components/Horario/horarioAtual";
 import Login from "./components/Auth/login";
 import PacienteList from "./components/Pacientes/pacientList";
 import SignUp from "./components/Auth/signUp";
 import useAppLogic from "./hooks/appLogic";
+import useAuth from "./hooks/useAuth"; // Importa o hook de autenticação
 
 function App() {
-  // Utilizando o hooks para gerenciar os estados e funções
+  // Utilize o hook personalizado para autenticação
+  const { isLoggedIn, user, handleLoginSubmit, handleLogout } = useAuth();
+
+  // Utilize o hook personalizado para lógica geral do app
   const {
-    user,
     loginData,
     loginError,
     isSignUp,
@@ -22,47 +27,12 @@ function App() {
     handleInputChange,
     handleFormSubmit,
     handleLoginChange,
-    handleLoginSubmit,
     handleSignUpChange,
     handleSignUpSubmit,
     setIsSignUp,
     setActiveTab,
     setShowForm,
   } = useAppLogic();
-
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    // Inicializa o estado com base no localStorage
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    return storedUser ? true : false;
-  });
-
-  const restoredUser = useState(() => {
-    // Restaura o usuário do localStorage
-    return JSON.parse(localStorage.getItem("user")) || null;
-  })[0]; // Removido `setRestoredUser`
-
-  useEffect(() => {
-    // Restaura o estado de login e usuário ao carregar o aplicativo
-    if (!user && restoredUser) {
-      setIsLoggedIn(true);
-    }
-  }, [user, restoredUser]);
-
-  useEffect(() => {
-    // Atualiza o localStorage sempre que o estado de login ou usuário mudar
-    if (isLoggedIn && user) {
-      // Salva apenas os dados necessários do usuário
-      const { email } = user; // Salva apenas o email ou outros dados simples
-      localStorage.setItem("user", JSON.stringify({ email }));
-    } else {
-      localStorage.removeItem("user");
-    }
-  }, [isLoggedIn, user]);
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    localStorage.removeItem("user");
-  };
 
   const renderContent = () => {
     if (!isLoggedIn) {
@@ -78,13 +48,11 @@ function App() {
         <Login
           loginData={loginData}
           handleLoginChange={handleLoginChange}
-          handleLoginSubmit={(data) => {
-            const loginSuccessful = handleLoginSubmit(data);
-            if (loginSuccessful) {
-              setIsLoggedIn(true);
-              // Salva apenas os dados necessários no localStorage
-              const { email } = data; // Salva apenas o email ou outros dados simples
-              localStorage.setItem("user", JSON.stringify({ email }));
+          handleLoginSubmit={(e) => {
+            e.preventDefault();
+            const loginSuccessful = handleLoginSubmit(loginData);
+            if (!loginSuccessful) {
+              console.error("Falha no login");
             }
           }}
           loginError={loginError}
@@ -117,12 +85,12 @@ function App() {
         </div>
         <div className="header-right">
           {isLoggedIn && user ? (
-            <>
-              {`Olá, ${user.email}`} {/* Exibe o usuário logado */}
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <span>{`Olá, ${user.email}`}</span> {/* Exibe o usuário logado */}
               <button onClick={handleLogout} className="logout-button">
-                Logout
+                <FontAwesomeIcon icon={faSignOutAlt} />
               </button>
-            </>
+            </div>
           ) : (
             "Não logado"
           )}
