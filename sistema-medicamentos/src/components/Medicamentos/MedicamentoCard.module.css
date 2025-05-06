@@ -50,7 +50,8 @@
 .input,
 .textarea {
     display: block;
-    width: 80%; /* Ajuste para centralizar e alinhar com o estilo de pacientes */
+    width: 80%;
+    /* Ajuste para centralizar e alinhar com o estilo de pacientes */
     margin-bottom: 15px;
     padding: 10px;
     font-size: 16px;
@@ -59,8 +60,10 @@
 }
 
 .submitButton {
-    width: 50%; /* Ajuste para centralizar o botão */
-    background-color: #28a745; /* Cor similar ao botão de pacientes */
+    width: 50%;
+    /* Ajuste para centralizar o botão */
+    background-color: #28a745;
+    /* Cor similar ao botão de pacientes */
     color: white;
     padding: 10px 20px;
     font-size: 16px;
@@ -71,7 +74,8 @@
 }
 
 .submitButton:hover {
-    background-color: #218838; /* Efeito hover */
+    background-color: #218838;
+    /* Efeito hover */
 }
 
 .openModalButton {
@@ -124,4 +128,12 @@
 
 .cancelButton:hover {
     background-color: #d32f2f;
+}
+
+.label {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+    color: #333;
 }

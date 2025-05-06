@@ -8,13 +8,11 @@ import PacienteList from "./components/Pacientes/pacientList";
 import SignUp from "./components/Auth/signUp";
 import useAppLogic from "./hooks/appLogic";
 import useAuth from "./hooks/useAuth"; // Importa o hook de autenticação
-import MedicamentoCard from "./components/Medicamentos/medicamentoCard"; // Importação do componente de medicamentos
+import MedicamentoList from "./components/Medicamentos/medicamentoList"; // Importação do componente de lista de medicamentos
 
 function App() {
-  // Utilize o hook personalizado para autenticação
   const { isLoggedIn, user, handleLoginSubmit, handleLogout } = useAuth();
 
-  // Utilize o hook personalizado para lógica geral do app
   const {
     loginData,
     loginError,
@@ -76,7 +74,7 @@ function App() {
     }
 
     if (activeTab === "Medicamentos") {
-      return <MedicamentoCard />; // Renderiza o componente de medicamentos
+      return <MedicamentoList />; // Renderiza o componente de lista de medicamentos
     }
 
     return <h1>Bem-vindo ao Sistema de Medicamentos</h1>;
