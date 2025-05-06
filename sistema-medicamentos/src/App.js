@@ -8,6 +8,7 @@ import PacienteList from "./components/Pacientes/pacientList";
 import SignUp from "./components/Auth/signUp";
 import useAppLogic from "./hooks/appLogic";
 import useAuth from "./hooks/useAuth"; // Importa o hook de autenticação
+import MedicamentoCard from "./components/Medicamentos/medicamentoCard"; // Importação do componente de medicamentos
 
 function App() {
   // Utilize o hook personalizado para autenticação
@@ -73,13 +74,18 @@ function App() {
         />
       );
     }
+
+    if (activeTab === "Medicamentos") {
+      return <MedicamentoCard />; // Renderiza o componente de medicamentos
+    }
+
     return <h1>Bem-vindo ao Sistema de Medicamentos</h1>;
   };
 
   return (
     <div className="app">
       <header className="header">
-        <div className="header-left">Sistema de Medicamentos</div> {/* Título do sistema */}
+        <div className="header-left"></div> {/* Título do sistema */}
         <div className="header-center">
           <HorarioAtual /> {/* Exibe o horário atualizado no centro */}
         </div>
