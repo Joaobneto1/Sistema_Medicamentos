@@ -17,6 +17,11 @@ body {
   /* Define a altura como 100% da altura da janela */
 }
 
+.app-container {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -94,6 +99,24 @@ body {
   /* Cor de fundo ao passar o mouse */
   border-radius: 5px;
   /* Bordas arredondadas */
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-around;
+    background-color: #333;
+    padding: 10px;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+}
+
+.nav-link:hover {
+    background-color: #575757;
+    border-radius: 4px;
 }
 
 /* Estilo do conteúdo principal */
