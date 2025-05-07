@@ -40,7 +40,7 @@ function App() {
     <Router>
       <div className="app">
         <header className="header">
-s          <div className="header-left">
+          <div className="header-left">
             <Link to={routes.login} className="nav-link">
               Login
             </Link>

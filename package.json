@@ -1,6 +1,0 @@
-{
-  "scripts": {
-    // ...existing scripts...
-    "lint": "eslint ."
-  }
-}
