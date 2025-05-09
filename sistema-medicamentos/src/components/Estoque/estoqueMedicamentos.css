@@ -1,0 +1,33 @@
+.estoque-container {
+    padding: 20px;
+}
+
+.estoque-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.estoque-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.estoque-card {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.adicionar-medicamento {
+    margin-top: 20px;
+}
+
+.adicionar-medicamento input {
+    margin-right: 10px;
+    padding: 5px;
+}
+
+.adicionar-medicamento button {
+    padding: 5px 10px;
+}
