@@ -127,6 +127,16 @@ const EstoqueMedicamentos = () => {
         }
     };
 
+    const handleDelete = async (id) => {
+        const { error } = await supabase.from("medicamentos").delete().eq("id", id);
+        if (error) {
+            console.error("Erro ao deletar medicamento:", error);
+        } else {
+            setMedicamentos(medicamentos.filter((medicamento) => medicamento.id !== id));
+            alert("Medicamento deletado com sucesso!");
+        }
+    };
+
     // Filtrar medicamentos no estoque com base na barra de pesquisa
     const estoqueFiltrado = estoque.filter((item) =>
         item.medicamento.nome.toLowerCase().includes(busca.toLowerCase())
@@ -160,7 +170,7 @@ const EstoqueMedicamentos = () => {
                             <button className="edit-button" onClick={() => setEditarEstoque(item)}>Editar</button>
                             <button
                                 className="delete-button"
-                                onClick={() => alert("Lógica de delete ainda será implementada.")}
+                                onClick={() => handleDelete(item.medicamento_id)}
                             >
                                 Deletar
                             </button>
