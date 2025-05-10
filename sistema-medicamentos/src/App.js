@@ -1,59 +1,29 @@
 import "./App.css";
-import HorarioAtual from "./components/Horario/horarioAtual";
-import Login from "./components/Auth/login";
-import SignUp from "./components/Auth/signUp";
-import useAuth from "./hooks/useAuth";
-import React, { useState, useEffect } from 'react';
-import supabase from './services/supabaseClient';
+import Header from "./components/Shared/Header";
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import EstoqueMedicamentos from "./components/Estoque/estoqueMedicamentos";
-
-const PacienteList = () => {
-  const [pacientes, setPacientes] = useState([]);
-
-  useEffect(() => {
-    const fetchPacientes = async () => {
-      const { data, error } = await supabase.from('pacientes').select('*');
-      if (error) {
-        console.error('Erro ao buscar pacientes:', error);
-      } else {
-        setPacientes(data);
-      }
-    };
-
-    fetchPacientes();
-  }, []);
-
-  return (
-    <div className="paciente-container">
-      <h1 className="paciente-title">Informações do Paciente</h1>
-      <div className="paciente-list">
-        {pacientes.map((paciente) => (
-          <div key={paciente.id} className="paciente-card">
-            <p><strong>Nome:</strong> {paciente.nome}</p>
-            <p><strong>Idade:</strong> {paciente.idade} anos</p>
-            <p><strong>Data de Nascimento:</strong> {paciente.data_nascimento || 'Não informado'}</p>
-            <ul>
-              <li>Nenhum medicamento cadastrado</li>
-            </ul>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
+import PacienteManager from "./components/Pacientes/PacienteManager";
+import PacienteList from "./components/Pacientes/PacienteList";
+import AdicionarPaciente from "./components/Pacientes/AdicionarPaciente";
+import EditarPaciente from "./components/Pacientes/EditarPaciente"; // Importar o componente de edição
 
 const App = () => {
   const [activeTab, setActiveTab] = useState("pacientes");
 
   return (
-    <div>
-      <nav>
-        <button onClick={() => setActiveTab("pacientes")}>Pacientes</button>
-        <button onClick={() => setActiveTab("estoque")}>Estoque</button>
-      </nav>
-      {activeTab === "pacientes" && <PacienteList />}
-      {activeTab === "estoque" && <EstoqueMedicamentos />}
-    </div>
+    <Router>
+      <Header /> {/* Apenas o header estilizado será mantido */}
+      <div>
+        <Routes>
+          <Route path="/pacientes" element={<PacienteList />} />
+          <Route path="/gerenciar-pacientes" element={<PacienteManager />} />
+          <Route path="/adicionar-paciente" element={<AdicionarPaciente />} />
+          <Route path="/editar-paciente/:id" element={<EditarPaciente />} /> {/* Rota para editar */}
+          <Route path="/estoque" element={<EstoqueMedicamentos />} />
+        </Routes>
+      </div>
+    </Router>
   );
 };
 

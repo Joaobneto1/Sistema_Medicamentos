@@ -19,6 +19,8 @@ const EstoqueMedicamentos = () => {
     const [showEstoqueModal, setShowEstoqueModal] = useState(false);
     const [busca, setBusca] = useState("");
     const [editarEstoque, setEditarEstoque] = useState(null); // Estado para edição do estoque
+    const [medicamentoParaExcluir, setMedicamentoParaExcluir] = useState(null); // Estado para o modal de confirmação
+    const [feedbackMessage, setFeedbackMessage] = useState(""); // Estado para mensagens de feedback
 
     useEffect(() => {
         const fetchEstoque = async () => {
@@ -127,14 +129,23 @@ const EstoqueMedicamentos = () => {
         }
     };
 
-    const handleDelete = async (id) => {
-        const { error } = await supabase.from("medicamentos").delete().eq("id", id);
+    const handleDelete = async () => {
+        if (!medicamentoParaExcluir) return;
+
+        console.log("ID do medicamento para excluir:", medicamentoParaExcluir.id); // Adicione este log
+
+        const { error } = await supabase.from("medicamentos").delete().eq("id", medicamentoParaExcluir.id);
         if (error) {
             console.error("Erro ao deletar medicamento:", error);
+            setFeedbackMessage("Erro ao deletar medicamento.");
         } else {
-            setMedicamentos(medicamentos.filter((medicamento) => medicamento.id !== id));
-            alert("Medicamento deletado com sucesso!");
+            setMedicamentos(medicamentos.filter((medicamento) => medicamento.id !== medicamentoParaExcluir.id));
+            setEstoque(estoque.filter((item) => item.medicamento_id !== medicamentoParaExcluir.id));
+            setFeedbackMessage(`Medicamento "${medicamentoParaExcluir.nome}" deletado com sucesso!`);
         }
+        setMedicamentoParaExcluir(null);
+
+        setTimeout(() => setFeedbackMessage(""), 3000);
     };
 
     // Filtrar medicamentos no estoque com base na barra de pesquisa
@@ -145,6 +156,10 @@ const EstoqueMedicamentos = () => {
     return (
         <div className="estoque-container">
             <h1 className="estoque-title">Estoque de Medicamentos</h1>
+
+            {/* Exibir mensagem de feedback */}
+            {feedbackMessage && <div className="feedback-message">{feedbackMessage}</div>}
+
             <div className="top-bar">
                 <input
                     type="text"
@@ -170,7 +185,7 @@ const EstoqueMedicamentos = () => {
                             <button className="edit-button" onClick={() => setEditarEstoque(item)}>Editar</button>
                             <button
                                 className="delete-button"
-                                onClick={() => handleDelete(item.medicamento_id)}
+                                onClick={() => setMedicamentoParaExcluir({ id: item.medicamento_id, nome: item.medicamento.nome })}
                             >
                                 Deletar
                             </button>
@@ -264,6 +279,20 @@ const EstoqueMedicamentos = () => {
                             <button type="submit">Salvar</button>
                             <button type="button" onClick={() => setEditarEstoque(null)}>Cancelar</button>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal de confirmação */}
+            {medicamentoParaExcluir && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <h2>Confirmação</h2>
+                        <p>Tem certeza que deseja excluir o medicamento "{medicamentoParaExcluir.nome}"?</p>
+                        <div className="button-group">
+                            <button className="delete-button" onClick={handleDelete}>Sim, excluir</button>
+                            <button className="cancel-button" onClick={() => setMedicamentoParaExcluir(null)}>Cancelar</button>
+                        </div>
                     </div>
                 </div>
             )}
