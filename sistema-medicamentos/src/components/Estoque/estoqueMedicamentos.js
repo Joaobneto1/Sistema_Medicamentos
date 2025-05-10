@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import supabase from "../../services/supabaseClient";
+import "./estoqueMedicamentos.css";
 
 const EstoqueMedicamentos = () => {
     const [estoque, setEstoque] = useState([]);
@@ -16,12 +17,15 @@ const EstoqueMedicamentos = () => {
     });
     const [showMedicamentoModal, setShowMedicamentoModal] = useState(false);
     const [showEstoqueModal, setShowEstoqueModal] = useState(false);
+    const [busca, setBusca] = useState("");
+    const [editarEstoque, setEditarEstoque] = useState(null); // Estado para edição do estoque
 
     useEffect(() => {
         const fetchEstoque = async () => {
             const { data, error } = await supabase
                 .from("estoque_medicamentos")
-                .select("id, quantidade, atualizado_em, medicamento:medicamento_id(nome, descricao, dose_mg)");
+                .select("id, quantidade, atualizado_em, medicamento_id, medicamento:medicamento_id(nome, descricao, dose_mg)");
+
             if (error) {
                 console.error("Erro ao buscar estoque:", error);
             } else {
@@ -30,7 +34,7 @@ const EstoqueMedicamentos = () => {
         };
 
         const fetchMedicamentos = async () => {
-            const { data, error } = await supabase.from("medicamentos").select("id, nome");
+            const { data, error } = await supabase.from("medicamentos").select("id, nome, descricao, dose_mg");
             if (error) {
                 console.error("Erro ao buscar medicamentos:", error);
             } else {
@@ -51,10 +55,10 @@ const EstoqueMedicamentos = () => {
 
         const { error } = await supabase
             .from("medicamentos")
-            .insert([{ 
-                nome: novoMedicamento.nome, 
-                descricao: novoMedicamento.descricao, 
-                dose_mg: novoMedicamento.dose 
+            .insert([{
+                nome: novoMedicamento.nome,
+                descricao: novoMedicamento.descricao,
+                dose_mg: novoMedicamento.dose
             }]);
 
         if (error) {
@@ -78,10 +82,10 @@ const EstoqueMedicamentos = () => {
 
         const { error } = await supabase
             .from("estoque_medicamentos")
-            .insert([{ 
-                medicamento_id: novoEstoque.medicamento_id, 
-                quantidade: novoEstoque.quantidade, 
-                atualizado_em: novoEstoque.atualizado_em 
+            .insert([{
+                medicamento_id: novoEstoque.medicamento_id,
+                quantidade: novoEstoque.quantidade,
+                atualizado_em: novoEstoque.atualizado_em
             }]);
 
         if (error) {
@@ -98,23 +102,72 @@ const EstoqueMedicamentos = () => {
         }
     };
 
+    const handleEditEstoque = async (e) => {
+        e.preventDefault();
+        if (!editarEstoque || editarEstoque.quantidade <= 0) {
+            alert("Por favor, preencha todos os campos corretamente.");
+            return;
+        }
+
+        const { error } = await supabase
+            .from("estoque_medicamentos")
+            .update({ quantidade: editarEstoque.quantidade, atualizado_em: new Date().toISOString() })
+            .eq("id", editarEstoque.id);
+
+        if (error) {
+            console.error("Erro ao editar estoque:", error);
+            alert("Erro ao editar estoque.");
+        } else {
+            alert("Estoque atualizado com sucesso!");
+            setEditarEstoque(null);
+            const { data: estoqueData } = await supabase
+                .from("estoque_medicamentos")
+                .select("id, quantidade, atualizado_em, medicamento:medicamento_id(nome, descricao, dose_mg)");
+            setEstoque(estoqueData);
+        }
+    };
+
+    // Filtrar medicamentos no estoque com base na barra de pesquisa
+    const estoqueFiltrado = estoque.filter((item) =>
+        item.medicamento.nome.toLowerCase().includes(busca.toLowerCase())
+    );
+
     return (
         <div className="estoque-container">
             <h1 className="estoque-title">Estoque de Medicamentos</h1>
+            <div className="top-bar">
+                <input
+                    type="text"
+                    className="barra-pesquisa"
+                    placeholder="Buscar medicamento no estoque pelo nome"
+                    value={busca}
+                    onChange={(e) => setBusca(e.target.value)}
+                />
+                <div className="botoes-container">
+                    <button className="btn-add" onClick={() => setShowMedicamentoModal(true)}>Adicionar Medicamento</button>
+                    <button className="btn-add" onClick={() => setShowEstoqueModal(true)}>Adicionar Estoque</button>
+                </div>
+            </div>
             <div className="estoque-list">
-                {estoque.map((item) => (
+                {estoqueFiltrado.map((item) => (
                     <div key={item.id} className="estoque-card">
                         <p><strong>Nome:</strong> {item.medicamento.nome}</p>
                         <p><strong>Descrição:</strong> {item.medicamento.descricao}</p>
                         <p><strong>Dose (mg):</strong> {item.medicamento.dose_mg}</p>
                         <p><strong>Quantidade:</strong> {item.quantidade}</p>
                         <p><strong>Última atualização:</strong> {new Date(item.atualizado_em).toLocaleString()}</p>
+                        <div className="button-group">
+                            <button className="edit-button" onClick={() => setEditarEstoque(item)}>Editar</button>
+                            <button
+                                className="delete-button"
+                                onClick={() => alert("Lógica de delete ainda será implementada.")}
+                            >
+                                Deletar
+                            </button>
+                        </div>
                     </div>
                 ))}
             </div>
-            <button onClick={() => setShowMedicamentoModal(true)}>Adicionar Medicamento</button>
-            <button onClick={() => setShowEstoqueModal(true)}>Adicionar Estoque</button>
-
             {showMedicamentoModal && (
                 <div className="modal">
                     <div className="modal-content">
@@ -180,6 +233,26 @@ const EstoqueMedicamentos = () => {
                             />
                             <button type="submit">Salvar</button>
                             <button type="button" onClick={() => setShowEstoqueModal(false)}>Cancelar</button>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {editarEstoque && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <h2>Editar Estoque</h2>
+                        <form onSubmit={handleEditEstoque}>
+                            <p><strong>Medicamento:</strong> {editarEstoque.medicamento.nome}</p>
+                            <input
+                                type="number"
+                                placeholder="Quantidade"
+                                value={editarEstoque.quantidade}
+                                onChange={(e) => setEditarEstoque({ ...editarEstoque, quantidade: parseInt(e.target.value, 10) })}
+                                required
+                            />
+                            <button type="submit">Salvar</button>
+                            <button type="button" onClick={() => setEditarEstoque(null)}>Cancelar</button>
                         </form>
                     </div>
                 </div>
