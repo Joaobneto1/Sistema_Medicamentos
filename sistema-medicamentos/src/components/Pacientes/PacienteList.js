@@ -9,7 +9,16 @@ const PacienteList = () => {
         const fetchPacientes = async () => {
             const { data, error } = await supabase
                 .from("pacientes")
-                .select("id, nome, idade, data_nascimento, paciente_medicamentos(medicamento:medicamento_id(nome))");
+                .select(`
+                    id, 
+                    nome, 
+                    idade, 
+                    data_nascimento, 
+                    paciente_medicamentos(
+                        medicamento:medicamento_id(nome), 
+                        horario_dose
+                    )
+                `);
             if (error) {
                 console.error("Erro ao buscar pacientes:", error);
             } else {
@@ -33,7 +42,9 @@ const PacienteList = () => {
                         <ul>
                             {paciente.paciente_medicamentos.length > 0 ? (
                                 paciente.paciente_medicamentos.map((item, index) => (
-                                    <li key={index}>{item.medicamento.nome}</li>
+                                    <li key={index}>
+                                        {item.medicamento.nome} - Horário: {item.horario_dose}
+                                    </li>
                                 ))
                             ) : (
                                 <li>Nenhum medicamento vinculado</li>

@@ -6,7 +6,7 @@ import "./PacienteManager.css";
 const AdicionarPaciente = () => {
     const [novoPaciente, setNovoPaciente] = useState({ nome: "", idade: 0, data_nascimento: "" });
     const [medicamentos, setMedicamentos] = useState([]);
-    const [medicamentoSelecionado, setMedicamentoSelecionado] = useState("");
+    const [associacoes, setAssociacoes] = useState([{ medicamento_id: "", horario_dose: "" }]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -39,19 +39,45 @@ const AdicionarPaciente = () => {
             return;
         }
 
-        if (medicamentoSelecionado) {
+        const pacienteId = pacienteData[0].id;
+
+        const associacoesValidas = associacoes.filter(
+            (associacao) => associacao.medicamento_id && associacao.horario_dose
+        );
+
+        if (associacoesValidas.length > 0) {
             const { error: associarError } = await supabase
                 .from("paciente_medicamentos")
-                .insert([{ paciente_id: pacienteData[0].id, medicamento_id: medicamentoSelecionado }]);
+                .insert(
+                    associacoesValidas.map((associacao) => ({
+                        paciente_id: pacienteId,
+                        medicamento_id: associacao.medicamento_id,
+                        horario_dose: associacao.horario_dose,
+                    }))
+                );
 
             if (associarError) {
-                console.error("Erro ao associar medicamento ao paciente:", associarError);
+                console.error("Erro ao associar medicamentos ao paciente:", associarError);
                 return;
             }
         }
 
         alert("Paciente adicionado com sucesso!");
         navigate("/pacientes");
+    };
+
+    const handleAddAssociacao = () => {
+        setAssociacoes([...associacoes, { medicamento_id: "", horario_dose: "" }]);
+    };
+
+    const handleRemoveAssociacao = (index) => {
+        setAssociacoes(associacoes.filter((_, i) => i !== index));
+    };
+
+    const handleChangeAssociacao = (index, field, value) => {
+        const updatedAssociacoes = [...associacoes];
+        updatedAssociacoes[index][field] = value;
+        setAssociacoes(updatedAssociacoes);
     };
 
     return (
@@ -81,19 +107,47 @@ const AdicionarPaciente = () => {
                     onChange={(e) => setNovoPaciente({ ...novoPaciente, data_nascimento: e.target.value })}
                     required
                 />
-                <select
-                    value={medicamentoSelecionado}
-                    onChange={(e) => setMedicamentoSelecionado(e.target.value)}
-                >
-                    <option value="">Selecione um medicamento (opcional)</option>
-                    {medicamentos.map((medicamento) => (
-                        <option key={medicamento.id} value={medicamento.id}>
-                            {medicamento.nome}
-                        </option>
-                    ))}
-                </select>
+                <h2>Associar Medicamentos</h2>
+                {associacoes.map((associacao, index) => (
+                    <div key={index} className="associacao-container">
+                        <select
+                            value={associacao.medicamento_id}
+                            onChange={(e) =>
+                                handleChangeAssociacao(index, "medicamento_id", e.target.value)
+                            }
+                            required
+                        >
+                            <option value="">Selecione um medicamento</option>
+                            {medicamentos.map((medicamento) => (
+                                <option key={medicamento.id} value={medicamento.id}>
+                                    {medicamento.nome}
+                                </option>
+                            ))}
+                        </select>
+                        <input
+                            type="time"
+                            value={associacao.horario_dose}
+                            onChange={(e) =>
+                                handleChangeAssociacao(index, "horario_dose", e.target.value)
+                            }
+                            required
+                        />
+                        <button
+                            type="button"
+                            onClick={() => handleRemoveAssociacao(index)}
+                            className="remove-button"
+                        >
+                            Remover
+                        </button>
+                    </div>
+                ))}
+                <button type="button" onClick={handleAddAssociacao} className="add-button">
+                    Adicionar Medicamento
+                </button>
                 <button type="submit">Salvar</button>
-                <button type="button" onClick={() => navigate("/pacientes")}>Cancelar</button>
+                <button type="button" onClick={() => navigate("/pacientes")}>
+                    Cancelar
+                </button>
             </form>
         </div>
     );
