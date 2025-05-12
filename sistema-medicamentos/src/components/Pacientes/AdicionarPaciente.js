@@ -29,6 +29,7 @@ const AdicionarPaciente = () => {
             return;
         }
 
+        // Insere o paciente na tabela "pacientes"
         const { data: pacienteData, error: pacienteError } = await supabase
             .from("pacientes")
             .insert([novoPaciente])
@@ -36,30 +37,52 @@ const AdicionarPaciente = () => {
 
         if (pacienteError) {
             console.error("Erro ao adicionar paciente:", pacienteError);
+            alert("Erro ao adicionar paciente. Verifique os dados e tente novamente.");
             return;
         }
 
+        // Obtém o ID do paciente recém-criado
         const pacienteId = pacienteData[0].id;
 
+        // Insere os medicamentos associados ao paciente
         const associacoesValidas = associacoes.filter(
             (associacao) => associacao.medicamento_id && associacao.horario_dose
         );
 
-        if (associacoesValidas.length > 0) {
-            const { error: associarError } = await supabase
-                .from("paciente_medicamentos")
-                .insert(
-                    associacoesValidas.map((associacao) => ({
+        const now = new Date();
+        const { error: associarError } = await supabase
+            .from("paciente_medicamentos")
+            .insert(
+                associacoesValidas.map((associacao) => {
+                    const [horas, minutos] = associacao.horario_dose.split(":").map(Number);
+                    const horarioDose = new Date();
+                    horarioDose.setHours(horas, minutos, 0, 0);
+
+                    // Corrige o cálculo da diferença de minutos
+                    const diffMinutes = (horarioDose - now) / (1000 * 60);
+                    const proximoMedicamento = diffMinutes >= 0 && diffMinutes <= 15;
+
+                    console.log(`Calculando proximo_medicamento para ${associacao.medicamento_id}:`, {
+                        horarioDose,
+                        now,
+                        diffMinutes,
+                        proximoMedicamento,
+                    });
+
+                    return {
                         paciente_id: pacienteId,
                         medicamento_id: associacao.medicamento_id,
                         horario_dose: associacao.horario_dose,
-                    }))
-                );
+                        intervalo_horas: associacao.intervalo_horas,
+                        proximo_medicamento: proximoMedicamento, // Define o valor com base no cálculo
+                    };
+                })
+            );
 
-            if (associarError) {
-                console.error("Erro ao associar medicamentos ao paciente:", associarError);
-                return;
-            }
+        if (associarError) {
+            console.error("Erro ao associar medicamentos ao paciente:", associarError);
+            alert("Erro ao associar medicamentos ao paciente.");
+            return;
         }
 
         alert("Paciente adicionado com sucesso!");

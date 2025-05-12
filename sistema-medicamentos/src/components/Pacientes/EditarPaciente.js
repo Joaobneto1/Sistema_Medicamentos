@@ -10,6 +10,7 @@ const EditarPaciente = () => {
     const [medicamentos, setMedicamentos] = useState([]);
     const [associacoes, setAssociacoes] = useState([]);
     const [feedbackMessage, setFeedbackMessage] = useState("");
+    const [horariosCalculados, setHorariosCalculados] = useState({}); // Armazena os horários calculados
 
     useEffect(() => {
         const fetchPaciente = async () => {
@@ -41,6 +42,7 @@ const EditarPaciente = () => {
                     setAssociacoes(data.paciente_medicamentos.map((item) => ({
                         medicamento_id: item.medicamento_id,
                         horario_dose: item.horario_dose,
+                        intervalo_horas: 0, // Novo campo para o intervalo de horas
                     })));
                 }
             }
@@ -58,6 +60,32 @@ const EditarPaciente = () => {
         fetchPaciente();
         fetchMedicamentos();
     }, [id]);
+
+    const calcularHorarios = () => {
+        const novosHorarios = {};
+        associacoes.forEach((associacao) => {
+            const intervaloHoras = parseInt(associacao.intervalo_horas, 10);
+
+            // Verifique se o intervalo de horas é um número válido
+            if (associacao.horario_dose && !isNaN(intervaloHoras) && intervaloHoras > 0) {
+                const horarios = [];
+                let horarioAtual = associacao.horario_dose;
+
+                for (let i = 0; i < 24; i += intervaloHoras) {
+                    horarios.push(horarioAtual);
+                    const [horas, minutos] = horarioAtual.split(":").map(Number);
+                    const novaHora = (horas + intervaloHoras) % 24;
+                    horarioAtual = `${novaHora.toString().padStart(2, "0")}:${minutos
+                        .toString()
+                        .padStart(2, "0")}`;
+                }
+
+                novosHorarios[associacao.medicamento_id] = horarios;
+            }
+        });
+
+        setHorariosCalculados(novosHorarios);
+    };
 
     const handleEditPaciente = async (e) => {
         e.preventDefault();
@@ -81,7 +109,7 @@ const EditarPaciente = () => {
         }
 
         const associacoesValidas = associacoes.filter(
-            (associacao) => associacao.medicamento_id && associacao.horario_dose
+            (associacao) => associacao.medicamento_id && associacao.horario_dose && associacao.intervalo_horas > 0
         );
 
         if (associacoesValidas.length > 0) {
@@ -92,6 +120,7 @@ const EditarPaciente = () => {
                         paciente_id: id,
                         medicamento_id: associacao.medicamento_id,
                         horario_dose: associacao.horario_dose,
+                        intervalo_horas: associacao.intervalo_horas, // Salvar o intervalo de horas
                     })),
                     { onConflict: ["paciente_id", "medicamento_id"] }
                 );
@@ -110,7 +139,7 @@ const EditarPaciente = () => {
     };
 
     const handleAddAssociacao = () => {
-        setAssociacoes([...associacoes, { medicamento_id: "", horario_dose: "" }]);
+        setAssociacoes([...associacoes, { medicamento_id: "", horario_dose: "", intervalo_horas: 0 }]);
     };
 
     const handleRemoveAssociacao = (index) => {
@@ -119,7 +148,14 @@ const EditarPaciente = () => {
 
     const handleChangeAssociacao = (index, field, value) => {
         const updatedAssociacoes = [...associacoes];
-        updatedAssociacoes[index][field] = value;
+
+        // Certifique-se de que o valor de intervalo_horas seja um número ou vazio
+        if (field === "intervalo_horas") {
+            updatedAssociacoes[index][field] = value === "" ? "" : parseInt(value, 10) || 0;
+        } else {
+            updatedAssociacoes[index][field] = value;
+        }
+
         setAssociacoes(updatedAssociacoes);
     };
 
@@ -174,6 +210,15 @@ const EditarPaciente = () => {
                             }
                             required
                         />
+                        <input
+                            type="number"
+                            placeholder="Intervalo (horas)"
+                            value={associacao.intervalo_horas}
+                            onChange={(e) =>
+                                handleChangeAssociacao(index, "intervalo_horas", parseInt(e.target.value, 10))
+                            }
+                            required
+                        />
                         <button
                             type="button"
                             onClick={() => handleRemoveAssociacao(index)}
@@ -186,11 +231,30 @@ const EditarPaciente = () => {
                 <button type="button" onClick={handleAddAssociacao} className="add-button">
                     Adicionar Medicamento
                 </button>
+                <button type="button" onClick={calcularHorarios} className="calculate-button">
+                    Calcular Horários
+                </button>
                 <button type="submit">Salvar</button>
                 <button type="button" onClick={() => navigate("/pacientes")}>
                     Cancelar
                 </button>
             </form>
+            <h2>Horários Calculados</h2>
+            <div className="horarios-calculados">
+                {Object.entries(horariosCalculados).map(([medicamentoId, horarios]) => (
+                    <div key={medicamentoId}>
+                        <h3>
+                            Medicamento:{" "}
+                            {medicamentos.find((med) => med.id === medicamentoId)?.nome || "Desconhecido"}
+                        </h3>
+                        <ul>
+                            {horarios.map((horario, index) => (
+                                <li key={index}>{horario}</li>
+                            ))}
+                        </ul>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };
