@@ -93,7 +93,7 @@ const PacienteList = () => {
         return () => clearInterval(interval);
     }, []);
 
-    const marcarComoMedicado = async (pacienteId, medicamentoId) => {
+    const marcarComoMedicado = async (pacienteId, medicamentoId, isAtrasado = false) => {
         console.log(`Marcando como medicado: Paciente ID ${pacienteId}, Medicamento ID ${medicamentoId}`);
         const { error } = await supabase
             .from("paciente_medicamentos")
@@ -105,23 +105,44 @@ const PacienteList = () => {
         } else {
             console.log("Medicação registrada com sucesso!");
 
-            // Atualiza o estado local para mover o paciente para a seção correta
-            setPacientes((prevPacientes) =>
-                prevPacientes
-                    .map((paciente) => {
-                        if (paciente.id === pacienteId) {
-                            const medicamentosAtualizados = paciente.paciente_medicamentos.filter(
-                                (med) => med.medicamento_id !== medicamentoId
-                            );
-                            return { ...paciente, paciente_medicamentos: medicamentosAtualizados };
-                        }
-                        return paciente;
-                    })
-                    .filter((paciente) => paciente.paciente_medicamentos.length > 0) // Remove pacientes sem medicamentos pendentes
-            );
+            if (isAtrasado) {
+                // Atualiza a lista de pacientes atrasados
+                setPacientesAtrasados((prevAtrasados) =>
+                    prevAtrasados
+                        .map((paciente) => {
+                            if (paciente.id === pacienteId) {
+                                const medicamentosAtualizados = paciente.paciente_medicamentos.filter(
+                                    (med) => med.medicamento_id !== medicamentoId
+                                );
+                                return { ...paciente, paciente_medicamentos: medicamentosAtualizados };
+                            }
+                            return paciente;
+                        })
+                        .filter((paciente) => paciente.paciente_medicamentos.length > 0) // Remove pacientes sem medicamentos atrasados
+                );
+            } else {
+                // Atualiza a lista de pacientes a serem medicados
+                setPacientes((prevPacientes) =>
+                    prevPacientes
+                        .map((paciente) => {
+                            if (paciente.id === pacienteId) {
+                                const medicamentosAtualizados = paciente.paciente_medicamentos.filter(
+                                    (med) => med.medicamento_id !== medicamentoId
+                                );
+                                return { ...paciente, paciente_medicamentos: medicamentosAtualizados };
+                            }
+                            return paciente;
+                        })
+                        .filter((paciente) => paciente.paciente_medicamentos.length > 0) // Remove pacientes sem medicamentos pendentes
+                );
+            }
 
+            // Adiciona o paciente à lista de pacientes já medicados
             setPacientesJaMedicados((prevMedicados) => {
-                const pacienteAtualizado = pacientes.find((paciente) => paciente.id === pacienteId);
+                const pacienteAtualizado = isAtrasado
+                    ? pacientesAtrasados.find((paciente) => paciente.id === pacienteId)
+                    : pacientes.find((paciente) => paciente.id === pacienteId);
+
                 const medicamentoMovido = pacienteAtualizado.paciente_medicamentos.find(
                     (med) => med.medicamento_id === medicamentoId
                 );
@@ -140,13 +161,20 @@ const PacienteList = () => {
         }
     };
 
+    const getCardClass = (status) => {
+        if (status === "atrasado") return "paciente-card atrasado";
+        if (status === "medicado") return "paciente-card medicado";
+        if (status === "proximo") return "paciente-card proximo";
+        return "paciente-card";
+    };
+
     return (
         <div className="paciente-manager-container">
             <h1>Pacientes a Serem Medicados</h1>
             <div className="paciente-list">
                 {pacientes.length > 0 ? (
                     pacientes.map((paciente) => (
-                        <div key={paciente.id} className="paciente-card">
+                        <div key={paciente.id} className="paciente-card proximo">
                             <p><strong>Nome:</strong> {paciente.nome}</p>
                             <p><strong>Idade:</strong> {paciente.idade}</p>
                             <p><strong>Data de Nascimento:</strong> {paciente.data_nascimento}</p>
@@ -181,7 +209,7 @@ const PacienteList = () => {
             <div className="paciente-list">
                 {pacientesJaMedicados.length > 0 ? (
                     pacientesJaMedicados.map((paciente) => (
-                        <div key={paciente.id} className="paciente-card">
+                        <div key={paciente.id} className="paciente-card medicado">
                             <p><strong>Nome:</strong> {paciente.nome}</p>
                             <p><strong>Idade:</strong> {paciente.idade}</p>
                             <p><strong>Data de Nascimento:</strong> {paciente.data_nascimento}</p>
@@ -208,7 +236,7 @@ const PacienteList = () => {
             <div className="paciente-list">
                 {pacientesAtrasados.length > 0 ? (
                     pacientesAtrasados.map((paciente) => (
-                        <div key={paciente.id} className="paciente-card">
+                        <div key={paciente.id} className="paciente-card atrasado">
                             <p><strong>Nome:</strong> {paciente.nome}</p>
                             <p><strong>Idade:</strong> {paciente.idade}</p>
                             <p><strong>Data de Nascimento:</strong> {paciente.data_nascimento}</p>
@@ -221,6 +249,14 @@ const PacienteList = () => {
                                         Horário: {item.horario_dose}
                                         <br />
                                         Intervalo: {item.intervalo_horas} horas
+                                        <br />
+                                        <button
+                                            onClick={() =>
+                                                marcarComoMedicado(paciente.id, item.medicamento_id, true)
+                                            }
+                                        >
+                                            Marcar como Medicado
+                                        </button>
                                     </li>
                                 ))}
                             </ul>

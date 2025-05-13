@@ -79,15 +79,13 @@ form button:hover {
     gap: 20px;
 }
 
+/* Estilo padrão para os cartões */
 .paciente-card {
-    border: 1px solid #ddd;
-    padding: 15px;
-    border-radius: 5px;
-    background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    transition: background-color 0.3s ease;
 }
 
 .paciente-card p {
@@ -128,6 +126,24 @@ form button:hover {
 
 .paciente-card button:last-of-type:hover {
     background-color: #d32f2f;
+}
+
+/* Pacientes atrasados (vermelho) */
+.paciente-card.atrasado {
+    background-color: #ffcccc;
+    border-color: #ff0000;
+}
+
+/* Pacientes já medicados (verde) */
+.paciente-card.medicado {
+    background-color: #ccffcc;
+    border-color: #00cc00;
+}
+
+/* Pacientes com horário próximo (azul claro) */
+.paciente-card.proximo {
+    background-color: #cce5ff;
+    border-color: #007bff;
 }
 
 .feedback-message {
