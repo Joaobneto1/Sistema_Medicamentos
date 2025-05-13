@@ -95,70 +95,107 @@ const PacienteList = () => {
 
     const marcarComoMedicado = async (pacienteId, medicamentoId, isAtrasado = false) => {
         console.log(`Marcando como medicado: Paciente ID ${pacienteId}, Medicamento ID ${medicamentoId}`);
-        const { error } = await supabase
+        
+        // Atualiza o status do medicamento para "medicado"
+        const { error: updateError } = await supabase
             .from("paciente_medicamentos")
             .update({ medicado: true })
             .match({ paciente_id: pacienteId, medicamento_id: medicamentoId });
 
-        if (error) {
-            console.error("Erro ao registrar medicação:", error);
-        } else {
-            console.log("Medicação registrada com sucesso!");
+        if (updateError) {
+            console.error("Erro ao registrar medicação:", updateError);
+            return;
+        }
 
-            if (isAtrasado) {
-                // Atualiza a lista de pacientes atrasados
-                setPacientesAtrasados((prevAtrasados) =>
-                    prevAtrasados
-                        .map((paciente) => {
-                            if (paciente.id === pacienteId) {
-                                const medicamentosAtualizados = paciente.paciente_medicamentos.filter(
-                                    (med) => med.medicamento_id !== medicamentoId
-                                );
-                                return { ...paciente, paciente_medicamentos: medicamentosAtualizados };
-                            }
-                            return paciente;
-                        })
-                        .filter((paciente) => paciente.paciente_medicamentos.length > 0) // Remove pacientes sem medicamentos atrasados
-                );
-            } else {
-                // Atualiza a lista de pacientes a serem medicados
-                setPacientes((prevPacientes) =>
-                    prevPacientes
-                        .map((paciente) => {
-                            if (paciente.id === pacienteId) {
-                                const medicamentosAtualizados = paciente.paciente_medicamentos.filter(
-                                    (med) => med.medicamento_id !== medicamentoId
-                                );
-                                return { ...paciente, paciente_medicamentos: medicamentosAtualizados };
-                            }
-                            return paciente;
-                        })
-                        .filter((paciente) => paciente.paciente_medicamentos.length > 0) // Remove pacientes sem medicamentos pendentes
-                );
+        console.log("Medicação registrada com sucesso!");
+
+        // Busca o valor atual do estoque na tabela estoque_medicamentos
+        const { data: estoqueData, error: fetchError } = await supabase
+            .from("estoque_medicamentos")
+            .select("quantidade")
+            .eq("medicamento_id", medicamentoId)
+            .single();
+
+        if (fetchError) {
+            console.error("Erro ao buscar o estoque do medicamento:", fetchError);
+            return;
+        }
+
+        const estoqueAtual = estoqueData.quantidade;
+
+        // Verifica se há estoque disponível
+        if (estoqueAtual <= 0) {
+            console.error("Estoque insuficiente para o medicamento.");
+            return;
+        }
+
+        // Atualiza o estoque do medicamento na tabela estoque_medicamentos
+        const { error: estoqueError } = await supabase
+            .from("estoque_medicamentos")
+            .update({ quantidade: estoqueAtual - 1 })
+            .match({ medicamento_id: medicamentoId });
+
+        if (estoqueError) {
+            console.error("Erro ao atualizar o estoque do medicamento:", estoqueError);
+            return;
+        }
+
+        console.log("Estoque do medicamento atualizado com sucesso!");
+
+        // Atualiza o estado local
+        if (isAtrasado) {
+            // Atualiza a lista de pacientes atrasados
+            setPacientesAtrasados((prevAtrasados) =>
+                prevAtrasados
+                    .map((paciente) => {
+                        if (paciente.id === pacienteId) {
+                            const medicamentosAtualizados = paciente.paciente_medicamentos.filter(
+                                (med) => med.medicamento_id !== medicamentoId
+                            );
+                            return { ...paciente, paciente_medicamentos: medicamentosAtualizados };
+                        }
+                        return paciente;
+                    })
+                    .filter((paciente) => paciente.paciente_medicamentos.length > 0) // Remove pacientes sem medicamentos atrasados
+            );
+        } else {
+            // Atualiza a lista de pacientes a serem medicados
+            setPacientes((prevPacientes) =>
+                prevPacientes
+                    .map((paciente) => {
+                        if (paciente.id === pacienteId) {
+                            const medicamentosAtualizados = paciente.paciente_medicamentos.filter(
+                                (med) => med.medicamento_id !== medicamentoId
+                            );
+                            return { ...paciente, paciente_medicamentos: medicamentosAtualizados };
+                        }
+                        return paciente;
+                    })
+                    .filter((paciente) => paciente.paciente_medicamentos.length > 0) // Remove pacientes sem medicamentos pendentes
+            );
+        }
+
+        // Adiciona o paciente à lista de pacientes já medicados
+        setPacientesJaMedicados((prevMedicados) => {
+            const pacienteAtualizado = isAtrasado
+                ? pacientesAtrasados.find((paciente) => paciente.id === pacienteId)
+                : pacientes.find((paciente) => paciente.id === pacienteId);
+
+            const medicamentoMovido = pacienteAtualizado.paciente_medicamentos.find(
+                (med) => med.medicamento_id === medicamentoId
+            );
+
+            if (pacienteAtualizado) {
+                const novoPaciente = {
+                    ...pacienteAtualizado,
+                    paciente_medicamentos: [medicamentoMovido],
+                };
+
+                return [...prevMedicados, novoPaciente];
             }
 
-            // Adiciona o paciente à lista de pacientes já medicados
-            setPacientesJaMedicados((prevMedicados) => {
-                const pacienteAtualizado = isAtrasado
-                    ? pacientesAtrasados.find((paciente) => paciente.id === pacienteId)
-                    : pacientes.find((paciente) => paciente.id === pacienteId);
-
-                const medicamentoMovido = pacienteAtualizado.paciente_medicamentos.find(
-                    (med) => med.medicamento_id === medicamentoId
-                );
-
-                if (pacienteAtualizado) {
-                    const novoPaciente = {
-                        ...pacienteAtualizado,
-                        paciente_medicamentos: [medicamentoMovido],
-                    };
-
-                    return [...prevMedicados, novoPaciente];
-                }
-
-                return prevMedicados;
-            });
-        }
+            return prevMedicados;
+        });
     };
 
     const getCardClass = (status) => {
