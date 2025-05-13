@@ -1,0 +1,66 @@
+.historico-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    color: #333;
+    font-family: Arial, sans-serif;
+}
+
+.historico-container h1 {
+    text-align: center;
+    color: #1e90ff;
+    margin-bottom: 20px;
+}
+
+.historico-dia {
+    margin-bottom: 30px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.historico-dia h2 {
+    color: #1e90ff;
+    margin-bottom: 10px;
+}
+
+.historico-item {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f1f1f1;
+}
+
+.historico-item p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.filtros-container {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filtros-container input,
+.filtros-container button {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.filtros-container button {
+    background-color: #1e90ff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.filtros-container button:hover {
+    background-color: #4682b4;
+}

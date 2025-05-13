@@ -7,6 +7,7 @@ import PacienteManager from "./components/Pacientes/PacienteManager";
 import PacienteList from "./components/Pacientes/PacienteList";
 import AdicionarPaciente from "./components/Pacientes/AdicionarPaciente";
 import EditarPaciente from "./components/Pacientes/EditarPaciente"; // Importar o componente de edição
+import HistoricoMedicados from "./components/Historico/HistoricoMedicados";
 
 const App = () => {
   const [activeTab, setActiveTab] = useState("pacientes");
@@ -21,6 +22,7 @@ const App = () => {
           <Route path="/adicionar-paciente" element={<AdicionarPaciente />} />
           <Route path="/editar-paciente/:id" element={<EditarPaciente />} /> {/* Rota para editar */}
           <Route path="/estoque" element={<EstoqueMedicamentos />} />
+          <Route path="/historico" element={<HistoricoMedicados />} /> {/* Rota para histórico de medicados */}
         </Routes>
       </div>
     </Router>
