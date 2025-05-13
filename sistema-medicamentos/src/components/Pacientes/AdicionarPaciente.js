@@ -49,34 +49,15 @@ const AdicionarPaciente = () => {
             (associacao) => associacao.medicamento_id && associacao.horario_dose
         );
 
-        const now = new Date();
         const { error: associarError } = await supabase
             .from("paciente_medicamentos")
             .insert(
-                associacoesValidas.map((associacao) => {
-                    const [horas, minutos] = associacao.horario_dose.split(":").map(Number);
-                    const horarioDose = new Date();
-                    horarioDose.setHours(horas, minutos, 0, 0);
-
-                    // Corrige o cálculo da diferença de minutos
-                    const diffMinutes = (horarioDose - now) / (1000 * 60);
-                    const proximoMedicamento = diffMinutes >= 0 && diffMinutes <= 15;
-
-                    console.log(`Calculando proximo_medicamento para ${associacao.medicamento_id}:`, {
-                        horarioDose,
-                        now,
-                        diffMinutes,
-                        proximoMedicamento,
-                    });
-
-                    return {
-                        paciente_id: pacienteId,
-                        medicamento_id: associacao.medicamento_id,
-                        horario_dose: associacao.horario_dose,
-                        intervalo_horas: associacao.intervalo_horas,
-                        proximo_medicamento: proximoMedicamento, // Define o valor com base no cálculo
-                    };
-                })
+                associacoesValidas.map((associacao) => ({
+                    paciente_id: pacienteId,
+                    medicamento_id: associacao.medicamento_id,
+                    horario_dose: associacao.horario_dose,
+                    intervalo_horas: associacao.intervalo_horas,
+                }))
             );
 
         if (associarError) {
