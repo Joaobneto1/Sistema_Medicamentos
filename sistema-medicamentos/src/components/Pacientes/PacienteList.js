@@ -96,10 +96,13 @@ const PacienteList = () => {
     const marcarComoMedicado = async (pacienteId, medicamentoId, isAtrasado = false) => {
         console.log(`Marcando como medicado: Paciente ID ${pacienteId}, Medicamento ID ${medicamentoId}`);
         
-        // Atualiza o status do medicamento para "medicado"
+        // Atualiza o status do medicamento para "medicado" e define o updated_at manualmente
         const { error: updateError } = await supabase
             .from("paciente_medicamentos")
-            .update({ medicado: true })
+            .update({
+                medicado: true,
+                updated_at: new Date().toISOString(), // Define o valor de updated_at manualmente
+            })
             .match({ paciente_id: pacienteId, medicamento_id: medicamentoId });
 
         if (updateError) {
