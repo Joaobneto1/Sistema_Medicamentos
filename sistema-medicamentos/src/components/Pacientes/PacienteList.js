@@ -2,6 +2,18 @@ import React, { useState, useEffect } from "react";
 import supabase from "../../services/supabaseClient";
 import "./PacienteManager.css";
 
+const diasSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+function calcularDiasSemana(dias) {
+    const hoje = new Date();
+    let resultado = [];
+    for (let i = 0; i < dias; i++) {
+        const dia = new Date(hoje);
+        dia.setDate(hoje.getDate() + i);
+        resultado.push(diasSemana[dia.getDay()]);
+    }
+    return resultado;
+}
+
 const PacienteList = () => {
     const [pacientes, setPacientes] = useState([]);
     const [pacientesJaMedicados, setPacientesJaMedicados] = useState([]);
@@ -21,7 +33,9 @@ const PacienteList = () => {
                         medicamento:medicamento_id(nome), 
                         horario_dose, 
                         intervalo_horas, 
-                        medicado
+                        medicado,
+                        uso_cronico,
+                        dias_tratamento
                     )
                 `);
 
@@ -95,7 +109,7 @@ const PacienteList = () => {
 
     const marcarComoMedicado = async (pacienteId, medicamentoId, isAtrasado = false) => {
         console.log(`Marcando como medicado: Paciente ID ${pacienteId}, Medicamento ID ${medicamentoId}`);
-        
+
         // Atualiza o status do medicamento para "medicado" e define o updated_at manualmente
         const { error: updateError } = await supabase
             .from("paciente_medicamentos")
@@ -228,6 +242,16 @@ const PacienteList = () => {
                                         <br />
                                         Intervalo: {item.intervalo_horas} horas
                                         <br />
+                                        Uso crônico: {item.uso_cronico ? "Sim" : "Não"}
+                                        <br />
+                                        {item.uso_cronico && item.dias_tratamento && (
+                                            <>
+                                                Dias de tratamento: {item.dias_tratamento}
+                                                <br />
+                                                Dias da semana: {calcularDiasSemana(item.dias_tratamento).join(", ")}
+                                                <br />
+                                            </>
+                                        )}
                                         <button
                                             onClick={() =>
                                                 marcarComoMedicado(paciente.id, item.medicamento_id)
@@ -262,6 +286,17 @@ const PacienteList = () => {
                                         Horário: {item.horario_dose}
                                         <br />
                                         Intervalo: {item.intervalo_horas} horas
+                                        <br />
+                                        Uso crônico: {item.uso_cronico ? "Sim" : "Não"}
+                                        <br />
+                                        {item.uso_cronico && item.dias_tratamento && (
+                                            <>
+                                                Dias de tratamento: {item.dias_tratamento}
+                                                <br />
+                                                Dias da semana: {calcularDiasSemana(item.dias_tratamento).join(", ")}
+                                                <br />
+                                            </>
+                                        )}
                                     </li>
                                 ))}
                             </ul>
@@ -290,6 +325,16 @@ const PacienteList = () => {
                                         <br />
                                         Intervalo: {item.intervalo_horas} horas
                                         <br />
+                                        Uso crônico: {item.uso_cronico ? "Sim" : "Não"}
+                                        <br />
+                                        {item.uso_cronico && item.dias_tratamento && (
+                                            <>
+                                                Dias de tratamento: {item.dias_tratamento}
+                                                <br />
+                                                Dias da semana: {calcularDiasSemana(item.dias_tratamento).join(", ")}
+                                                <br />
+                                            </>
+                                        )}
                                         <button
                                             onClick={() =>
                                                 marcarComoMedicado(paciente.id, item.medicamento_id, true)

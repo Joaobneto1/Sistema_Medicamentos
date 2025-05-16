@@ -6,8 +6,21 @@ import "./PacienteManager.css";
 const AdicionarPaciente = () => {
     const [novoPaciente, setNovoPaciente] = useState({ nome: "", idade: 0, data_nascimento: "" });
     const [medicamentos, setMedicamentos] = useState([]);
-    const [associacoes, setAssociacoes] = useState([{ medicamento_id: "", horario_dose: "" }]);
+    const [associacoes, setAssociacoes] = useState([{ medicamento_id: "", horario_dose: "", uso_cronico: false, dias_tratamento: 1 }]);
     const navigate = useNavigate();
+
+    const diasSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+
+    function calcularDiasSemana(dias) {
+        const hoje = new Date();
+        let resultado = [];
+        for (let i = 0; i < dias; i++) {
+            const dia = new Date(hoje);
+            dia.setDate(hoje.getDate() + i);
+            resultado.push(diasSemana[dia.getDay()]);
+        }
+        return resultado;
+    }
 
     useEffect(() => {
         const fetchMedicamentos = async () => {
@@ -57,6 +70,8 @@ const AdicionarPaciente = () => {
                     medicamento_id: associacao.medicamento_id,
                     horario_dose: associacao.horario_dose,
                     intervalo_horas: associacao.intervalo_horas,
+                    uso_cronico: associacao.uso_cronico,
+                    dias_tratamento: associacao.dias_tratamento,
                 }))
             );
 
@@ -71,7 +86,7 @@ const AdicionarPaciente = () => {
     };
 
     const handleAddAssociacao = () => {
-        setAssociacoes([...associacoes, { medicamento_id: "", horario_dose: "" }]);
+        setAssociacoes([...associacoes, { medicamento_id: "", horario_dose: "", uso_cronico: false, dias_tratamento: 1 }]);
     };
 
     const handleRemoveAssociacao = (index) => {
@@ -136,6 +151,33 @@ const AdicionarPaciente = () => {
                             }
                             required
                         />
+                        <label style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                            <input
+                                type="checkbox"
+                                checked={!!associacao.uso_cronico}
+                                onChange={(e) =>
+                                    handleChangeAssociacao(index, "uso_cronico", e.target.checked)
+                                }
+                            />
+                            Crônico
+                        </label>
+                        {associacao.uso_cronico && (
+                            <>
+                                <input
+                                    type="number"
+                                    min={1}
+                                    placeholder="Dias de Tratamento"
+                                    value={associacao.dias_tratamento}
+                                    onChange={(e) =>
+                                        handleChangeAssociacao(index, "dias_tratamento", parseInt(e.target.value, 10) || 1)
+                                    }
+                                    required
+                                />
+                                <div>
+                                    Dias da semana: {calcularDiasSemana(associacao.dias_tratamento).join(", ")}
+                                </div>
+                            </>
+                        )}
                         <button
                             type="button"
                             onClick={() => handleRemoveAssociacao(index)}

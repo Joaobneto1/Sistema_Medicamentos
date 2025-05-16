@@ -12,6 +12,18 @@ const EditarPaciente = () => {
     const [feedbackMessage, setFeedbackMessage] = useState("");
     const [horariosCalculados, setHorariosCalculados] = useState({}); // Armazena os horários calculados
 
+    const diasSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+    function calcularDiasSemana(dias) {
+        const hoje = new Date();
+        let resultado = [];
+        for (let i = 0; i < dias; i++) {
+            const dia = new Date(hoje);
+            dia.setDate(hoje.getDate() + i);
+            resultado.push(diasSemana[dia.getDay()]);
+        }
+        return resultado;
+    }
+
     useEffect(() => {
         const fetchPaciente = async () => {
             const { data, error } = await supabase
@@ -23,7 +35,9 @@ const EditarPaciente = () => {
                     data_nascimento, 
                     paciente_medicamentos(
                         medicamento_id, 
-                        horario_dose
+                        horario_dose,
+                        uso_cronico,
+                        dias_tratamento
                     )
                 `)
                 .eq("id", id)
@@ -42,7 +56,9 @@ const EditarPaciente = () => {
                     setAssociacoes(data.paciente_medicamentos.map((item) => ({
                         medicamento_id: item.medicamento_id,
                         horario_dose: item.horario_dose,
-                        intervalo_horas: 0, // Novo campo para o intervalo de horas
+                        intervalo_horas: item.intervalo_horas || 0,
+                        uso_cronico: item.uso_cronico || false,
+                        dias_tratamento: item.dias_tratamento || 1,
                     })));
                 }
             }
@@ -120,7 +136,9 @@ const EditarPaciente = () => {
                         paciente_id: id,
                         medicamento_id: associacao.medicamento_id,
                         horario_dose: associacao.horario_dose,
-                        intervalo_horas: associacao.intervalo_horas, // Salvar o intervalo de horas
+                        intervalo_horas: associacao.intervalo_horas,
+                        uso_cronico: associacao.uso_cronico,
+                        dias_tratamento: associacao.dias_tratamento,
                     })),
                     { onConflict: ["paciente_id", "medicamento_id"] }
                 );
@@ -139,7 +157,7 @@ const EditarPaciente = () => {
     };
 
     const handleAddAssociacao = () => {
-        setAssociacoes([...associacoes, { medicamento_id: "", horario_dose: "", intervalo_horas: 0 }]);
+        setAssociacoes([...associacoes, { medicamento_id: "", horario_dose: "", intervalo_horas: 0, uso_cronico: false, dias_tratamento: 1 }]);
     };
 
     const handleRemoveAssociacao = (index) => {
@@ -219,6 +237,33 @@ const EditarPaciente = () => {
                             }
                             required
                         />
+                        <label style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                            <input
+                                type="checkbox"
+                                checked={!!associacao.uso_cronico}
+                                onChange={(e) =>
+                                    handleChangeAssociacao(index, "uso_cronico", e.target.checked)
+                                }
+                            />
+                            Crônico
+                        </label>
+                        {associacao.uso_cronico && (
+                            <>
+                                <input
+                                    type="number"
+                                    min={1}
+                                    placeholder="Dias de Tratamento"
+                                    value={associacao.dias_tratamento}
+                                    onChange={(e) =>
+                                        handleChangeAssociacao(index, "dias_tratamento", parseInt(e.target.value, 10) || 1)
+                                    }
+                                    required
+                                />
+                                <div>
+                                    Dias da semana: {calcularDiasSemana(associacao.dias_tratamento).join(", ")}
+                                </div>
+                            </>
+                        )}
                         <button
                             type="button"
                             onClick={() => handleRemoveAssociacao(index)}
