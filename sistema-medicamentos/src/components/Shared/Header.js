@@ -13,7 +13,6 @@ const Header = () => {
                 <ul>
                     <li><Link to="/pacientes">Visualizar Pacientes</Link></li>
                     <li><Link to="/gerenciar-pacientes">Gerenciar Pacientes</Link></li>
-                    <li><Link to="/adicionar-paciente">Adicionar Paciente</Link></li>
                     <li><Link to="/estoque">Estoque</Link></li>
                     <li><Link to="/historico">Histórico de Medicados</Link></li> {/* Novo link para o histórico */}
                 </ul>

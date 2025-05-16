@@ -8,11 +8,11 @@ const EstoqueMedicamentos = () => {
     const [novoMedicamento, setNovoMedicamento] = useState({
         nome: "",
         descricao: "",
-        dose: 0
+        dose: ""
     });
     const [novoEstoque, setNovoEstoque] = useState({
         medicamento_id: "",
-        quantidade: 0,
+        quantidade: "",
         atualizado_em: ""
     });
     const [showMedicamentoModal, setShowMedicamentoModal] = useState(false);

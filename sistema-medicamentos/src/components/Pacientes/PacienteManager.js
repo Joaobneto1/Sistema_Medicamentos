@@ -6,6 +6,7 @@ import "./PacienteManager.css";
 const PacienteManager = () => {
     const [pacientes, setPacientes] = useState([]);
     const [pacienteSelecionado, setPacienteSelecionado] = useState(null);
+    const [busca, setBusca] = useState(""); // Adicione este estado
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -40,18 +41,27 @@ const PacienteManager = () => {
             >
                 Adicionar Paciente
             </button>
+            <input
+                type="text"
+                placeholder="Buscar paciente pelo nome"
+                value={busca}
+                onChange={e => setBusca(e.target.value)}
+                style={{ margin: "20px 0", padding: "10px", width: "100%", maxWidth: "400px" }}
+            />
             <div className="paciente-list">
-                {pacientes.map((paciente) => (
-                    <div
-                        key={paciente.id}
-                        className="paciente-card"
-                        onClick={() => setPacienteSelecionado(paciente)}
-                    >
-                        <p><strong>Nome:</strong> {paciente.nome}</p>
-                        <p><strong>Idade:</strong> {paciente.idade}</p>
-                        <p><strong>Data de Nascimento:</strong> {paciente.data_nascimento}</p>
-                    </div>
-                ))}
+                {pacientes
+                    .filter(p => p.nome.toLowerCase().includes(busca.toLowerCase()))
+                    .map((paciente) => (
+                        <div
+                            key={paciente.id}
+                            className="paciente-card"
+                            onClick={() => setPacienteSelecionado(paciente)}
+                        >
+                            <p><strong>Nome:</strong> {paciente.nome}</p>
+                            <p><strong>Idade:</strong> {paciente.idade}</p>
+                            <p><strong>Data de Nascimento:</strong> {paciente.data_nascimento}</p>
+                        </div>
+                    ))}
             </div>
 
             {pacienteSelecionado && (

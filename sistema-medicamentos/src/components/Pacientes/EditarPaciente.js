@@ -6,7 +6,7 @@ import "./PacienteManager.css";
 const EditarPaciente = () => {
     const { id } = useParams(); // Obter o ID do paciente da URL
     const navigate = useNavigate();
-    const [paciente, setPaciente] = useState({ nome: "", idade: 0, data_nascimento: "" });
+    const [paciente, setPaciente] = useState({ nome: "", idade: "", data_nascimento: "" });
     const [medicamentos, setMedicamentos] = useState([]);
     const [associacoes, setAssociacoes] = useState([]);
     const [feedbackMessage, setFeedbackMessage] = useState("");
@@ -162,7 +162,7 @@ const EditarPaciente = () => {
     };
 
     const handleAddAssociacao = () => {
-        setAssociacoes([...associacoes, { medicamento_id: "", horario_dose: "", intervalo_horas: 0, uso_cronico: false, dias_tratamento: 1 }]);
+        setAssociacoes([...associacoes, { medicamento_id: "", horario_dose: "", intervalo_horas: "", uso_cronico: false, dias_tratamento: "" }]);
     };
 
     const handleRemoveAssociacao = (index) => {

@@ -4,10 +4,10 @@ import supabase from "../../services/supabaseClient";
 import "./PacienteManager.css";
 
 const AdicionarPaciente = () => {
-    const [novoPaciente, setNovoPaciente] = useState({ nome: "", idade: 0, data_nascimento: "" });
+    const [novoPaciente, setNovoPaciente] = useState({ nome: "", idade: "", data_nascimento: "" });
     const [medicamentos, setMedicamentos] = useState([]);
     const [associacoes, setAssociacoes] = useState([
-        { medicamento_id: "", horario_dose: "", intervalo_horas: 0, uso_cronico: false, dias_tratamento: 1 }
+        { medicamento_id: "", horario_dose: "", intervalo_horas: "", uso_cronico: false, dias_tratamento: "" }
     ]);
     const navigate = useNavigate();
 
@@ -91,7 +91,7 @@ const AdicionarPaciente = () => {
     const handleAddAssociacao = () => {
         setAssociacoes([
             ...associacoes,
-            { medicamento_id: "", horario_dose: "", intervalo_horas: 0, uso_cronico: false, dias_tratamento: 1 }
+            { medicamento_id: "", horario_dose: "", intervalo_horas: "", uso_cronico: false, dias_tratamento: "" }
         ]);
     };
 
