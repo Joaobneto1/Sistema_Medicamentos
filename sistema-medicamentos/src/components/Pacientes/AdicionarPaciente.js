@@ -6,7 +6,9 @@ import "./PacienteManager.css";
 const AdicionarPaciente = () => {
     const [novoPaciente, setNovoPaciente] = useState({ nome: "", idade: 0, data_nascimento: "" });
     const [medicamentos, setMedicamentos] = useState([]);
-    const [associacoes, setAssociacoes] = useState([{ medicamento_id: "", horario_dose: "", uso_cronico: false, dias_tratamento: 1 }]);
+    const [associacoes, setAssociacoes] = useState([
+        { medicamento_id: "", horario_dose: "", intervalo_horas: 0, uso_cronico: false, dias_tratamento: 1 }
+    ]);
     const navigate = useNavigate();
 
     const diasSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
@@ -59,26 +61,27 @@ const AdicionarPaciente = () => {
 
         // Insere os medicamentos associados ao paciente
         const associacoesValidas = associacoes.filter(
-            (associacao) => associacao.medicamento_id && associacao.horario_dose
+            (associacao) => associacao.medicamento_id && associacao.horario_dose && associacao.intervalo_horas > 0
         );
 
-        const { error: associarError } = await supabase
-            .from("paciente_medicamentos")
-            .insert(
-                associacoesValidas.map((associacao) => ({
-                    paciente_id: pacienteId,
-                    medicamento_id: associacao.medicamento_id,
-                    horario_dose: associacao.horario_dose,
-                    intervalo_horas: associacao.intervalo_horas,
-                    uso_cronico: associacao.uso_cronico,
-                    dias_tratamento: associacao.dias_tratamento,
-                }))
-            );
-
-        if (associarError) {
-            console.error("Erro ao associar medicamentos ao paciente:", associarError);
-            alert("Erro ao associar medicamentos ao paciente.");
-            return;
+        if (associacoesValidas.length > 0) {
+            await supabase
+                .from("paciente_medicamentos")
+                .upsert(
+                    associacoesValidas.map((associacao) => {
+                        let dias_tratamento = associacao.uso_cronico ? 365 : associacao.dias_tratamento;
+                        let uso_cronico = associacao.uso_cronico || dias_tratamento >= 365;
+                        return {
+                            paciente_id: pacienteId,
+                            medicamento_id: associacao.medicamento_id,
+                            horario_dose: associacao.horario_dose,
+                            intervalo_horas: associacao.intervalo_horas,
+                            uso_cronico,
+                            dias_tratamento,
+                        };
+                    }),
+                    { onConflict: ["paciente_id", "medicamento_id"] }
+                );
         }
 
         alert("Paciente adicionado com sucesso!");
@@ -86,7 +89,10 @@ const AdicionarPaciente = () => {
     };
 
     const handleAddAssociacao = () => {
-        setAssociacoes([...associacoes, { medicamento_id: "", horario_dose: "", uso_cronico: false, dias_tratamento: 1 }]);
+        setAssociacoes([
+            ...associacoes,
+            { medicamento_id: "", horario_dose: "", intervalo_horas: 0, uso_cronico: false, dias_tratamento: 1 }
+        ]);
     };
 
     const handleRemoveAssociacao = (index) => {
@@ -95,7 +101,11 @@ const AdicionarPaciente = () => {
 
     const handleChangeAssociacao = (index, field, value) => {
         const updatedAssociacoes = [...associacoes];
-        updatedAssociacoes[index][field] = value;
+        if (field === "intervalo_horas") {
+            updatedAssociacoes[index][field] = value === "" ? "" : parseInt(value, 10) || 0;
+        } else {
+            updatedAssociacoes[index][field] = value;
+        }
         setAssociacoes(updatedAssociacoes);
     };
 
@@ -151,6 +161,15 @@ const AdicionarPaciente = () => {
                             }
                             required
                         />
+                        <input
+                            type="number"
+                            placeholder="Intervalo (horas)"
+                            value={associacao.intervalo_horas}
+                            onChange={(e) =>
+                                handleChangeAssociacao(index, "intervalo_horas", parseInt(e.target.value, 10))
+                            }
+                            required
+                        />
                         <label style={{ display: "flex", alignItems: "center", gap: "5px" }}>
                             <input
                                 type="checkbox"
@@ -161,23 +180,20 @@ const AdicionarPaciente = () => {
                             />
                             Crônico
                         </label>
-                        {associacao.uso_cronico && (
-                            <>
-                                <input
-                                    type="number"
-                                    min={1}
-                                    placeholder="Dias de Tratamento"
-                                    value={associacao.dias_tratamento}
-                                    onChange={(e) =>
-                                        handleChangeAssociacao(index, "dias_tratamento", parseInt(e.target.value, 10) || 1)
-                                    }
-                                    required
-                                />
-                                <div>
-                                    Dias da semana: {calcularDiasSemana(associacao.dias_tratamento).join(", ")}
-                                </div>
-                            </>
-                        )}
+                        {/* Dias de tratamento sempre visível */}
+                        <input
+                            type="number"
+                            min={1}
+                            placeholder="Dias de Tratamento"
+                            value={associacao.dias_tratamento}
+                            onChange={(e) =>
+                                handleChangeAssociacao(index, "dias_tratamento", parseInt(e.target.value, 10) || 1)
+                            }
+                            required
+                        />
+                        <div>
+                            Dias da semana: {calcularDiasSemana(associacao.dias_tratamento).join(", ")}
+                        </div>
                         <button
                             type="button"
                             onClick={() => handleRemoveAssociacao(index)}

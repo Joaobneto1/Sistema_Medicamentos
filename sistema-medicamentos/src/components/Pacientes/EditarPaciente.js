@@ -132,14 +132,19 @@ const EditarPaciente = () => {
             const { error: associarError } = await supabase
                 .from("paciente_medicamentos")
                 .upsert(
-                    associacoesValidas.map((associacao) => ({
-                        paciente_id: id,
-                        medicamento_id: associacao.medicamento_id,
-                        horario_dose: associacao.horario_dose,
-                        intervalo_horas: associacao.intervalo_horas,
-                        uso_cronico: associacao.uso_cronico,
-                        dias_tratamento: associacao.dias_tratamento,
-                    })),
+                    associacoesValidas.map((associacao) => {
+                        // Se crônico marcado, força 365 dias. Se não, define uso_cronico conforme dias_tratamento.
+                        let dias_tratamento = associacao.uso_cronico ? 365 : associacao.dias_tratamento;
+                        let uso_cronico = associacao.uso_cronico || dias_tratamento >= 365;
+                        return {
+                            paciente_id: id,
+                            medicamento_id: associacao.medicamento_id,
+                            horario_dose: associacao.horario_dose,
+                            intervalo_horas: associacao.intervalo_horas,
+                            uso_cronico,
+                            dias_tratamento,
+                        };
+                    }),
                     { onConflict: ["paciente_id", "medicamento_id"] }
                 );
 
@@ -247,23 +252,20 @@ const EditarPaciente = () => {
                             />
                             Crônico
                         </label>
-                        {associacao.uso_cronico && (
-                            <>
-                                <input
-                                    type="number"
-                                    min={1}
-                                    placeholder="Dias de Tratamento"
-                                    value={associacao.dias_tratamento}
-                                    onChange={(e) =>
-                                        handleChangeAssociacao(index, "dias_tratamento", parseInt(e.target.value, 10) || 1)
-                                    }
-                                    required
-                                />
-                                <div>
-                                    Dias da semana: {calcularDiasSemana(associacao.dias_tratamento).join(", ")}
-                                </div>
-                            </>
-                        )}
+                        {/* Dias de tratamento agora sempre visível */}
+                        <input
+                            type="number"
+                            min={1}
+                            placeholder="Dias de Tratamento"
+                            value={associacao.dias_tratamento}
+                            onChange={(e) =>
+                                handleChangeAssociacao(index, "dias_tratamento", parseInt(e.target.value, 10) || 1)
+                            }
+                            required
+                        />
+                        <div>
+                            Dias da semana: {calcularDiasSemana(associacao.dias_tratamento).join(", ")}
+                        </div>
                         <button
                             type="button"
                             onClick={() => handleRemoveAssociacao(index)}
