@@ -1,0 +1,145 @@
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(120deg, #e0e7ef 0%, #f6f8fa 100%);
+}
+
+.auth-box {
+  background: #fff;
+  padding: 36px 32px;
+  border-radius: 16px;
+  box-shadow: 0 6px 32px rgba(30, 144, 255, 0.10);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 370px;
+  box-sizing: border-box;
+  gap: 8px;
+  margin: 0 auto;
+}
+
+.auth-box h1 {
+  margin-bottom: 10px;
+  color: #1e90ff;
+  font-size: 26px;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.auth-box p {
+  margin-bottom: 18px;
+  color: #555;
+  font-size: 15px;
+  text-align: center;
+}
+
+.auth-box form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-box label {
+  color: #333;
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.auth-box input[type="email"],
+.auth-box input[type="password"] {
+  padding: 12px 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  background: #f3f6fa;
+  outline: none;
+  margin-bottom: 4px;
+  transition: box-shadow 0.2s;
+  box-shadow: 0 1px 2px rgba(30,144,255,0.04);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.auth-box input[type="email"]:focus,
+.auth-box input[type="password"]:focus {
+  box-shadow: 0 0 0 2px #1e90ff33;
+  background: #fff;
+}
+
+.auth-box button[type="submit"] {
+  background: linear-gradient(90deg, #1e90ff 60%, #007bff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  margin-bottom: 6px;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(30,144,255,0.08);
+}
+
+.auth-box button[type="submit"]:hover {
+  background: linear-gradient(90deg, #007bff 60%, #1e90ff 100%);
+  box-shadow: 0 4px 16px rgba(30,144,255,0.12);
+}
+
+.auth-box .error {
+  color: #ff6347;
+  background: #ffeaea;
+  border-radius: 6px;
+  padding: 7px 0;
+  margin-bottom: 6px;
+  text-align: center;
+  font-size: 14px;
+  border: none;
+}
+
+.auth-box .success {
+  color: #2e7d32;
+  background: #e8f5e9;
+  border-radius: 6px;
+  padding: 7px 0;
+  margin-bottom: 6px;
+  text-align: center;
+  font-size: 14px;
+  border: none;
+}
+
+.auth-box .link {
+  color: #1e90ff;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 0;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.auth-box .link:hover {
+  color: #007bff;
+}
+
+.auth-box form label {
+  margin-bottom: 0;
+}
+
+@media (max-width: 480px) {
+  .auth-box {
+    max-width: 98vw;
+    padding: 18px 4vw;
+  }
+}
+
+/* Esconde o header quando a classe .hide-header está presente */
+.hide-header {
+  display: none !important;
+}

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import supabase from "../../services/supabaseClient";
+// Importa o CSS correto para garantir o estilo
+import "./Auth.css";
 
 function Login({ setUser, setIsSignUp }) {
   const [loginData, setLoginData] = useState({ email: "", password: "" });
@@ -61,7 +63,6 @@ function Login({ setUser, setIsSignUp }) {
           <button
             onClick={() => setIsSignUp(true)}
             className="link"
-            style={{ background: "none", border: "none", color: "blue", textDecoration: "underline", cursor: "pointer" }}
           >
             Cadastre-se
           </button>

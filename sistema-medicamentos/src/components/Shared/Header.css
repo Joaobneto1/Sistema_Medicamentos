@@ -62,3 +62,8 @@ nav ul li a {
 nav ul li a:hover {
     text-decoration: underline;
 }
+
+/* Esconde o header quando a classe hide-header está presente */
+.hide-header {
+    display: none !important;
+}
