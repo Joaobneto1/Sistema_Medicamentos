@@ -1,69 +1,70 @@
 .app-header {
     background-color: #1e90ff;
-    padding: 15px;
+    padding: 0;
     color: white;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
-    background-color: #007bff;
+    padding: 18px 32px;
+    background-color: #1e90ff;
     color: white;
     font-family: Arial, sans-serif;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .header-left {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: bold;
+    letter-spacing: 1px;
+    text-align: left;
 }
 
-.app-header nav ul {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
-}
-
+.app-header nav ul,
 nav ul {
     list-style: none;
     display: flex;
-    gap: 15px;
+    gap: 24px;
     margin: 0;
     padding: 0;
+    align-items: center;
+    justify-content: center;
 }
 
-.app-header nav ul li {
-    margin: 0 15px;
+.app-header nav ul li,
+nav ul li {
+    margin: 0;
 }
 
-.app-header nav ul li a {
-    color: white;
-    text-decoration: none !important;
-    /* Remove o sublinhado de forma definitiva */
-    font-size: 16px;
-    font-weight: bold;
-    transition: color 0.3s ease;
-}
-
+.app-header nav ul li a,
 nav ul li a {
     color: white;
-    text-decoration: none;
-    font-size: 16px;
+    text-decoration: none !important;
+    font-size: 17px;
+    font-weight: 600;
+    padding: 8px 18px;
+    border-radius: 6px;
+    transition: background 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
 }
 
-.app-header nav ul li a:hover {
-    color: #ffdd57;
-}
-
+.app-header nav ul li a:hover,
 nav ul li a:hover {
-    text-decoration: underline;
+    background: #cce5ff;
+    color: #1e90ff;
+    text-decoration: none;
 }
 
-/* Esconde o header quando a classe hide-header está presente */
 .hide-header {
     display: none !important;
 }

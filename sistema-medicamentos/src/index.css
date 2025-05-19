@@ -10,6 +10,8 @@ body {
   /* Melhora a suavização de fontes no WebKit */
   -moz-osx-font-smoothing: grayscale;
   /* Melhora a suavização de fontes no macOS */
+  background: #f6f8fa;
+  /* Define o fundo padrão */
 }
 
 /* Define estilos para elementos <code> */
@@ -30,33 +32,42 @@ code {
 
 .login-form {
   background: #fff;
-  padding: 32px 28px;
-  border-radius: 10px;
-  box-shadow: 0 4px 24px rgba(30, 144, 255, 0.08);
+  padding: 40px 36px;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(30, 144, 255, 0.10);
   display: flex;
   flex-direction: column;
-  min-width: 320px;
-  max-width: 90vw;
+  min-width: 340px;
+  max-width: 95vw;
+  align-items: center;
+  justify-content: center;
 }
 
 .login-form h2 {
-  margin-bottom: 18px;
+  margin-bottom: 24px;
   color: #1e90ff;
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 600;
   text-align: center;
+  letter-spacing: 1px;
 }
 
 .login-form input[type="text"],
 .login-form input[type="password"] {
-  padding: 10px 12px;
-  margin-bottom: 14px;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  font-size: 15px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  border: 1.5px solid #cce5ff;
+  border-radius: 7px;
+  font-size: 16px;
   background: #f9f9f9;
   outline: none;
   transition: border 0.2s;
+  width: 260px;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .login-form input[type="text"]:focus,
@@ -65,28 +76,48 @@ code {
   background: #fff;
 }
 
-.login-form button[type="submit"] {
+.login-form button[type="submit"],
+.login-form button,
+.login-form .button-group button {
   background: #1e90ff;
   color: #fff;
   border: none;
-  border-radius: 6px;
-  padding: 10px 0;
-  font-size: 16px;
+  border-radius: 7px;
+  padding: 8px 0;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s;
+  width: 130px;
+  min-width: 100px;
+  max-width: 180px;
+  margin: 0 auto 8px auto;
+  display: block;
+  height: 36px;
 }
 
-.login-form button[type="submit"]:hover {
+.login-form button[type="submit"]:hover,
+.login-form button:hover,
+.login-form .button-group button:hover {
   background: #007bff;
+}
+
+.login-form .button-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  margin-top: 8px;
 }
 
 .login-form .login-error {
   color: #ff6347;
   background: #ffeaea;
-  border-radius: 4px;
-  padding: 6px 0;
-  margin-bottom: 10px;
+  border-radius: 5px;
+  padding: 8px 0;
+  margin-bottom: 14px;
   text-align: center;
-  font-size: 14px;
+  font-size: 15px;
+  width: 100%;
 }
