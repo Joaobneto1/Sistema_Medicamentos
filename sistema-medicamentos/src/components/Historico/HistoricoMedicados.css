@@ -20,7 +20,7 @@
     margin-bottom: 32px;
     padding: 24px 18px;
     border: 1px solid #cce5ff;
-    border-radius: 12px;
+    border-radius: 50px;
     background-color: #fff;
     box-shadow: 0 2px 8px rgba(30, 144, 255, 0.10);
     width: 100%;
@@ -41,7 +41,7 @@
     margin-bottom: 18px;
     padding: 12px 10px;
     border: 1px solid #cce5ff;
-    border-radius: 8px;
+    border-radius: 30px;
     background-color: #f9f9f9;
     transition: background-color 0.3s, border-color 0.3s;
     width: 100%;
@@ -83,7 +83,7 @@
     padding: 12px;
     font-size: 15px;
     border: 1.5px solid #cce5ff;
-    border-radius: 6px;
+    border-radius: 30px;
     background: #f9f9f9;
     transition: border 0.2s;
 }

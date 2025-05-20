@@ -117,6 +117,7 @@ const HistoricoMedicados = () => {
                     name="paciente"
                     value={filtros.paciente}
                     onChange={handleFiltroChange}
+                    style={{ borderRadius: "30px", border: '1px solid #cce5ff', backgroundColor: 'white' }}
                 >
                     <option value="">Selecione um paciente</option>
                     {pacientes.map((paciente) => (
@@ -129,6 +130,7 @@ const HistoricoMedicados = () => {
                     name="medicamento"
                     value={filtros.medicamento}
                     onChange={handleFiltroChange}
+                    style={{ borderRadius: "30px", border: '1px solid #cce5ff', backgroundColor: 'white' }}
                 >
                     <option value="">Selecione um medicamento</option>
                     {medicamentos.map((medicamento) => (
