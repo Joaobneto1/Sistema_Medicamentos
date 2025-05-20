@@ -218,8 +218,10 @@ const EstoqueMedicamentos = () => {
                                 onChange={(e) => setNovoMedicamento({ ...novoMedicamento, dose: parseInt(e.target.value, 10) })}
                                 required
                             />
-                            <button type="submit">Salvar</button>
-                            <button type="button" onClick={() => setShowMedicamentoModal(false)}>Cancelar</button>
+                            <div className="modal-actions">
+                                <button type="submit">Salvar</button>
+                                <button type="button" onClick={() => setShowMedicamentoModal(false)}>Cancelar</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -256,8 +258,10 @@ const EstoqueMedicamentos = () => {
                                 onChange={(e) => setNovoEstoque({ ...novoEstoque, atualizado_em: e.target.value })}
                                 required
                             />
-                            <button type="submit">Salvar</button>
-                            <button type="button" onClick={() => setShowEstoqueModal(false)}>Cancelar</button>
+                            <div className="modal-actions">
+                                <button type="submit">Salvar</button>
+                                <button type="button" onClick={() => setShowEstoqueModal(false)}>Cancelar</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -276,8 +280,10 @@ const EstoqueMedicamentos = () => {
                                 onChange={(e) => setEditarEstoque({ ...editarEstoque, quantidade: parseInt(e.target.value, 10) })}
                                 required
                             />
-                            <button type="submit">Salvar</button>
-                            <button type="button" onClick={() => setEditarEstoque(null)}>Cancelar</button>
+                            <div className="modal-actions">
+                                <button type="submit">Salvar</button>
+                                <button type="button" onClick={() => setEditarEstoque(null)}>Cancelar</button>
+                            </div>
                         </form>
                     </div>
                 </div>
