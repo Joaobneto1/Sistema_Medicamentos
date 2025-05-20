@@ -29,6 +29,7 @@ const PacienteList = () => {
                     idade, 
                     data_nascimento, 
                     quarto,
+                    foto_url,
                     paciente_medicamentos(
                         medicamento_id, 
                         medicamento:medicamento_id(nome), 
@@ -230,6 +231,13 @@ const PacienteList = () => {
                 {pacientes.length > 0 ? (
                     pacientes.map((paciente) => (
                         <div key={paciente.id} className="paciente-card proximo">
+                            {paciente.foto_url && (
+                                <img
+                                    src={paciente.foto_url}
+                                    alt="Foto do paciente"
+                                    style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 8, marginBottom: 8 }}
+                                />
+                            )}
                             <p><strong>Nome:</strong> {paciente.nome}</p>
                             <p><strong>Idade:</strong> {paciente.idade}</p>
                             <p><strong>Quarto:</strong> {paciente.quarto}</p>
@@ -275,6 +283,13 @@ const PacienteList = () => {
                 {pacientesAtrasados.length > 0 ? (
                     pacientesAtrasados.map((paciente) => (
                         <div key={paciente.id} className="paciente-card atrasado">
+                            {paciente.foto_url && (
+                                <img
+                                    src={paciente.foto_url}
+                                    alt="Foto do paciente"
+                                    style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 8, marginBottom: 8 }}
+                                />
+                            )}
                             <p><strong>Nome:</strong> {paciente.nome}</p>
                             <p><strong>Idade:</strong> {paciente.idade}</p>
                             <p><strong>Quarto:</strong> {paciente.quarto}</p>
@@ -320,6 +335,13 @@ const PacienteList = () => {
                 {pacientesJaMedicados.length > 0 ? (
                     pacientesJaMedicados.map((paciente) => (
                         <div key={paciente.id} className="paciente-card medicado">
+                            {paciente.foto_url && (
+                                <img
+                                    src={paciente.foto_url}
+                                    alt="Foto do paciente"
+                                    style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 8, marginBottom: 8 }}
+                                />
+                            )}
                             <p><strong>Nome:</strong> {paciente.nome}</p>
                             <p><strong>Idade:</strong> {paciente.idade}</p>
                             <p><strong>Quarto:</strong> {paciente.quarto}</p>

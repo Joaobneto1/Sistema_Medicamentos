@@ -4,7 +4,7 @@ import supabase from "../../services/supabaseClient";
 import "./PacienteManager.css";
 
 const AdicionarPaciente = () => {
-    const [novoPaciente, setNovoPaciente] = useState({ nome: "", idade: "", data_nascimento: "", quarto: "" });
+    const [novoPaciente, setNovoPaciente] = useState({ nome: "", idade: "", data_nascimento: "", quarto: "", foto_url: "" });
     const [medicamentos, setMedicamentos] = useState([]);
     const [associacoes, setAssociacoes] = useState([
         { medicamento_id: "", horario_dose: "", intervalo_horas: "", uso_cronico: false, dias_tratamento: "" }
@@ -109,6 +109,16 @@ const AdicionarPaciente = () => {
         setAssociacoes(updatedAssociacoes);
     };
 
+    const handleFotoChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setNovoPaciente((prev) => ({ ...prev, foto_url: reader.result }));
+        };
+        reader.readAsDataURL(file);
+    };
+
     return (
         <div className="paciente-manager-container">
             <header className="header">
@@ -143,6 +153,14 @@ const AdicionarPaciente = () => {
                     onChange={(e) => setNovoPaciente({ ...novoPaciente, quarto: e.target.value })}
                     required
                 />
+                <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFotoChange}
+                />
+                {novoPaciente.foto_url && (
+                    <img src={novoPaciente.foto_url} alt="Foto do paciente" style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 8, marginBottom: 8 }} />
+                )}
                 <h2>Associar Medicamentos</h2>
                 {associacoes.map((associacao, index) => (
                     <div key={index} className="associacao-container">
@@ -219,7 +237,6 @@ const AdicionarPaciente = () => {
                                 </button>
                             </div>
                             <div className="form-actions-col">
-                                <button type="submit">Salvar</button>
                                 <button type="button" onClick={() => navigate("/pacientes")}>
                                     Cancelar
                                 </button>
@@ -227,6 +244,10 @@ const AdicionarPaciente = () => {
                         </div>
                     </div>
                 ))}
+                {/* Botão Salvar único no final do formulário */}
+                <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+                    <button type="submit" className="save-button">Salvar</button>
+                </div>
             </form>
         </div>
     );

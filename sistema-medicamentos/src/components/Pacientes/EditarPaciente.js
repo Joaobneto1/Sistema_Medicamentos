@@ -219,6 +219,17 @@ const EditarPaciente = () => {
                     required
                 />
                 <h2>Medicamentos Associados</h2>
+                {(associacoes.length === 0) && (
+                    <div className="associacao-container">
+                        <button
+                            type="button"
+                            onClick={handleAddAssociacao}
+                            className="edit-add-button"
+                        >
+                            Adicionar Medicamento
+                        </button>
+                    </div>
+                )}
                 {associacoes.map((associacao, index) => (
                     <div key={index} className="associacao-container">
                         <select
