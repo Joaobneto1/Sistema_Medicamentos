@@ -27,7 +27,7 @@
     max-width: 1200px;
 }
 
-/* Card de paciente - nova abordagem */
+/* Card de paciente */
 .paciente-card {
     background: #fff;
     border: 1.5px solid #e3eaf5;
@@ -105,14 +105,56 @@
 .paciente-card li {
     font-size: 14px;
     color: #217a36;
-    background: #e6ffe6;
+    background: none;
     border-radius: 16px;
     padding: 4px 12px;
     margin: 0;
     display: inline-block;
     text-align: center;
-    box-shadow: 0 1px 2px rgba(0,204,0,0.04);
+    box-shadow: 0 1px 2px rgba(0, 204, 0, 0.04);
     font-weight: 500;
+}
+
+/* Para pacientes atrasados, deixa o fundo do li igual ao card */
+.paciente-card.atrasado li {
+    background: #ffcccc;
+    color: #000;
+}
+
+/* Para pacientes já medicados, deixa o fundo do li igual ao card */
+.paciente-card.medicado li {
+    background: #ccffcc;
+    color: #000;
+}
+
+/* Para pacientes com horário próximo, deixa o fundo do li igual ao card */
+.paciente-card.proximo li {
+    background: #cce5ff;
+    color: #000;
+}
+
+.paciente-card li button {
+    margin-top: 8px;
+    width: 100%;
+    min-width: 120px;
+    max-width: 220px;
+    padding: 10px 0;
+    font-size: 13px;
+    font-weight: 00;
+    border-radius: 18px;
+    background-color: #1e90ff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1px 4px rgba(30, 144, 255, 0.10);
+    display: block;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+.paciente-card li button:hover {
+    background-color: #007bff;
 }
 
 /* Status visual */
@@ -124,13 +166,13 @@
 .paciente-card.medicado {
     border-color: #b3ffb3;
     box-shadow: 0 4px 18px rgba(0, 204, 0, 0.10);
-    background: linear-gradient(135deg, #f6fff6 0%, #e6ffe6 100%);
+    background: #ccffcc;
 }
 
 .paciente-card.proximo {
     border-color: #b3d8ff;
     box-shadow: 0 4px 18px rgba(0, 123, 255, 0.10);
-    background: linear-gradient(135deg, #f6fbff 0%, #e6f3ff 100%);
+    background: #b3d8ff;
 }
 
 /* Texto para status */
@@ -141,12 +183,12 @@
     width: 100%;
     padding: 6px 0;
     text-align: center;
-    font-size: 13px;
+    font-size: 10px;
     font-weight: 700;
     letter-spacing: 1px;
     border-radius: 14px 14px 0 0;
     z-index: 2;
-    background: rgba(255,255,255,0.92);
+    background: rgba(255, 255, 255, 0.92);
 }
 
 .paciente-card.atrasado .paciente-status {
@@ -184,7 +226,7 @@
     height: 32px;
     min-height: 32px;
     max-height: 34px;
-    box-shadow: 0 1px 4px rgba(30,144,255,0.08);
+    box-shadow: 0 1px 4px rgba(30, 144, 255, 0.08);
     margin: 0;
     display: flex;
     align-items: center;
@@ -214,14 +256,17 @@
     .paciente-list {
         gap: 14px;
     }
+
     .paciente-card {
         width: 97vw;
         min-width: unset;
         padding: 18px 6vw 12px 6vw;
     }
+
     .paciente-card .button-group {
         margin: 10px 0 0 0;
     }
+
     .paciente-card ul {
         justify-content: center;
     }

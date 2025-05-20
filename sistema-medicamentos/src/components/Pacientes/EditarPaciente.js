@@ -266,25 +266,35 @@ const EditarPaciente = () => {
                         <div>
                             Dias da semana: {calcularDiasSemana(associacao.dias_tratamento).join(", ")}
                         </div>
-                        <button
-                            type="button"
-                            onClick={() => handleRemoveAssociacao(index)}
-                            className="remove-button"
-                        >
-                            Remover
-                        </button>
+                        <div className="edit-actions-row">
+                            <div className="edit-actions-col">
+                                <button
+                                    type="button"
+                                    onClick={handleAddAssociacao}
+                                    className="edit-add-button"
+                                >
+                                    Adicionar Medicamento
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => handleRemoveAssociacao(index)}
+                                    className="edit-remove-button"
+                                >
+                                    Remover
+                                </button>
+                            </div>
+                            <div className="edit-form-actions-col">
+                                <button type="submit">Salvar</button>
+                                <button type="button" onClick={calcularHorarios}>
+                                    Calcular Horários
+                                </button>
+                                <button type="button" onClick={() => navigate("/pacientes")}>
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 ))}
-                <button type="button" onClick={handleAddAssociacao} className="add-button">
-                    Adicionar Medicamento
-                </button>
-                <button type="button" onClick={calcularHorarios} className="calculate-button">
-                    Calcular Horários
-                </button>
-                <button type="submit">Salvar</button>
-                <button type="button" onClick={() => navigate("/pacientes")}>
-                    Cancelar
-                </button>
             </form>
             <h2>Horários Calculados</h2>
             <div className="horarios-calculados">

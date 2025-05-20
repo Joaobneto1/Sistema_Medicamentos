@@ -257,7 +257,7 @@ const PacienteList = () => {
                                                 marcarComoMedicado(paciente.id, item.medicamento_id)
                                             }
                                         >
-                                            Marcar como Medicado
+                                            Medicado
                                         </button>
                                     </li>
                                 ))}
@@ -340,7 +340,7 @@ const PacienteList = () => {
                                                 marcarComoMedicado(paciente.id, item.medicamento_id, true)
                                             }
                                         >
-                                            Marcar como Medicado
+                                            Medicado
                                         </button>
                                     </li>
                                 ))}

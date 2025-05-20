@@ -194,22 +194,32 @@ const AdicionarPaciente = () => {
                         <div>
                             Dias da semana: {calcularDiasSemana(associacao.dias_tratamento).join(", ")}
                         </div>
-                        <button
-                            type="button"
-                            onClick={() => handleRemoveAssociacao(index)}
-                            className="remove-button"
-                        >
-                            Remover
-                        </button>
+                        <div className="associacao-actions-row">
+                            <div className="associacao-actions-col">
+                                <button
+                                    type="button"
+                                    onClick={handleAddAssociacao}
+                                    className="add-button"
+                                >
+                                    Adicionar
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => handleRemoveAssociacao(index)}
+                                    className="remove-button"
+                                >
+                                    Remover
+                                </button>
+                            </div>
+                            <div className="form-actions-col">
+                                <button type="submit">Salvar</button>
+                                <button type="button" onClick={() => navigate("/pacientes")}>
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 ))}
-                <button type="button" onClick={handleAddAssociacao} className="add-button">
-                    Adicionar Medicamento
-                </button>
-                <button type="submit">Salvar</button>
-                <button type="button" onClick={() => navigate("/pacientes")}>
-                    Cancelar
-                </button>
             </form>
         </div>
     );

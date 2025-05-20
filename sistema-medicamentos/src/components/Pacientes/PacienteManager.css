@@ -9,20 +9,18 @@
 }
 
 .header {
-    background-color: #1e90ff;
     color: white;
-    padding: 28px 0;
+    padding: 5px 0;
     text-align: center;
     border-radius: 8px;
-    margin-bottom: 32px;
-    box-shadow: 0 2px 8px rgba(30, 144, 255, 0.10);
+    margin-bottom: 30px;
     width: 90%;
     max-width: 900px;
 }
 
 .header h1 {
     margin: 0;
-    font-size: 28px;
+    font-size: 38px;
     font-weight: bold;
     letter-spacing: 1px;
 }
@@ -87,15 +85,15 @@ form button {
     max-height: 36px;
     width: 120px;
     align-self: center;
-    box-shadow: 0 1px 4px rgba(30,144,255,0.08);
+    box-shadow: 0 1px 4px rgba(30, 144, 255, 0.08);
 }
 
-form button + button {
+form button+button {
     margin-left: 12px;
     background-color: #ff6347;
 }
 
-form button + button:hover {
+form button+button:hover {
     background-color: #d32f2f;
 }
 
@@ -211,4 +209,194 @@ form button:hover {
     width: 100%;
     max-width: 420px;
     align-self: center;
+}
+
+.associacao-actions-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    margin-top: 18px;
+    gap: 18px;
+}
+
+.associacao-actions-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 48%;
+}
+
+.remove-button,
+.add-button {
+    width: 100%;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 8px 0;
+    margin: 0;
+    margin-bottom: 0;
+}
+
+.remove-button {
+    background-color: #ff6347;
+    color: white;
+    border: none;
+    margin-bottom: 0;
+    transition: background 0.2s;
+    font-size: 14px;
+}
+
+.remove-button:hover {
+    background-color: #ff6347;
+}
+
+.add-button {
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    margin-bottom: 0;
+    transition: background 0.2s;
+    line-height: 1.1;
+    vertical-align: top;
+    white-space: normal;
+    text-align: center;
+    word-break: break-word;
+}
+
+/* Garante que o texto do botão fique mais para cima e visível */
+.add-button span,
+.add-button {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    height: auto;
+    min-height: 35px;
+}
+
+.add-button:hover {
+    background-color: #27ae60;
+}
+
+.form-actions-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 48%;
+}
+
+.form-actions-col button {
+    width: 100%;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 8px 0;
+    margin: 0;
+}
+
+.form-actions-col button[type="submit"] {
+    background-color: #1e90ff;
+    color: white;
+    border: none;
+}
+
+.form-actions-col button[type="submit"]:hover {
+    background-color: #007bff;
+}
+
+.form-actions-col button[type="button"] {
+    background-color: #ff6347;
+    color: white;
+    border: none;
+}
+
+.form-actions-col button[type="button"]:hover {
+    background-color: #d32f2f;
+}
+
+.edit-actions-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    margin-top: 18px;
+    gap: 18px;
+}
+
+.edit-actions-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 48%;
+}
+
+.edit-remove-button,
+.edit-add-button {
+    width: 100%;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 8px 0;
+    margin: 0;
+    margin-bottom: 0;
+}
+
+.edit-remove-button {
+    background-color: #ff6347;
+    color: white;
+    border: none;
+    margin-bottom: 0;
+    transition: background 0.2s;
+}
+
+.edit-remove-button:hover {
+    background-color: #ff6347;
+}
+
+.edit-add-button {
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    margin-bottom: 0;
+    transition: background 0.2s;
+}
+
+.edit-add-button:hover {
+    background-color: #27ae60;
+}
+
+.edit-form-actions-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 48%;
+}
+
+.edit-form-actions-col button {
+    width: 100%;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 8px 0;
+    margin: 0;
+}
+
+.edit-form-actions-col button[type="submit"] {
+    background-color: #1e90ff;
+    color: white;
+    border: none;
+}
+
+.edit-form-actions-col button[type="submit"]:hover {
+    background-color: #007bff;
+}
+
+.edit-form-actions-col button[type="button"] {
+    background-color: #ff6347;
+    color: white;
+    border: none;
+}
+
+.edit-form-actions-col button[type="button"]:hover {
+    background-color: #d32f2f;
 }
