@@ -4,7 +4,7 @@ import supabase from "../../services/supabaseClient";
 import "./PacienteManager.css";
 
 const AdicionarPaciente = () => {
-    const [novoPaciente, setNovoPaciente] = useState({ nome: "", idade: "", data_nascimento: "" });
+    const [novoPaciente, setNovoPaciente] = useState({ nome: "", idade: "", data_nascimento: "", quarto: "" });
     const [medicamentos, setMedicamentos] = useState([]);
     const [associacoes, setAssociacoes] = useState([
         { medicamento_id: "", horario_dose: "", intervalo_horas: "", uso_cronico: false, dias_tratamento: "" }
@@ -39,7 +39,7 @@ const AdicionarPaciente = () => {
 
     const handleAddPaciente = async (e) => {
         e.preventDefault();
-        if (!novoPaciente.nome || novoPaciente.idade <= 0 || !novoPaciente.data_nascimento) {
+        if (!novoPaciente.nome || novoPaciente.idade <= 0 || !novoPaciente.data_nascimento || !novoPaciente.quarto) {
             alert("Por favor, preencha todos os campos corretamente.");
             return;
         }
@@ -134,6 +134,13 @@ const AdicionarPaciente = () => {
                     placeholder="Data de Nascimento"
                     value={novoPaciente.data_nascimento}
                     onChange={(e) => setNovoPaciente({ ...novoPaciente, data_nascimento: e.target.value })}
+                    required
+                />
+                <input
+                    type="text"
+                    placeholder="Quarto"
+                    value={novoPaciente.quarto}
+                    onChange={(e) => setNovoPaciente({ ...novoPaciente, quarto: e.target.value })}
                     required
                 />
                 <h2>Associar Medicamentos</h2>

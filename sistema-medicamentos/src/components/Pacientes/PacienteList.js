@@ -28,6 +28,7 @@ const PacienteList = () => {
                     nome, 
                     idade, 
                     data_nascimento, 
+                    quarto,
                     paciente_medicamentos(
                         medicamento_id, 
                         medicamento:medicamento_id(nome), 
@@ -231,6 +232,7 @@ const PacienteList = () => {
                         <div key={paciente.id} className="paciente-card proximo">
                             <p><strong>Nome:</strong> {paciente.nome}</p>
                             <p><strong>Idade:</strong> {paciente.idade}</p>
+                            <p><strong>Quarto:</strong> {paciente.quarto}</p>
                             <p><strong>Data de Nascimento:</strong> {paciente.data_nascimento}</p>
                             <p><strong>Medicamentos:</strong></p>
                             <ul>
@@ -275,6 +277,7 @@ const PacienteList = () => {
                         <div key={paciente.id} className="paciente-card atrasado">
                             <p><strong>Nome:</strong> {paciente.nome}</p>
                             <p><strong>Idade:</strong> {paciente.idade}</p>
+                            <p><strong>Quarto:</strong> {paciente.quarto}</p>
                             <p><strong>Data de Nascimento:</strong> {paciente.data_nascimento}</p>
                             <p><strong>Medicamentos Atrasados:</strong></p>
                             <ul>
@@ -319,6 +322,7 @@ const PacienteList = () => {
                         <div key={paciente.id} className="paciente-card medicado">
                             <p><strong>Nome:</strong> {paciente.nome}</p>
                             <p><strong>Idade:</strong> {paciente.idade}</p>
+                            <p><strong>Quarto:</strong> {paciente.quarto}</p>
                             <p><strong>Data de Nascimento:</strong> {paciente.data_nascimento}</p>
                             <p><strong>Medicamentos Tomados:</strong></p>
                             <ul>

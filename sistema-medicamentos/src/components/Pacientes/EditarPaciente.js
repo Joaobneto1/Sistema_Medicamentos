@@ -6,7 +6,7 @@ import "./PacienteManager.css";
 const EditarPaciente = () => {
     const { id } = useParams(); // Obter o ID do paciente da URL
     const navigate = useNavigate();
-    const [paciente, setPaciente] = useState({ nome: "", idade: "", data_nascimento: "" });
+    const [paciente, setPaciente] = useState({ nome: "", idade: "", data_nascimento: "", quarto: "" });
     const [medicamentos, setMedicamentos] = useState([]);
     const [associacoes, setAssociacoes] = useState([]);
     const [feedbackMessage, setFeedbackMessage] = useState("");
@@ -33,6 +33,7 @@ const EditarPaciente = () => {
                     nome, 
                     idade, 
                     data_nascimento, 
+                    quarto,
                     paciente_medicamentos(
                         medicamento_id, 
                         horario_dose,
@@ -50,6 +51,7 @@ const EditarPaciente = () => {
                     nome: data.nome,
                     idade: data.idade,
                     data_nascimento: data.data_nascimento,
+                    quarto: data.quarto || ""
                 });
 
                 if (data.paciente_medicamentos.length > 0) {
@@ -105,7 +107,7 @@ const EditarPaciente = () => {
 
     const handleEditPaciente = async (e) => {
         e.preventDefault();
-        if (!paciente.nome || paciente.idade <= 0 || !paciente.data_nascimento) {
+        if (!paciente.nome || paciente.idade <= 0 || !paciente.data_nascimento || !paciente.quarto) {
             alert("Por favor, preencha todos os campos corretamente.");
             return;
         }
@@ -116,6 +118,7 @@ const EditarPaciente = () => {
                 nome: paciente.nome,
                 idade: paciente.idade,
                 data_nascimento: paciente.data_nascimento,
+                quarto: paciente.quarto
             })
             .eq("id", id);
 
@@ -208,6 +211,13 @@ const EditarPaciente = () => {
                     onChange={(e) => setPaciente({ ...paciente, data_nascimento: e.target.value })}
                     required
                 />
+                <input
+                    type="text"
+                    placeholder="Quarto"
+                    value={paciente.quarto}
+                    onChange={(e) => setPaciente({ ...paciente, quarto: e.target.value })}
+                    required
+                />
                 <h2>Medicamentos Associados</h2>
                 {associacoes.map((associacao, index) => (
                     <div key={index} className="associacao-container">
@@ -252,7 +262,6 @@ const EditarPaciente = () => {
                             />
                             Crônico
                         </label>
-                        {/* Dias de tratamento agora sempre visível */}
                         <input
                             type="number"
                             min={1}
@@ -284,7 +293,6 @@ const EditarPaciente = () => {
                                 </button>
                             </div>
                             <div className="edit-form-actions-col">
-                                <button type="submit">Salvar</button>
                                 <button type="button" onClick={calcularHorarios}>
                                     Calcular Horários
                                 </button>
@@ -295,6 +303,10 @@ const EditarPaciente = () => {
                         </div>
                     </div>
                 ))}
+                {/* Botão Salvar único no final do formulário */}
+                <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+                    <button type="submit" className="save-button">Salvar</button>
+                </div>
             </form>
             <h2>Horários Calculados</h2>
             <div className="horarios-calculados">
