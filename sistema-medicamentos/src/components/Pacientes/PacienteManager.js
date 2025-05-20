@@ -6,7 +6,7 @@ import "./PacienteManager.css";
 const PacienteManager = () => {
     const [pacientes, setPacientes] = useState([]);
     const [pacienteSelecionado, setPacienteSelecionado] = useState(null);
-    const [busca, setBusca] = useState(""); // Adicione este estado
+    const [busca, setBusca] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -48,18 +48,34 @@ const PacienteManager = () => {
                 onChange={e => setBusca(e.target.value)}
                 style={{ margin: "20px 0", padding: "10px", width: "100%", maxWidth: "400px", borderRadius: "30px", border: "1.5px solid #cce5ff" }}
             />
-            <div className="paciente-list">
+            <div className="paciente-list-cards paciente-list-cards-wrap">
                 {pacientes
                     .filter(p => p.nome.toLowerCase().includes(busca.toLowerCase()))
                     .map((paciente) => (
                         <div
                             key={paciente.id}
-                            className="paciente-card"
+                            className="paciente-card-modern"
+                            style={{ cursor: "pointer" }}
                             onClick={() => setPacienteSelecionado(paciente)}
                         >
-                            <p><strong>Nome:</strong> {paciente.nome}</p>
-                            <p><strong>Idade:</strong> {paciente.idade}</p>
-                            <p><strong>Data de Nascimento:</strong> {paciente.data_nascimento}</p>
+                            <div className="paciente-card-header">
+                                <div>
+                                    <span className="paciente-card-title">{paciente.nome}</span>
+                                    <div className="paciente-card-subtitle">
+                                        Idade: {paciente.idade}
+                                    </div>
+                                    <div className="paciente-card-subtitle">
+                                        Data de Nascimento: {paciente.data_nascimento}
+                                    </div>
+                                </div>
+                                {paciente.foto_url && (
+                                    <img
+                                        src={paciente.foto_url}
+                                        alt="Foto do paciente"
+                                        className="paciente-card-foto"
+                                    />
+                                )}
+                            </div>
                         </div>
                     ))}
             </div>
@@ -68,13 +84,28 @@ const PacienteManager = () => {
                 <div className="modal">
                     <div className="modal-content">
                         <h2>Gerenciar Paciente</h2>
-                        <p><strong>Nome:</strong> {pacienteSelecionado.nome}</p>
-                        <p><strong>Idade:</strong> {pacienteSelecionado.idade}</p>
-                        <p><strong>Data de Nascimento:</strong> {pacienteSelecionado.data_nascimento}</p>
+                        <div className="paciente-card-header" style={{ marginBottom: 16 }}>
+                            <div>
+                                <span className="paciente-card-title">{pacienteSelecionado.nome}</span>
+                                <div className="paciente-card-subtitle">
+                                    Idade: {pacienteSelecionado.idade}
+                                </div>
+                                <div className="paciente-card-subtitle">
+                                    Data de Nascimento: {pacienteSelecionado.data_nascimento}
+                                </div>
+                            </div>
+                            {pacienteSelecionado.foto_url && (
+                                <img
+                                    src={pacienteSelecionado.foto_url}
+                                    alt="Foto do paciente"
+                                    className="paciente-card-foto"
+                                />
+                            )}
+                        </div>
                         <div className="button-group">
                             <button
                                 className="edit-button"
-                                onClick={() => navigate(`/editar-paciente/${pacienteSelecionado.id}`)} // Redireciona para a rota de edição
+                                onClick={() => navigate(`/editar-paciente/${pacienteSelecionado.id}`)}
                             >
                                 Editar
                             </button>

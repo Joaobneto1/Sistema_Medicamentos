@@ -217,161 +217,178 @@ const PacienteList = () => {
         });
     };
 
-    const getCardClass = (status) => {
-        if (status === "atrasado") return "paciente-card atrasado";
-        if (status === "medicado") return "paciente-card medicado";
-        if (status === "proximo") return "paciente-card proximo";
-        return "paciente-card";
+    const getCardStyle = (status) => {
+        if (status === "atrasado") {
+            return { border: "2px solid #ff6b6b", background: "#ffeaea" };
+        }
+        if (status === "medicado") {
+            return { border: "2px solid #bdbdbd", background: "#f5f5f5" };
+        }
+        // padrão (disponível)
+        return { border: "2px solid #1ccfc9", background: "#fff" };
     };
 
     return (
         <div className="paciente-manager-container">
-            <h1>Pacientes a Serem Medicados</h1>
-            <div className="paciente-list">
+            <h2 style={{ textAlign: "center", margin: "24px 0 16px 0", fontWeight: 500, color: "#444" }}>
+                Pacientes disponíveis:
+            </h2>
+            <div className="paciente-list-cards">
                 {pacientes.length > 0 ? (
                     pacientes.map((paciente) => (
-                        <div key={paciente.id} className="paciente-card proximo">
-                            {paciente.foto_url && (
-                                <img
-                                    src={paciente.foto_url}
-                                    alt="Foto do paciente"
-                                    style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 8, marginBottom: 8 }}
-                                />
-                            )}
-                            <p><strong>Nome:</strong> {paciente.nome}</p>
-                            <p><strong>Idade:</strong> {paciente.idade}</p>
-                            <p><strong>Quarto:</strong> {paciente.quarto}</p>
-                            <p><strong>Data de Nascimento:</strong> {paciente.data_nascimento}</p>
-                            <p><strong>Medicamentos:</strong></p>
-                            <ul>
-                                {paciente.paciente_medicamentos.map((item, index) => (
-                                    <li key={index}>
-                                        <strong>{item.medicamento.nome}</strong>
-                                        <br />
-                                        Horário: {item.horario_dose}
-                                        <br />
-                                        Intervalo: {item.intervalo_horas} horas
-                                        <br />
-                                        Uso crônico: {item.uso_cronico ? "Sim" : "Não"}
-                                        <br />
-                                        {item.uso_cronico && item.dias_tratamento && (
-                                            <>
-                                                Dias de tratamento: {item.dias_tratamento}
-                                                <br />
-                                                <br />
-                                            </>
-                                        )}
-                                        <button
-                                            onClick={() =>
-                                                marcarComoMedicado(paciente.id, item.medicamento_id)
-                                            }
-                                        >
-                                            Medicado
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
+                        <div key={paciente.id} className="paciente-card-modern" style={getCardStyle("proximo")}>
+                            <div className="paciente-card-header">
+                                <div>
+                                    <span className="paciente-card-title">{paciente.nome}</span>
+                                    <div className="paciente-card-subtitle">
+                                        Quarto {paciente.quarto} &nbsp;|&nbsp; Idade: {paciente.idade}
+                                    </div>
+                                    <div className="paciente-card-subtitle">
+                                        Nascimento: {paciente.data_nascimento}
+                                    </div>
+                                </div>
+                                {paciente.foto_url && (
+                                    <img
+                                        src={paciente.foto_url}
+                                        alt="Foto do paciente"
+                                        className="paciente-card-foto"
+                                    />
+                                )}
+                            </div>
+                            <div className="paciente-card-body">
+                                <ul className="paciente-card-meds">
+                                    {paciente.paciente_medicamentos.map((item, index) => (
+                                        <li key={index}>
+                                            <span className="paciente-card-med-nome">{item.medicamento.nome}</span>
+                                            <div className="paciente-card-med-info">
+                                                Horário: {item.horario_dose} &nbsp;|&nbsp; Intervalo: {item.intervalo_horas}h
+                                            </div>
+                                            <div className="paciente-card-med-info">
+                                                Uso crônico: {item.uso_cronico ? "Sim" : "Não"}
+                                                {item.dias_tratamento && (
+                                                    <> &nbsp;|&nbsp; Dias: {item.dias_tratamento}</>
+                                                )}
+                                            </div>
+                                            <button
+                                                className="paciente-card-btn"
+                                                onClick={() =>
+                                                    marcarComoMedicado(paciente.id, item.medicamento_id)
+                                                }
+                                            >
+                                                Medicado
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
                     ))
                 ) : (
-                    <p>Nenhum paciente precisa ser medicado no momento.</p>
+                    <p style={{ textAlign: "center" }}>Nenhum paciente precisa ser medicado no momento.</p>
                 )}
             </div>
 
-            <h1>Pacientes Atrasados</h1>
-            <div className="paciente-list">
+            <h1 style={{ color: "#2196f3", textAlign: "center", margin: "32px 0 16px 0" }}>Pacientes Atrasados</h1>
+            <div className="paciente-list-cards">
                 {pacientesAtrasados.length > 0 ? (
                     pacientesAtrasados.map((paciente) => (
-                        <div key={paciente.id} className="paciente-card atrasado">
-                            {paciente.foto_url && (
-                                <img
-                                    src={paciente.foto_url}
-                                    alt="Foto do paciente"
-                                    style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 8, marginBottom: 8 }}
-                                />
-                            )}
-                            <p><strong>Nome:</strong> {paciente.nome}</p>
-                            <p><strong>Idade:</strong> {paciente.idade}</p>
-                            <p><strong>Quarto:</strong> {paciente.quarto}</p>
-                            <p><strong>Data de Nascimento:</strong> {paciente.data_nascimento}</p>
-                            <p><strong>Medicamentos Atrasados:</strong></p>
-                            <ul>
-                                {paciente.paciente_medicamentos.map((item, index) => (
-                                    <li key={index}>
-                                        <strong>{item.medicamento.nome}</strong>
-                                        <br />
-                                        Horário: {item.horario_dose}
-                                        <br />
-                                        Intervalo: {item.intervalo_horas} horas
-                                        <br />
-                                        Uso crônico: {item.uso_cronico ? "Sim" : "Não"}
-                                        <br />
-                                        {item.uso_cronico && item.dias_tratamento && (
-                                            <>
-                                                Dias de tratamento: {item.dias_tratamento}
-                                                <br />
-                                                <br />
-                                            </>
-                                        )}
-                                        <button
-                                            onClick={() =>
-                                                marcarComoMedicado(paciente.id, item.medicamento_id, true)
-                                            }
-                                        >
-                                            Medicado
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
+                        <div key={paciente.id} className="paciente-card-modern" style={getCardStyle("atrasado")}>
+                            <div className="paciente-card-header">
+                                <div>
+                                    <span className="paciente-card-title">{paciente.nome}</span>
+                                    <div className="paciente-card-subtitle">
+                                        Quarto {paciente.quarto} &nbsp;|&nbsp; Idade: {paciente.idade}
+                                    </div>
+                                    <div className="paciente-card-subtitle">
+                                        Nascimento: {paciente.data_nascimento}
+                                    </div>
+                                </div>
+                                {paciente.foto_url && (
+                                    <img
+                                        src={paciente.foto_url}
+                                        alt="Foto do paciente"
+                                        className="paciente-card-foto"
+                                    />
+                                )}
+                            </div>
+                            <div className="paciente-card-body">
+                                <ul className="paciente-card-meds">
+                                    {paciente.paciente_medicamentos.map((item, index) => (
+                                        <li key={index}>
+                                            <span className="paciente-card-med-nome">{item.medicamento.nome}</span>
+                                            <div className="paciente-card-med-info">
+                                                Horário: {item.horario_dose} &nbsp;|&nbsp; Intervalo: {item.intervalo_horas}h
+                                            </div>
+                                            <div className="paciente-card-med-info">
+                                                Uso crônico: {item.uso_cronico ? "Sim" : "Não"}
+                                                {item.dias_tratamento && (
+                                                    <> &nbsp;|&nbsp; Dias: {item.dias_tratamento}</>
+                                                )}
+                                            </div>
+                                            <button
+                                                className="paciente-card-btn"
+                                                onClick={() =>
+                                                    marcarComoMedicado(paciente.id, item.medicamento_id, true)
+                                                }
+                                            >
+                                                Medicado
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
                     ))
                 ) : (
-                    <p>Nenhum paciente está atrasado no momento.</p>
+                    <p style={{ textAlign: "center" }}>Nenhum paciente está atrasado no momento.</p>
                 )}
             </div>
 
-            <h1>Pacientes Já Medicados</h1>
-            <div className="paciente-list">
+            <h1 style={{ color: "#666", textAlign: "center", margin: "32px 0 16px 0" }}>Pacientes Já Medicados</h1>
+            <div className="paciente-list-cards paciente-list-cards-wrap">
                 {pacientesJaMedicados.length > 0 ? (
-                    pacientesJaMedicados.map((paciente) => (
-                        <div key={paciente.id} className="paciente-card medicado">
-                            {paciente.foto_url && (
-                                <img
-                                    src={paciente.foto_url}
-                                    alt="Foto do paciente"
-                                    style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 8, marginBottom: 8 }}
-                                />
-                            )}
-                            <p><strong>Nome:</strong> {paciente.nome}</p>
-                            <p><strong>Idade:</strong> {paciente.idade}</p>
-                            <p><strong>Quarto:</strong> {paciente.quarto}</p>
-                            <p><strong>Data de Nascimento:</strong> {paciente.data_nascimento}</p>
-                            <p><strong>Medicamentos Tomados:</strong></p>
-                            <ul>
-                                {paciente.paciente_medicamentos.map((item, index) => (
-                                    <li key={index}>
-                                        <strong>{item.medicamento.nome}</strong>
-                                        <br />
-                                        Horário: {item.horario_dose}
-                                        <br />
-                                        Intervalo: {item.intervalo_horas} horas
-                                        <br />
-                                        Uso crônico: {item.uso_cronico ? "Sim" : "Não"}
-                                        <br />
-                                        {item.uso_cronico && item.dias_tratamento && (
-                                            <>
-                                                Dias de tratamento: {item.dias_tratamento}
-                                                <br />
-                                                <br />
-                                            </>
-                                        )}
-                                    </li>
-                                ))}
-                            </ul>
+                    pacientesJaMedicados.slice(-6).reverse().map((paciente) => (
+                        <div key={paciente.id} className="paciente-card-modern" style={getCardStyle("medicado")}>
+                            <div className="paciente-card-header">
+                                <div>
+                                    <span className="paciente-card-title">{paciente.nome}</span>
+                                    <div className="paciente-card-subtitle">
+                                        Quarto {paciente.quarto} &nbsp;|&nbsp; Idade: {paciente.idade}
+                                    </div>
+                                    <div className="paciente-card-subtitle">
+                                        Nascimento: {paciente.data_nascimento}
+                                    </div>
+                                </div>
+                                {paciente.foto_url && (
+                                    <img
+                                        src={paciente.foto_url}
+                                        alt="Foto do paciente"
+                                        className="paciente-card-foto"
+                                    />
+                                )}
+                            </div>
+                            <div className="paciente-card-body">
+                                <ul className="paciente-card-meds">
+                                    {paciente.paciente_medicamentos.map((item, index) => (
+                                        <li key={index}>
+                                            <span className="paciente-card-med-nome">{item.medicamento.nome}</span>
+                                            <div className="paciente-card-med-info">
+                                                Horário: {item.horario_dose} &nbsp;|&nbsp; Intervalo: {item.intervalo_horas}h
+                                            </div>
+                                            <div className="paciente-card-med-info">
+                                                Uso crônico: {item.uso_cronico ? "Sim" : "Não"}
+                                                {item.dias_tratamento && (
+                                                    <> &nbsp;|&nbsp; Dias: {item.dias_tratamento}</>
+                                                )}
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
                     ))
                 ) : (
-                    <p>Nenhum paciente foi medicado recentemente.</p>
+                    <p style={{ textAlign: "center" }}>Nenhum paciente foi medicado recentemente.</p>
                 )}
             </div>
         </div>
