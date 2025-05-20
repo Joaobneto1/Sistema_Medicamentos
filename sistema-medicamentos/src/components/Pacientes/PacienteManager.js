@@ -46,7 +46,7 @@ const PacienteManager = () => {
                 placeholder="Buscar paciente pelo nome"
                 value={busca}
                 onChange={e => setBusca(e.target.value)}
-                style={{ margin: "20px 0", padding: "10px", width: "100%", maxWidth: "400px" }}
+                style={{ margin: "20px 0", padding: "10px", width: "100%", maxWidth: "400px", borderRadius: "30px", border: "1.5px solid #cce5ff" }}
             />
             <div className="paciente-list">
                 {pacientes
