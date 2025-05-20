@@ -248,7 +248,6 @@ const PacienteList = () => {
                                             <>
                                                 Dias de tratamento: {item.dias_tratamento}
                                                 <br />
-                                                Dias da semana: {calcularDiasSemana(item.dias_tratamento).join(", ")}
                                                 <br />
                                             </>
                                         )}
@@ -266,44 +265,6 @@ const PacienteList = () => {
                     ))
                 ) : (
                     <p>Nenhum paciente precisa ser medicado no momento.</p>
-                )}
-            </div>
-
-            <h1>Pacientes Já Medicados</h1>
-            <div className="paciente-list">
-                {pacientesJaMedicados.length > 0 ? (
-                    pacientesJaMedicados.map((paciente) => (
-                        <div key={paciente.id} className="paciente-card medicado">
-                            <p><strong>Nome:</strong> {paciente.nome}</p>
-                            <p><strong>Idade:</strong> {paciente.idade}</p>
-                            <p><strong>Data de Nascimento:</strong> {paciente.data_nascimento}</p>
-                            <p><strong>Medicamentos Tomados:</strong></p>
-                            <ul>
-                                {paciente.paciente_medicamentos.map((item, index) => (
-                                    <li key={index}>
-                                        <strong>{item.medicamento.nome}</strong>
-                                        <br />
-                                        Horário: {item.horario_dose}
-                                        <br />
-                                        Intervalo: {item.intervalo_horas} horas
-                                        <br />
-                                        Uso crônico: {item.uso_cronico ? "Sim" : "Não"}
-                                        <br />
-                                        {item.uso_cronico && item.dias_tratamento && (
-                                            <>
-                                                Dias de tratamento: {item.dias_tratamento}
-                                                <br />
-                                                Dias da semana: {calcularDiasSemana(item.dias_tratamento).join(", ")}
-                                                <br />
-                                            </>
-                                        )}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))
-                ) : (
-                    <p>Nenhum paciente foi medicado recentemente.</p>
                 )}
             </div>
 
@@ -331,7 +292,6 @@ const PacienteList = () => {
                                             <>
                                                 Dias de tratamento: {item.dias_tratamento}
                                                 <br />
-                                                Dias da semana: {calcularDiasSemana(item.dias_tratamento).join(", ")}
                                                 <br />
                                             </>
                                         )}
@@ -349,6 +309,43 @@ const PacienteList = () => {
                     ))
                 ) : (
                     <p>Nenhum paciente está atrasado no momento.</p>
+                )}
+            </div>
+
+            <h1>Pacientes Já Medicados</h1>
+            <div className="paciente-list">
+                {pacientesJaMedicados.length > 0 ? (
+                    pacientesJaMedicados.map((paciente) => (
+                        <div key={paciente.id} className="paciente-card medicado">
+                            <p><strong>Nome:</strong> {paciente.nome}</p>
+                            <p><strong>Idade:</strong> {paciente.idade}</p>
+                            <p><strong>Data de Nascimento:</strong> {paciente.data_nascimento}</p>
+                            <p><strong>Medicamentos Tomados:</strong></p>
+                            <ul>
+                                {paciente.paciente_medicamentos.map((item, index) => (
+                                    <li key={index}>
+                                        <strong>{item.medicamento.nome}</strong>
+                                        <br />
+                                        Horário: {item.horario_dose}
+                                        <br />
+                                        Intervalo: {item.intervalo_horas} horas
+                                        <br />
+                                        Uso crônico: {item.uso_cronico ? "Sim" : "Não"}
+                                        <br />
+                                        {item.uso_cronico && item.dias_tratamento && (
+                                            <>
+                                                Dias de tratamento: {item.dias_tratamento}
+                                                <br />
+                                                <br />
+                                            </>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))
+                ) : (
+                    <p>Nenhum paciente foi medicado recentemente.</p>
                 )}
             </div>
         </div>
