@@ -6,7 +6,7 @@ import "./PacienteManager.css";
 const EditarPaciente = () => {
     const { id } = useParams(); // Obter o ID do paciente da URL
     const navigate = useNavigate();
-    const [paciente, setPaciente] = useState({ nome: "", idade: "", data_nascimento: "", quarto: "" });
+    const [paciente, setPaciente] = useState({ nome: "", idade: "", data_nascimento: "", quarto: "", foto_url: "" });
     const [medicamentos, setMedicamentos] = useState([]);
     const [associacoes, setAssociacoes] = useState([]);
     const [feedbackMessage, setFeedbackMessage] = useState("");
@@ -34,6 +34,7 @@ const EditarPaciente = () => {
                     idade, 
                     data_nascimento, 
                     quarto,
+                    foto_url,
                     paciente_medicamentos(
                         medicamento_id, 
                         horario_dose,
@@ -51,7 +52,8 @@ const EditarPaciente = () => {
                     nome: data.nome,
                     idade: data.idade,
                     data_nascimento: data.data_nascimento,
-                    quarto: data.quarto || ""
+                    quarto: data.quarto || "",
+                    foto_url: data.foto_url || ""
                 });
 
                 if (data.paciente_medicamentos.length > 0) {
@@ -105,6 +107,16 @@ const EditarPaciente = () => {
         setHorariosCalculados(novosHorarios);
     };
 
+    const handleFotoChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setPaciente((prev) => ({ ...prev, foto_url: reader.result }));
+        };
+        reader.readAsDataURL(file);
+    };
+
     const handleEditPaciente = async (e) => {
         e.preventDefault();
         if (!paciente.nome || paciente.idade <= 0 || !paciente.data_nascimento || !paciente.quarto) {
@@ -118,7 +130,8 @@ const EditarPaciente = () => {
                 nome: paciente.nome,
                 idade: paciente.idade,
                 data_nascimento: paciente.data_nascimento,
-                quarto: paciente.quarto
+                quarto: paciente.quarto,
+                foto_url: paciente.foto_url || null
             })
             .eq("id", id);
 
@@ -218,6 +231,23 @@ const EditarPaciente = () => {
                     onChange={(e) => setPaciente({ ...paciente, quarto: e.target.value })}
                     required
                 />
+                {/* Campo para upload de foto do paciente */}
+                <div className="foto-paciente-upload">
+                    <label htmlFor="fotoPaciente">Foto do Paciente:</label>
+                    <input
+                        type="file"
+                        id="fotoPaciente"
+                        name="fotoPaciente"
+                        accept="image/*"
+                        onChange={handleFotoChange}
+                    />
+                    {/* Exibe a foto atual se existir */}
+                    {paciente.foto_url && (
+                        <div style={{ marginTop: 8 }}>
+                            <img src={paciente.foto_url} alt="Foto do Paciente" style={{ width: 100, height: 100, objectFit: "cover", borderRadius: 8 }} />
+                        </div>
+                    )}
+                </div>
                 <h2>Medicamentos Associados</h2>
                 {(associacoes.length === 0) && (
                     <div className="associacao-container">
