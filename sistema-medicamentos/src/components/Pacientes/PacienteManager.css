@@ -1,0 +1,495 @@
+.paciente-manager-container {
+    padding: 40px 0;
+    background-color: #f6f8fa;
+    color: #333;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header {
+    color: white;
+    padding: 5px 0;
+    text-align: center;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    width: 90%;
+    max-width: 900px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 38px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.paciente-manager-container h1,
+.paciente-manager-container h2 {
+    text-align: center;
+    color: #1e90ff;
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+}
+
+form {
+    margin: 24px 0;
+    padding: 24px 28px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(30, 144, 255, 0.08);
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+form input,
+form select,
+form button {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px 10px;
+    border: 1px solid #cce5ff;
+    border-radius: 6px;
+    font-size: 15px;
+    background: #f9f9f9;
+    outline: none;
+    transition: border 0.2s;
+    box-sizing: border-box;
+}
+
+form input:focus,
+form select:focus {
+    border: 1.5px solid #1e90ff;
+    background: #fff;
+}
+
+form button {
+    background-color: #1e90ff;
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    transition: background-color 0.3s;
+    padding: 8px 0;
+    margin-bottom: 0;
+    height: 34px;
+    min-height: 34px;
+    max-height: 36px;
+    width: 120px;
+    align-self: center;
+    box-shadow: 0 1px 4px rgba(30, 144, 255, 0.08);
+}
+
+form button+button {
+    margin-left: 12px;
+    background-color: #ff6347;
+}
+
+form button+button:hover {
+    background-color: #d32f2f;
+}
+
+form button:hover {
+    background-color: #007bff;
+}
+
+.paciente-list {
+    margin-top: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.paciente-list-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+}
+
+.paciente-list-cards-wrap {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 18px;
+}
+
+.paciente-card {
+    border: 1px solid #cce5ff;
+    border-radius: 12px;
+    padding: 24px 18px;
+    margin-bottom: 0;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(30, 144, 255, 0.10);
+    transition: background-color 0.3s, border-color 0.3s, transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 270px;
+}
+
+.paciente-card-modern {
+    background: #fff;
+    border: 2px solid #1ccfc9;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    padding: 18px 22px;
+    max-width: 420px;
+    min-width: 320px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.paciente-card:hover {
+    transform: translateY(-7px) scale(1.03);
+    box-shadow: 0 6px 16px rgba(30, 144, 255, 0.18);
+}
+
+.paciente-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.paciente-card-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #222;
+}
+
+.paciente-card-subtitle {
+    font-size: 0.95rem;
+    color: #666;
+    margin-top: 2px;
+}
+
+.paciente-card-foto {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1.5px solid #e0e0e0;
+}
+
+.paciente-card-body {
+    margin-top: 8px;
+}
+
+.paciente-card-meds {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.paciente-card-med-nome {
+    font-weight: 600;
+    color: #1ccfc9;
+}
+
+.paciente-card-med-info {
+    font-size: 0.95rem;
+    color: #444;
+    margin-bottom: 2px;
+}
+
+.paciente-card-btn {
+    margin-top: 6px;
+    background: #1ccfc9;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 18px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.paciente-card-btn:hover {
+    background: #17b3ae;
+}
+
+.paciente-card p {
+    margin: 8px 0;
+    font-size: 15px;
+    color: #555;
+    width: 100%;
+}
+
+.paciente-card .button-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    gap: 8px;
+    width: 100%;
+}
+
+.paciente-card button {
+    padding: 8px 0;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    width: 48%;
+    min-width: 80px;
+    height: 34px;
+    min-height: 34px;
+    max-height: 36px;
+}
+
+.paciente-card button:first-of-type {
+    background-color: #1e90ff;
+    color: white;
+}
+
+.paciente-card button:first-of-type:hover {
+    background-color: #007bff;
+}
+
+.paciente-card button:last-of-type {
+    background-color: #ff6347;
+    color: white;
+}
+
+.paciente-card button:last-of-type:hover {
+    background-color: #d32f2f;
+}
+
+/* Pacientes atrasados (vermelho) */
+.paciente-card.atrasado {
+    background-color: #ffcccc;
+    border-color: #ff0000;
+}
+
+/* Pacientes já medicados (verde) */
+.paciente-card.medicado {
+    background-color: #ccffcc;
+    border-color: #00cc00;
+}
+
+/* Pacientes com horário próximo (azul claro) */
+.paciente-card.proximo {
+    background-color: #cce5ff;
+    border-color: #007bff;
+}
+
+.feedback-message {
+    background-color: #ccffcc;
+    color: #155724;
+    padding: 12px;
+    margin: 18px 0;
+    border: 1px solid #00cc00;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 15px;
+    width: 100%;
+    max-width: 420px;
+    align-self: center;
+}
+
+.associacao-actions-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    margin-top: 18px;
+    gap: 18px;
+}
+
+.associacao-actions-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 48%;
+}
+
+.remove-button,
+.add-button {
+    width: 100%;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 8px 0;
+    margin: 0;
+    margin-bottom: 0;
+}
+
+.remove-button {
+    background-color: #ff6347;
+    color: white;
+    border: none;
+    margin-bottom: 0;
+    transition: background 0.2s;
+    font-size: 14px;
+}
+
+.remove-button:hover {
+    background-color: #ff6347;
+}
+
+.add-button {
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    margin-bottom: 0;
+    transition: background 0.2s;
+    line-height: 1.1;
+    vertical-align: top;
+    white-space: normal;
+    text-align: center;
+    word-break: break-word;
+}
+
+/* Garante que o texto do botão fique mais para cima e visível */
+.add-button span,
+.add-button {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    height: auto;
+    min-height: 35px;
+}
+
+.add-button:hover {
+    background-color: #27ae60;
+}
+
+.form-actions-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 48%;
+}
+
+.form-actions-col button {
+    width: 100%;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 8px 0;
+    margin: 0;
+}
+
+.form-actions-col button[type="submit"] {
+    background-color: #1e90ff;
+    color: white;
+    border: none;
+}
+
+.form-actions-col button[type="submit"]:hover {
+    background-color: #007bff;
+}
+
+.form-actions-col button[type="button"] {
+    background-color: #ff6347;
+    color: white;
+    border: none;
+}
+
+.form-actions-col button[type="button"]:hover {
+    background-color: #d32f2f;
+}
+
+.edit-actions-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    margin-top: 18px;
+    gap: 18px;
+}
+
+.edit-actions-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 48%;
+}
+
+.edit-remove-button,
+.edit-add-button {
+    width: 100%;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 8px 0;
+    margin: 0;
+    margin-bottom: 0;
+}
+
+.edit-remove-button {
+    background-color: #ff6347;
+    color: white;
+    border: none;
+    margin-bottom: 0;
+    transition: background 0.2s;
+}
+
+.edit-remove-button:hover {
+    background-color: #ff6347;
+}
+
+.edit-add-button {
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    margin-bottom: 0;
+    transition: background 0.2s;
+}
+
+.edit-add-button:hover {
+    background-color: #27ae60;
+}
+
+.edit-form-actions-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 48%;
+}
+
+.edit-form-actions-col button {
+    width: 100%;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 8px 0;
+    margin: 0;
+}
+
+.edit-form-actions-col button[type="submit"] {
+    background-color: #1e90ff;
+    color: white;
+    border: none;
+}
+
+.edit-form-actions-col button[type="submit"]:hover {
+    background-color: #007bff;
+}
+
+.edit-form-actions-col button[type="button"] {
+    background-color: #ff6347;
+    color: white;
+    border: none;
+}
+
+.edit-form-actions-col button[type="button"]:hover {
+    background-color: #d32f2f;
+}

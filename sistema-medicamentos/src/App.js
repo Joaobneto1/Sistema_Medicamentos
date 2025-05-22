@@ -1,142 +1,77 @@
 import "./App.css";
-import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
-import HorarioAtual from "./components/Horario/horarioAtual";
+import Header from "./components/Shared/Header";
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import EstoqueMedicamentos from "./components/Estoque/estoqueMedicamentos";
+import PacienteManager from "./components/Pacientes/PacienteManager";
+import PacienteList from "./components/Pacientes/PacienteList";
+import AdicionarPaciente from "./components/Pacientes/AdicionarPaciente";
+import EditarPaciente from "./components/Pacientes/EditarPaciente";
+import HistoricoMedicados from "./components/Historico/HistoricoMedicados";
 import Login from "./components/Auth/login";
-import PacienteList from "./components/Pacientes/pacientList";
 import SignUp from "./components/Auth/signUp";
-import useAppLogic from "./hooks/appLogic";
-import useAuth from "./hooks/useAuth";
-import MedicamentoCadastro from "./components/Medicamentos/medicamentoCadastro";
-import EstoqueMedicamentos from "./components/Medicamentos/estoqueMedicamentos";
-import routes from "./routesConfig"; // Importar as rotas configuradas
+import supabase from "./services/supabaseClient";
 
-function App() {
-  const { isLoggedIn, user, handleLoginSubmit, handleLogout } = useAuth();
+const App = () => {
+  const [user, setUser] = useState(null); // Estado para armazenar o usuário logado
+  const [isSignUp, setIsSignUp] = useState(false); // Estado para alternar entre login e cadastro
 
-  const {
-    loginData,
-    loginError,
-    isSignUp,
-    signUpData,
-    signUpError,
-    activeTab,
-    showForm,
-    formData,
-    pacientes,
-    handleInputChange,
-    handleFormSubmit,
-    handleLoginChange,
-    handleSignUpChange,
-    handleSignUpSubmit,
-    setIsSignUp,
-    setActiveTab,
-    setShowForm,
-  } = useAppLogic();
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setUser(session.user);
+      }
+    };
+    checkUser();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+  };
 
   return (
     <Router>
-      <div className="app">
-        <header className="header">
-          <div className="header-left">
-            <Link to={routes.login} className="nav-link">
-              Login
-            </Link>
+      <Header />
+      <div>
+        {user && (
+          <div style={{ textAlign: "right", padding: "10px" }}>
+            <button onClick={handleLogout} style={{ padding: "10px", cursor: "pointer" }}>
+              Sair
+            </button>
           </div>
-          <div className="header-center">
-            <HorarioAtual />
-          </div>
-          <div className="header-right">
-            {isLoggedIn && user ? (
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <span>{`Olá, ${user.email}`}</span>
-                <button onClick={handleLogout} className="logout-button">
-                  <FontAwesomeIcon icon={faSignOutAlt} />
-                </button>
-              </div>
-            ) : (
-              "Não logado"
-            )}
-          </div>
-        </header>
-        <nav className="navbar">
-          <Link to={routes.home} className="nav-link">
-            Home
-          </Link>
-          <Link to={routes.pacientes} className="nav-link">
-            Pacientes
-          </Link>
-          <Link to={routes.cadastroMedicamentos} className="nav-link">
-            Cadastro de Medicamentos
-          </Link>
-          <Link to={routes.estoqueMedicamentos} className="nav-link">
-            Estoque de Medicamentos
-          </Link>
-        </nav>
-        <main className="content">
-          <Routes>
-            <Route
-              path={routes.home}
-              element={<h1>Bem-vindo ao Sistema de Medicamentos</h1>}
-            />
-            <Route
-              path={routes.login}
-              element={
-                <Login
-                  loginData={loginData}
-                  handleLoginChange={handleLoginChange}
-                  handleLoginSubmit={(e) => {
-                    e.preventDefault();
-                    const loginSuccessful = handleLoginSubmit(loginData);
-                    if (!loginSuccessful) {
-                      console.error("Falha no login");
-                    }
-                  }}
-                  loginError={loginError}
-                  setIsSignUp={setIsSignUp}
-                />
-              }
-            />
-            <Route
-              path={routes.signUp}
-              element={
-                <SignUp
-                  signUpData={signUpData}
-                  handleSignUpChange={handleSignUpChange}
-                  handleSignUpSubmit={handleSignUpSubmit}
-                  signUpError={signUpError}
-                  setIsSignUp={setIsSignUp}
-                />
-              }
-            />
-            <Route
-              path={routes.pacientes}
-              element={
-                <PacienteList
-                  pacientes={pacientes}
-                  showForm={showForm}
-                  formData={formData}
-                  handleInputChange={handleInputChange}
-                  handleFormSubmit={handleFormSubmit}
-                  setShowForm={setShowForm}
-                />
-              }
-            />
-            <Route
-              path={routes.cadastroMedicamentos}
-              element={<MedicamentoCadastro />}
-            />
-            <Route
-              path={routes.estoqueMedicamentos}
-              element={<EstoqueMedicamentos />}
-            />
-          </Routes>
-        </main>
+        )}
+        <Routes>
+          {!user ? (
+            <>
+              <Route
+                path="/"
+                element={
+                  isSignUp ? (
+                    <SignUp setIsSignUp={setIsSignUp} />
+                  ) : (
+                    <Login setUser={setUser} setIsSignUp={setIsSignUp} />
+                  )
+                }
+              />
+              <Route path="*" element={<Navigate to="/" />} />
+            </>
+          ) : (
+            <>
+              <Route path="/pacientes" element={<PacienteList />} />
+              <Route path="/gerenciar-pacientes" element={<PacienteManager />} />
+              <Route path="/adicionar-paciente" element={<AdicionarPaciente />} />
+              <Route path="/editar-paciente/:id" element={<EditarPaciente />} />
+              <Route path="/estoque" element={<EstoqueMedicamentos />} />
+              <Route path="/historico" element={<HistoricoMedicados />} />
+              <Route path="*" element={<Navigate to="/pacientes" />} />
+            </>
+          )}
+        </Routes>
       </div>
     </Router>
   );
-}
+};
 
 export default App;

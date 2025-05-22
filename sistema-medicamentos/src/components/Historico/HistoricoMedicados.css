@@ -1,0 +1,107 @@
+.historico-container {
+    padding: 40px 0;
+    background-color: #f6f8fa;
+    color: #333;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.historico-container h1 {
+    text-align: center;
+    color: #1e90ff;
+    margin-bottom: 32px;
+    font-size: 28px;
+    letter-spacing: 1px;
+}
+
+.historico-dia {
+    margin-bottom: 32px;
+    padding: 24px 18px;
+    border: 1px solid #cce5ff;
+    border-radius: 50px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(30, 144, 255, 0.10);
+    width: 100%;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.historico-dia h2 {
+    color: #1e90ff;
+    margin-bottom: 14px;
+    font-size: 20px;
+    text-align: left;
+}
+
+.historico-item {
+    margin-bottom: 18px;
+    padding: 12px 10px;
+    border: 1px solid #cce5ff;
+    border-radius: 30px;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s, border-color 0.3s;
+    width: 100%;
+}
+
+.historico-item.medicado {
+    background-color: #ccffcc;
+    border-color: #00cc00;
+}
+
+.historico-item.atrasado {
+    background-color: #ffcccc;
+    border-color: #ff0000;
+}
+
+.historico-item.proximo {
+    background-color: #cce5ff;
+    border-color: #007bff;
+}
+
+.historico-item p {
+    margin: 7px 0;
+    font-size: 15px;
+    color: #555;
+}
+
+.filtros-container {
+    margin-bottom: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    width: 100%;
+    max-width: 700px;
+}
+
+.filtros-container input,
+.filtros-container button {
+    padding: 12px;
+    font-size: 15px;
+    border: 1.5px solid #cce5ff;
+    border-radius: 30px;
+    background: #f9f9f9;
+    transition: border 0.2s;
+}
+
+.filtros-container input:focus {
+    border: 1.5px solid #1e90ff;
+    background: #fff;
+}
+
+.filtros-container button {
+    background-color: #1e90ff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border: none;
+    font-weight: bold;
+}
+
+.filtros-container button:hover {
+    background-color: #007bff;
+}

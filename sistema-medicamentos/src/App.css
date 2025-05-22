@@ -1,367 +1,273 @@
-/* Estilo global para o corpo da página */
-body {
-  margin: 0;
-  /* Remove a margem padrão */
-  font-family: Arial, sans-serif;
-  /* Define a fonte padrão */
-  background-color: #f4f4f9;
-  /* Define a cor de fundo */
-}
-
-.app {
-  display: flex;
-  /* Define um layout flexível */
-  flex-direction: column;
-  /* Organiza os elementos em coluna */
-  height: 100vh;
-  /* Define a altura como 100% da altura da janela */
-}
-
-.app-container {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  background-color: #007bff;
-  /* Cor azul */
-  color: white;
-  /* Texto branco para contraste */
-  border-bottom: 1px solid #0056b3;
-  /* Linha inferior mais escura */
-}
-
-.header-left,
-.header-center,
-.header-right {
-  flex: 1;
-  text-align: center;
-}
-
-.header-left {
-  text-align: left;
-}
-
-.header-right {
-  display: flex;
-  /* Exibe o conteúdo em linha */
-  align-items: center;
-  /* Alinha verticalmente */
-  justify-content: flex-end;
-  /* Alinha horizontalmente no lado direito */
-  gap: 10px;
-  /* Espaçamento entre o nome e o botão */
-  flex: 1;
-  /* Faz com que ocupe o espaço restante no cabeçalho */
-  padding-right: 20px;
-  /* Adiciona um espaçamento à direita */
-}
-
-/* Estilo da barra de navegação */
-.navbar {
-  display: flex;
-  /* Define um layout flexível */
-  justify-content: space-around;
-  /* Espaça os itens igualmente */
-  background-color: #f8f9fa;
-  /* Cor de fundo cinza claro */
-  padding: 10px 0;
-  /* Espaçamento interno vertical */
-  border-bottom: 1px solid #ddd;
-  /* Linha inferior */
-}
-
-/* Estilo dos botões de navegação */
-.nav-button {
-  background: none;
-  /* Remove o fundo padrão */
-  border: none;
-  /* Remove a borda padrão */
-  font-size: 16px;
-  /* Define o tamanho da fonte */
-  cursor: pointer;
-  /* Define o cursor como ponteiro */
-  padding: 10px 20px;
-  /* Espaçamento interno */
-  color: #007bff;
-  /* Cor do texto azul */
-  transition: background-color 0.3s;
-  /* Animação na mudança de cor */
-}
-
-/* Estilo ao passar o mouse sobre os botões de navegação */
-.nav-button:hover {
-  background-color: #e9ecef;
-  /* Cor de fundo ao passar o mouse */
-  border-radius: 5px;
-  /* Bordas arredondadas */
-}
-
-.navbar {
-    display: flex;
-    justify-content: space-around;
-    background-color: #333;
-    padding: 10px;
-}
-
-.nav-link {
-    color: white;
-    text-decoration: none;
-    padding: 10px;
-}
-
-.nav-link:hover {
-    background-color: #575757;
-    border-radius: 4px;
-}
-
-/* Estilo do conteúdo principal */
-.content {
-  flex: 1;
-  /* Faz o conteúdo ocupar o espaço restante */
-  padding: 20px;
-  /* Espaçamento interno */
-  text-align: center;
-  /* Centraliza o texto */
-}
-
-/* Container dos pacientes */
+/* Container principal */
 .paciente-container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+    padding: 40px 0;
+    background-color: #f6f8fa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-/* Grid para os cartões de pacientes */
-.paciente-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
+/* Título da página */
+.paciente-title {
+    font-size: 30px;
+    font-weight: bold;
+    color: #1e90ff;
+    margin-bottom: 32px;
+    text-align: center;
+    letter-spacing: 1px;
 }
 
-/* Estilo dos cartões de pacientes */
+/* Lista de pacientes */
+.paciente-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
+}
+
+/* Card de paciente */
 .paciente-card {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  text-align: left;
-  /* Alinha o texto à esquerda */
+    background: #fff;
+    border: 1.5px solid #e3eaf5;
+    border-radius: 14px;
+    padding: 28px 22px 18px 22px;
+    width: 290px;
+    min-height: 260px;
+    box-shadow: 0 4px 18px rgba(30, 144, 255, 0.08);
+    transition: transform 0.18s, box-shadow 0.18s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    text-align: center;
+    justify-content: flex-start;
 }
 
-.paciente-card p {
-  margin: 5px 0;
-  font-size: 14px;
-  color: #333;
+.paciente-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 10px 28px rgba(30, 144, 255, 0.13);
+}
+
+.paciente-card .paciente-nome {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e90ff;
+    margin: 0 auto 6px auto;
+    text-align: center;
+    width: 100%;
+    letter-spacing: 0.5px;
+}
+
+.paciente-card .paciente-info {
+    width: 100%;
+    margin-bottom: 8px;
+    color: #444;
+    font-size: 15px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.paciente-card .paciente-label {
+    font-weight: 600;
+    color: #007bff;
+    margin-right: 2px;
+}
+
+.paciente-card .paciente-medicamentos-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #217a36;
+    margin: 12px 0 6px 0;
+    text-align: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .paciente-card ul {
-  padding-left: 20px;
-  margin-top: 10px;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
 }
 
-.paciente-card ul li {
-  font-size: 13px;
-  color: #555;
+.paciente-card li {
+    font-size: 14px;
+    color: #217a36;
+    background: none;
+    border-radius: 16px;
+    padding: 4px 12px;
+    margin: 0;
+    display: inline-block;
+    text-align: center;
+    box-shadow: 0 1px 2px rgba(0, 204, 0, 0.04);
+    font-weight: 500;
 }
 
-/* Cabeçalho da seção de pacientes */
-.paciente-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* Para pacientes atrasados, deixa o fundo do li igual ao card */
+.paciente-card.atrasado li {
+    background: #ffcccc;
+    color: #000;
 }
 
-/* Botão de criar paciente */
-.create-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+/* Para pacientes já medicados, deixa o fundo do li igual ao card */
+.paciente-card.medicado li {
+    background: #ccffcc;
+    color: #000;
 }
 
-.create-button:hover {
-  background-color: #0056b3;
+/* Para pacientes com horário próximo, deixa o fundo do li igual ao card */
+.paciente-card.proximo li {
+    background: #cce5ff;
+    color: #000;
 }
 
-/* Estilo para a página de login */
-.auth-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #f4f4f9;
+.paciente-card li button {
+    margin-top: 8px;
+    width: 100%;
+    min-width: 120px;
+    max-width: 220px;
+    padding: 10px 0;
+    font-size: 13px;
+    font-weight: 00;
+    border-radius: 18px;
+    background-color: #1e90ff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1px 4px rgba(30, 144, 255, 0.10);
+    display: block;
+    text-align: center;
+    letter-spacing: 0.5px;
 }
 
-.auth-box {
-  width: 100%;
-  max-width: 400px;
-  background-color: white;
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: left;
+.paciente-card li button:hover {
+    background-color: #007bff;
 }
 
-.auth-box h1 {
-  margin-bottom: 10px;
-  font-size: 28px;
-  color: #333;
+/* Status visual */
+.paciente-card.atrasado {
+    border-color: #ffb3b3;
+    box-shadow: 0 4px 18px rgba(255, 0, 0, 0.10);
 }
 
-.auth-box p {
-  margin-bottom: 20px;
-  font-size: 16px;
-  color: #555;
+.paciente-card.medicado {
+    border-color: #b3ffb3;
+    box-shadow: 0 4px 18px rgba(0, 204, 0, 0.10);
+    background: #ccffcc;
 }
 
-.auth-box input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 16px;
+.paciente-card.proximo {
+    border-color: #b3d8ff;
+    box-shadow: 0 4px 18px rgba(0, 123, 255, 0.10);
+    background: #b3d8ff;
 }
 
-.auth-box input:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+/* Texto para status */
+.paciente-card .paciente-status {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 6px 0;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-radius: 14px 14px 0 0;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.92);
 }
 
-.auth-box button {
-  width: 100%;
-  padding: 12px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+.paciente-card.atrasado .paciente-status {
+    color: #ff0000;
 }
 
-.auth-box button:hover {
-  background-color: #0056b3;
+.paciente-card.medicado .paciente-status {
+    color: #00cc00;
 }
 
-.auth-box .link {
-  color: #007bff;
-  text-decoration: none;
-  cursor: pointer;
+.paciente-card.proximo .paciente-status {
+    color: #007bff;
 }
 
-.auth-box .link:hover {
-  text-decoration: underline;
+/* Botões do card */
+.paciente-card .button-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin: 16px 0 0 0;
 }
 
-/* Ocultar barra de navegação na tela de login */
-.auth-page~.navbar {
-  display: none;
+.paciente-card button {
+    padding: 7px 0;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    transition: background-color 0.3s, box-shadow 0.2s;
+    width: 48%;
+    min-width: 70px;
+    height: 32px;
+    min-height: 32px;
+    max-height: 34px;
+    box-shadow: 0 1px 4px rgba(30, 144, 255, 0.08);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* Estilo para a sobreposição de detalhes do paciente */
-.paciente-details-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+.paciente-card button:first-of-type {
+    background-color: #1e90ff;
+    color: white;
 }
 
-.paciente-details {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  text-align: left;
+.paciente-card button:first-of-type:hover {
+    background-color: #007bff;
 }
 
-.paciente-details h2 {
-  margin-bottom: 20px;
-  font-size: 24px;
-  color: #333;
+.paciente-card button:last-of-type {
+    background-color: #ff6347;
+    color: white;
 }
 
-.paciente-details p {
-  margin-bottom: 10px;
-  font-size: 16px;
-  color: #555;
+.paciente-card button:last-of-type:hover {
+    background-color: #d32f2f;
 }
 
-/* Estilo para o botão de fechar na janela de detalhes */
-.close-button {
-  display: block;
-  margin-left: auto;
-  margin-bottom: 10px;
-  background-color: white;
-  color: #dc3545;
-  border: 2px solid #dc3545;
-  border-radius: 5px;
-  padding: 5px 10px;
-  font-size: 14px;
-  cursor: pointer;
-  position: relative;
-  /* Permite posicionamento relativo */
-  top: -10px;
-  /* Move o botão para cima */
-}
+/* Responsivo */
+@media (max-width: 600px) {
+    .paciente-list {
+        gap: 14px;
+    }
 
-.close-button:hover {
-  background-color: #dc3545;
-  color: white;
-}
+    .paciente-card {
+        width: 97vw;
+        min-width: unset;
+        padding: 18px 6vw 12px 6vw;
+    }
 
-.logout-button {
-  background-color: #ff4d4d;
-  /* Cor de fundo */
-  color: white;
-  /* Cor do ícone */
-  border: none;
-  /* Remove a borda */
-  border-radius: 50%;
-  /* Torna o botão redondo */
-  width: 30px;
-  /* Largura do botão */
-  height: 30px;
-  /* Altura do botão */
-  display: flex;
-  /* Centraliza o conteúdo */
-  justify-content: center;
-  /* Centraliza horizontalmente */
-  align-items: center;
-  /* Centraliza verticalmente */
-  cursor: pointer;
-  /* Mostra o cursor de clique */
-  transition: background-color 0.3s ease;
-  /* Animação suave ao passar o mouse */
-  margin-left: 10px;
-  /* Espaçamento entre o nome e o botão */
-}
+    .paciente-card .button-group {
+        margin: 10px 0 0 0;
+    }
 
-.logout-button:hover {
-  background-color: #e60000;
-  /* Cor ao passar o mouse */
-}
-
-.logout-button:active {
-  background-color: #cc0000;
-  /* Cor ao clicar */
+    .paciente-card ul {
+        justify-content: center;
+    }
 }

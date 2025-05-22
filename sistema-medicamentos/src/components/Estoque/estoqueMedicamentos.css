@@ -1,0 +1,283 @@
+.estoque-container {
+    padding: 40px 0;
+    font-family: Arial, sans-serif;
+    background-color: #f6f8fa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.estoque-title {
+    font-size: 28px;
+    margin-bottom: 32px;
+    text-align: center;
+    color: #1e90ff;
+    letter-spacing: 1px;
+}
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 32px;
+    gap: 24px;
+    width: 100%;
+    max-width: 900px;
+}
+
+.barra-pesquisa {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px;
+    font-size: 16px;
+    border: 1.5px solid #1e90ff;
+    border-radius: 30px;
+    background: #f9f9f9;
+    transition: border 0.2s;
+}
+
+.barra-pesquisa:focus {
+    border: 1.5px solid #1e90ff;
+    background: #fff;
+}
+
+.botoes-container {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-add {
+    padding: 8px 18px;
+    font-size: 15px;
+    color: #fff;
+    background-color: #1e90ff;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+    height: 36px;
+    min-height: 36px;
+    max-height: 38px;
+}
+
+.btn-add:hover {
+    background-color: #007bff;
+}
+
+.estoque-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.estoque-card {
+    border: 2px solid #1ccfc9;
+    border-radius: 18px;
+    padding: 22px 18px 18px 18px;
+    width: 340px;
+    min-height: 170px;
+    background: #fff;
+    box-shadow: 0 4px 18px rgba(30, 144, 255, 0.08);
+    transition: transform 0.18s, box-shadow 0.18s, border-color 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    margin-bottom: 0;
+}
+
+.estoque-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 10px 28px rgba(30, 144, 255, 0.13);
+    border-color: #1ccfc9;
+}
+
+.estoque-card p {
+    margin: 6px 0;
+    color: #222;
+    font-size: 15px;
+    width: 100%;
+    text-align: left;
+    font-weight: 500;
+}
+
+.estoque-card p strong {
+    color: #1e90ff;
+    font-weight: 700;
+}
+
+.estoque-card .button-group {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 18px;
+    gap: 18px;
+    width: 100%;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 14px;
+    gap: 12px;
+    width: 100%;
+}
+
+.edit-button,
+.delete-button {
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 10px 0;
+    width: 46%;
+    min-width: 110px;
+    max-width: 180px;
+    height: 38px;
+    box-shadow: 0 1px 4px rgba(30, 144, 255, 0.10);
+    margin: 0;
+    transition: background 0.2s, box-shadow 0.2s;
+    display: block;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+.edit-button {
+    background-color: #1e90ff;
+    color: #fff;
+    border: none;
+}
+
+.edit-button:hover {
+    background-color: #007bff;
+}
+
+.delete-button {
+    background-color: #ff6347;
+    color: #fff;
+    border: none;
+}
+
+.delete-button:hover {
+    background-color: #d32f2f;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    width: 450px;
+    margin: auto;
+    padding: 28px 24px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(30, 144, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.modal-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 8px;
+    gap: 0;
+}
+
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+    width: 100%;
+    margin-bottom: 14px;
+    padding: 12px;
+    border: 1.5px solid #cce5ff;
+    border-radius: 6px;
+    font-size: 15px;
+    background: #f9f9f9;
+    transition: border 0.2s;
+    box-sizing: border-box;
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus,
+.modal-content select:focus {
+    border: 1.5px solid #1e90ff;
+    background: #fff;
+}
+
+.modal-content button {
+    padding: 8px 0;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    transition: background 0.2s;
+    width: 120px;
+    height: 34px;
+    min-height: 34px;
+    max-height: 36px;
+    box-shadow: 0 1px 4px rgba(30, 144, 255, 0.08);
+    margin: 0;
+}
+
+.modal-content button[type="submit"] {
+    background-color: #1e90ff;
+    color: white;
+    margin-right: 0;
+}
+
+.modal-content button[type="button"] {
+    background-color: #ff6347;
+    color: white;
+    margin-left: 0;
+}
+
+.modal-content button[type="submit"]:hover {
+    background-color: #007bff;
+}
+
+.modal-content button[type="button"]:hover {
+    background-color: #d32f2f;
+}
+
+/* Responsivo */
+@media (max-width: 700px) {
+    .estoque-list {
+        gap: 14px;
+    }
+
+    .estoque-card {
+        width: 97vw;
+        min-width: unset;
+        padding: 18px 6vw 12px 6vw;
+    }
+
+    .estoque-card .button-group {
+        margin-top: 12px;
+        gap: 10px;
+    }
+}
