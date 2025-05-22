@@ -37,7 +37,8 @@ const PacienteList = () => {
                         intervalo_horas, 
                         medicado,
                         uso_cronico,
-                        dias_tratamento
+                        dias_tratamento,
+                        updated_at
                     )
                 `);
 
@@ -57,18 +58,43 @@ const PacienteList = () => {
                     const medicamentosNaoMedicados = [];
 
                     paciente.paciente_medicamentos.forEach((medicamento) => {
+                        // Calcular o próximo horário em que o medicamento pode ser administrado
+                        let podeMedicar = false;
+                        let estaAtrasado = false;
+                        let jaMedicado = false;
+
+                        // Parse do horário da dose
                         const [horas, minutos] = medicamento.horario_dose.split(":").map(Number);
                         const horarioDose = new Date(horaAtual);
                         horarioDose.setHours(horas, minutos, 0, 0);
 
-                        // Ajuste para garantir precisão no cálculo da diferença
-                        const diferencaMinutos = Math.floor((horarioDose - horaAtual) / (1000 * 60));
+                        // Se já foi medicado, verificar se já passou o intervalo
+                        if (medicamento.medicado && medicamento.updated_at && medicamento.intervalo_horas) {
+                            const ultimaMed = new Date(medicamento.updated_at);
+                            const proximaDose = new Date(ultimaMed.getTime() + medicamento.intervalo_horas * 60 * 60 * 1000);
+                            if (horaAtual >= proximaDose) {
+                                // Já passou o intervalo, pode medicar novamente
+                                podeMedicar = true;
+                                jaMedicado = false;
+                            } else {
+                                // Ainda não passou o intervalo, considerar como já medicado
+                                jaMedicado = true;
+                            }
+                        } else if (!medicamento.medicado) {
+                            // Nunca foi medicado, considerar horário da dose
+                            const diferencaMinutos = Math.floor((horarioDose - horaAtual) / (1000 * 60));
+                            if (diferencaMinutos >= 0 && diferencaMinutos <= margemMinutos) {
+                                podeMedicar = true;
+                            } else if (diferencaMinutos < 0) {
+                                estaAtrasado = true;
+                            }
+                        }
 
-                        if (medicamento.medicado) {
-                            medicamentosMedicados.push(medicamento);
-                        } else if (diferencaMinutos >= 0 && diferencaMinutos <= margemMinutos) {
+                        if (podeMedicar) {
                             medicamentosParaMedicar.push(medicamento);
-                        } else if (diferencaMinutos < 0) {
+                        } else if (jaMedicado) {
+                            medicamentosMedicados.push(medicamento);
+                        } else if (estaAtrasado) {
                             medicamentosNaoMedicados.push(medicamento);
                         }
                     });

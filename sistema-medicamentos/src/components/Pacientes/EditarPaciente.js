@@ -38,6 +38,7 @@ const EditarPaciente = () => {
                     paciente_medicamentos(
                         medicamento_id, 
                         horario_dose,
+                        intervalo_horas,
                         uso_cronico,
                         dias_tratamento
                     )
@@ -60,7 +61,7 @@ const EditarPaciente = () => {
                     setAssociacoes(data.paciente_medicamentos.map((item) => ({
                         medicamento_id: item.medicamento_id,
                         horario_dose: item.horario_dose,
-                        intervalo_horas: item.intervalo_horas || 0,
+                        intervalo_horas: item.intervalo_horas || 1,
                         uso_cronico: item.uso_cronico || false,
                         dias_tratamento: item.dias_tratamento || 1,
                     })));
@@ -124,6 +125,7 @@ const EditarPaciente = () => {
             return;
         }
 
+        // Atualiza dados do paciente
         const { error: pacienteError } = await supabase
             .from("pacientes")
             .update({
@@ -140,8 +142,47 @@ const EditarPaciente = () => {
             return;
         }
 
+        // Busca associações atuais do banco
+        const { data: assocAtuais, error: assocFetchError } = await supabase
+            .from("paciente_medicamentos")
+            .select("medicamento_id")
+            .eq("paciente_id", id);
+
+        if (assocFetchError) {
+            console.error("Erro ao buscar associações atuais:", assocFetchError);
+            return;
+        }
+
+        // Lista de medicamento_ids atualmente no formulário
+        const idsNoForm = associacoes
+            .filter(a => a.medicamento_id)
+            .map(a => String(a.medicamento_id));
+
+        // Lista de medicamento_ids atualmente no banco
+        const idsNoBanco = (assocAtuais || []).map(a => String(a.medicamento_id));
+
+        // Descobre quais ids foram removidos no formulário
+        const idsRemovidos = idsNoBanco.filter(idBanco => !idsNoForm.includes(idBanco));
+
+        // Remove do banco os medicamentos removidos no formulário
+        if (idsRemovidos.length > 0) {
+            const { error: delError } = await supabase
+                .from("paciente_medicamentos")
+                .delete()
+                .eq("paciente_id", id)
+                .in("medicamento_id", idsRemovidos);
+            if (delError) {
+                console.error("Erro ao remover medicamentos:", delError);
+                return;
+            }
+        }
+
+        // Upsert dos medicamentos presentes no formulário
         const associacoesValidas = associacoes.filter(
-            (associacao) => associacao.medicamento_id && associacao.horario_dose && associacao.intervalo_horas > 0
+            (associacao) =>
+                associacao.medicamento_id &&
+                associacao.horario_dose &&
+                associacao.intervalo_horas > 0
         );
 
         if (associacoesValidas.length > 0) {
@@ -149,14 +190,13 @@ const EditarPaciente = () => {
                 .from("paciente_medicamentos")
                 .upsert(
                     associacoesValidas.map((associacao) => {
-                        // Se crônico marcado, força 365 dias. Se não, define uso_cronico conforme dias_tratamento.
-                        let dias_tratamento = associacao.uso_cronico ? 365 : associacao.dias_tratamento;
-                        let uso_cronico = associacao.uso_cronico || dias_tratamento >= 365;
+                        let dias_tratamento = associacao.uso_cronico ? 365 : associacao.dias_tratamento || 1;
+                        let uso_cronico = !!associacao.uso_cronico || dias_tratamento >= 365;
                         return {
                             paciente_id: id,
                             medicamento_id: associacao.medicamento_id,
                             horario_dose: associacao.horario_dose,
-                            intervalo_horas: associacao.intervalo_horas,
+                            intervalo_horas: Number(associacao.intervalo_horas) || 1,
                             uso_cronico,
                             dias_tratamento,
                         };
