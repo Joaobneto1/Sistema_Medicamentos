@@ -6,4 +6,6 @@ const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+// Certifique-se de que as credenciais do Supabase estão configuradas corretamente.
+
 export default supabase;
