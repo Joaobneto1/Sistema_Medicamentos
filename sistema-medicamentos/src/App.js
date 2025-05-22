@@ -33,15 +33,8 @@ const App = () => {
 
   return (
     <Router>
-      <Header />
+      {user && <Header user={user} handleLogout={handleLogout} />}
       <div>
-        {user && (
-          <div style={{ textAlign: "right", padding: "10px" }}>
-            <button onClick={handleLogout} style={{ padding: "10px", cursor: "pointer" }}>
-              Sair
-            </button>
-          </div>
-        )}
         <Routes>
           {!user ? (
             <>
