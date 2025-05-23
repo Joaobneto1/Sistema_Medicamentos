@@ -1,39 +1,43 @@
 .app-header {
-    background-color: #1e90ff;
+    background: linear-gradient(90deg, #155fa0 0%, #1e90ff 100%);
     padding: 0;
-    color: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(30, 90, 150, 0.10);
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
+    border-bottom: 2px solid #e3eaf5;
 }
 
 .header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 18px 32px;
-    background-color: #1e90ff;
-    color: white;
-    font-family: Arial, sans-serif;
+    padding: 18px 40px;
+    background: transparent;
+    color: #fff;
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
 }
 
 .header-left {
-    font-size: 20px;
-    font-weight: bold;
-    letter-spacing: 1px;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
     text-align: left;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .app-header nav ul,
 nav ul {
     list-style: none;
     display: flex;
-    gap: 24px;
+    gap: 32px;
     margin: 0;
     padding: 0;
     align-items: center;
@@ -47,24 +51,95 @@ nav ul li {
 
 .app-header nav ul li a,
 nav ul li a {
-    color: white;
+    color: #f4f8fb;
     text-decoration: none !important;
     font-size: 17px;
-    font-weight: 600;
-    padding: 8px 18px;
-    border-radius: 6px;
-    transition: background 0.2s, color 0.2s;
+    font-weight: 500;
+    padding: 8px 20px;
+    border-radius: 5px;
+    transition: background 0.18s, color 0.18s;
     display: flex;
     align-items: center;
+    letter-spacing: 0.5px;
 }
 
 .app-header nav ul li a:hover,
 nav ul li a:hover {
-    background: #cce5ff;
-    color: #1e90ff;
+    background: #e3f2fd;
+    color: #155fa0;
     text-decoration: none;
 }
 
 .hide-header {
     display: none !important;
+}
+
+.header-user-info {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.header-username {
+    background: #f4f8fb;
+    color: #155fa0;
+    padding: 7px 18px;
+    border-radius: 6px;
+    font-weight: 600;
+    margin-right: 8px;
+    box-shadow: 0 1px 4px rgba(30, 90, 150, 0.08);
+    letter-spacing: 0.5px;
+    border: 1px solid #e3eaf5;
+}
+
+.header-logout-btn {
+    background: linear-gradient(90deg, #e53935 0%, #b71c1c 100%);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 28px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
+    box-shadow: 0 1px 4px rgba(183, 28, 28, 0.10);
+    outline: none;
+    letter-spacing: 0.5px;
+    border: 1px solid #b71c1c;
+}
+
+.header-logout-btn:hover {
+    background: linear-gradient(90deg, #b71c1c 0%, #e53935 100%);
+    color: #fff;
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 4px 12px rgba(183, 28, 28, 0.13);
+}
+
+/* Responsivo */
+@media (max-width: 700px) {
+    .header-container {
+        flex-direction: column;
+        gap: 18px;
+        padding: 16px 8vw;
+    }
+    .header-left {
+        font-size: 19px;
+    }
+    .app-header nav ul,
+    nav ul {
+        gap: 14px;
+    }
+    .header-user-info {
+        gap: 10px;
+    }
+    .header-username {
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+    .header-logout-btn {
+        padding: 7px 14px;
+        font-size: 14px;
+    }
 }
