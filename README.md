@@ -24,7 +24,7 @@ O sistema permite o gerenciamento completo do ciclo de medicação dos pacientes
 - **CSS3** — Estilização customizada para uma experiência visual agradável.
 - **React Hooks** — Gerenciamento de estado e efeitos.
 - **React Router** — Navegação entre páginas.
-- **Local Storage/API** — (Dependendo da implementação) para persistência dos dados.
+- **Local Storage/API** — Para persistência dos dados.
 
 ---
 
