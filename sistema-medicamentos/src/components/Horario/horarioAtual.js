@@ -9,7 +9,7 @@ function HorarioAtual() {
             try {
                 const apiKey = "GHQ1EHZZA0FT";
                 const response = await fetch(
-                    `http://api.timezonedb.com/v2.1/get-time-zone?key=${apiKey}&format=json&by=zone&zone=America/Sao_Paulo`
+                    `https://api.timezonedb.com/v2.1/get-time-zone?key=${apiKey}&format=json&by=zone&zone=America/Sao_Paulo`
                 );
 
                 if (!response.ok) {
