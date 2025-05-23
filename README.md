@@ -53,7 +53,7 @@ Você pode acessar a aplicação diretamente pelo link:
    ```
 2. Acesse o diretório do projeto:
    ```bash
-   cd Sistema_Medicamentos
+   cd sistema-medicamentos
    ```
 3. Instale as dependências:
    ```bash
