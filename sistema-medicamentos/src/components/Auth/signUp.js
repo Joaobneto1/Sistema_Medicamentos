@@ -4,7 +4,7 @@ import supabase from "../../services/supabaseClient";
 import "./Auth.css";
 
 function SignUp({ setIsSignUp }) {
-  const [signUpData, setSignUpData] = useState({ email: "", password: "" });
+  const [signUpData, setSignUpData] = useState({ email: "", password: "", nome: "" });
   const [signUpError, setSignUpError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -19,7 +19,8 @@ function SignUp({ setIsSignUp }) {
       email: signUpData.email,
       password: signUpData.password,
       options: {
-        emailRedirectTo: `${window.location.origin}/`, // Redireciona para a tela inicial após confirmação
+        emailRedirectTo: `${window.location.origin}/`,
+        data: { display_name: signUpData.nome }
       },
     });
 
@@ -37,6 +38,17 @@ function SignUp({ setIsSignUp }) {
         <h1>Cadastre-se</h1>
         <p>Crie sua conta para acessar o sistema</p>
         <form onSubmit={handleSignUpSubmit}>
+          <label>
+            Nome:
+            <input
+              type="text"
+              name="nome"
+              value={signUpData.nome}
+              onChange={handleSignUpChange}
+              placeholder="Digite seu nome completo"
+              required
+            />
+          </label>
           <label>
             Email:
             <input

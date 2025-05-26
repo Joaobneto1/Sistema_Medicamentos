@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import supabase from "../../services/supabaseClient";
 import "./PacienteManager.css";
 
@@ -18,6 +18,12 @@ const PacienteList = () => {
     const [pacientes, setPacientes] = useState([]);
     const [pacientesJaMedicados, setPacientesJaMedicados] = useState([]);
     const [pacientesAtrasados, setPacientesAtrasados] = useState([]);
+    const [alertasEstoque, setAlertasEstoque] = useState([]);
+    const [showAlertModal, setShowAlertModal] = useState(false);
+    const [alertaVisivel, setAlertaVisivel] = useState(false);
+    const [alertaMensagem, setAlertaMensagem] = useState("");
+    const [historicoAlertas, setHistoricoAlertas] = useState([]);
+    const alertaTimeout = useRef(null);
 
     useEffect(() => {
         const fetchPacientes = async () => {
@@ -142,13 +148,55 @@ const PacienteList = () => {
             }
         };
 
+        const fetchAlertasEstoque = async () => {
+            const { data, error } = await supabase
+                .from("estoque_medicamentos")
+                .select("quantidade, medicamento:medicamento_id(nome)")
+                .lte("quantidade", 5);
+
+            if (!error && data && data.length > 0) {
+                setAlertasEstoque(data);
+
+                // Mostra alerta para cada medicamento novo em alerta
+                data.forEach(item => {
+                    const mensagem = `Atenção: Estoque baixo para ${item.medicamento.nome} (apenas ${item.quantidade} unidade${item.quantidade === 1 ? "" : "s"})`;
+                    // Evita alertas duplicados no histórico
+                    setHistoricoAlertas(prev => {
+                        if (!prev.some(h => h.medicamentoNome === item.medicamento.nome)) {
+                            return [...prev, { medicamentoNome: item.medicamento.nome, quantidade: item.quantidade, id: Date.now() + Math.random() }];
+                        }
+                        return prev;
+                    });
+                    // Mostra alerta visual se não estiver visível
+                    setAlertaMensagem(mensagem);
+                    setAlertaVisivel(true);
+                    if (alertaTimeout.current) clearTimeout(alertaTimeout.current);
+                    alertaTimeout.current = setTimeout(() => setAlertaVisivel(false), 5000);
+                });
+            } else {
+                setAlertasEstoque([]);
+            }
+        };
+
         fetchPacientes();
+        fetchAlertasEstoque();
 
         // Atualiza a lista a cada 5 minutos
-        const interval = setInterval(fetchPacientes, 5 * 60 * 1000);
+        const interval = setInterval(() => {
+            fetchPacientes();
+            fetchAlertasEstoque();
+        }, 5 * 60 * 1000);
 
-        return () => clearInterval(interval);
+        return () => {
+            clearInterval(interval);
+            if (alertaTimeout.current) clearTimeout(alertaTimeout.current);
+        };
     }, []);
+
+    // Função para remover alerta do histórico
+    const removerAlertaHistorico = (id) => {
+        setHistoricoAlertas(prev => prev.filter(a => a.id !== id));
+    };
 
     const marcarComoMedicado = async (pacienteId, medicamentoId, isAtrasado = false) => {
         console.log(`Marcando como medicado: Paciente ID ${pacienteId}, Medicamento ID ${medicamentoId}`);
@@ -271,6 +319,141 @@ const PacienteList = () => {
 
     return (
         <div className="paciente-manager-container">
+            {/* Alerta visual flutuante */}
+            {alertaVisivel && (
+                <div
+                    style={{
+                        position: "fixed",
+                        top: 10,
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        background: "#ff9800",
+                        color: "#fff",
+                        padding: "12px 32px",
+                        borderRadius: 8,
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                        zIndex: 3000,
+                        fontWeight: 600,
+                        fontSize: 16,
+                        opacity: alertaVisivel ? 1 : 0,
+                        transition: "opacity 1s"
+                    }}
+                >
+                    {alertaMensagem}
+                </div>
+            )}
+
+            {/* Sino de alerta de estoque */}
+            <div style={{ position: "fixed", top: 20, right: 30, zIndex: 1000 }}>
+                <button
+                    style={{
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        position: "relative"
+                    }}
+                    onClick={() => setShowAlertModal(true)}
+                    title="Alertas de Estoque"
+                >
+                    {/* Ícone de sino */}
+                    <span style={{ fontSize: 32, color: alertasEstoque.length > 0 ? "#ff9800" : "#888" }}>
+                        &#128276;
+                    </span>
+                    {alertasEstoque.length > 0 && (
+                        <span
+                            style={{
+                                position: "absolute",
+                                top: 0,
+                                right: 0,
+                                background: "#ff9800",
+                                color: "#fff",
+                                borderRadius: "50%",
+                                width: 18,
+                                height: 18,
+                                fontSize: 12,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center"
+                            }}
+                        >
+                            {alertasEstoque.length}
+                        </span>
+                    )}
+                </button>
+            </div>
+            {/* Modal de alertas/histórico */}
+            {showAlertModal && (
+                <div
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100vw",
+                        height: "100vh",
+                        background: "rgba(0,0,0,0.3)",
+                        zIndex: 2000,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center"
+                    }}
+                    onClick={() => setShowAlertModal(false)}
+                >
+                    <div
+                        style={{
+                            background: "#fff",
+                            borderRadius: 8,
+                            padding: 24,
+                            minWidth: 320,
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+                            position: "relative"
+                        }}
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <h2 style={{ marginTop: 0 }}>Histórico de Alertas de Estoque Baixo</h2>
+                        {historicoAlertas.length === 0 ? (
+                            <p>Nenhum alerta no histórico.</p>
+                        ) : (
+                            <ul style={{ padding: 0, listStyle: "none" }}>
+                                {historicoAlertas.map((item) => (
+                                    <li key={item.id} style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
+                                        <span style={{ flex: 1 }}>
+                                            <strong>{item.medicamentoNome}</strong> - Estoque: {item.quantidade}
+                                        </span>
+                                        <button
+                                            style={{
+                                                background: "none",
+                                                border: "none",
+                                                color: "#ff6b6b",
+                                                fontSize: 18,
+                                                cursor: "pointer",
+                                                marginLeft: 8
+                                            }}
+                                            title="Marcar como lido"
+                                            onClick={() => removerAlertaHistorico(item.id)}
+                                        >
+                                            &#10006;
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                        <button
+                            style={{
+                                marginTop: 16,
+                                background: "#2196f3",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: 4,
+                                padding: "8px 16px",
+                                cursor: "pointer"
+                            }}
+                            onClick={() => setShowAlertModal(false)}
+                        >
+                            Fechar
+                        </button>
+                    </div>
+                </div>
+            )}
             <h2 style={{ textAlign: "center", margin: "24px 0 16px 0", fontWeight: 500, color: "#444" }}>
                 Pacientes disponíveis:
             </h2>

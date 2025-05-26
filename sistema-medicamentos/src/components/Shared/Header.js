@@ -21,7 +21,7 @@ const Header = ({ user, handleLogout }) => {
                 {user && (
                     <div className="header-user-info">
                         <span className="header-username">
-                            {user.user_metadata?.name || user.email || "Usuário"}
+                            {user.user_metadata?.display_name || user.nome || user.name || "Usuário"}
                         </span>
                         <button className="header-logout-btn" onClick={handleLogout}>
                             Sair
