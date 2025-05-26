@@ -71,9 +71,15 @@ const PacienteList = () => {
                         if (medicamento.medicado && medicamento.updated_at && medicamento.intervalo_horas) {
                             const ultimaMed = new Date(medicamento.updated_at);
                             const proximaDose = new Date(ultimaMed.getTime() + medicamento.intervalo_horas * 60 * 60 * 1000);
+
                             if (horaAtual >= proximaDose) {
                                 // Após o intervalo, pode medicar novamente
-                                podeMedicar = true;
+                                // Se já passou do horário da dose, está atrasado
+                                if (horaAtual > horarioDose) {
+                                    estaAtrasado = true;
+                                } else if (Math.floor((horarioDose - horaAtual) / (1000 * 60)) >= 0 && Math.floor((horarioDose - horaAtual) / (1000 * 60)) <= margemMinutos) {
+                                    podeMedicar = true;
+                                }
                                 jaMedicado = false;
                             } else {
                                 jaMedicado = true;
@@ -89,7 +95,6 @@ const PacienteList = () => {
                         }
 
                         // --- NOVO: sempre permitir que doses futuras do mesmo medicamento apareçam ---
-                        // Se o horário da dose for maior que a hora atual, e já passou o intervalo, pode medicar novamente
                         if (medicamento.medicado && medicamento.updated_at && medicamento.intervalo_horas) {
                             const ultimaMed = new Date(medicamento.updated_at);
                             const proximaDose = new Date(ultimaMed.getTime() + medicamento.intervalo_horas * 60 * 60 * 1000);
