@@ -46,7 +46,7 @@ const PacienteList = () => {
                 console.error("Erro ao buscar pacientes:", error);
             } else {
                 const horaAtual = new Date();
-                const margemMinutos = 15; // Margem de 15 minutos para considerar horários próximos
+                const margemMinutos = 15;
 
                 const pacientesParaMedicar = [];
                 const pacientesMedicados = [];
@@ -58,26 +58,24 @@ const PacienteList = () => {
                     const medicamentosNaoMedicados = [];
 
                     paciente.paciente_medicamentos.forEach((medicamento) => {
-                        // Calcular o próximo horário em que o medicamento pode ser administrado
-                        let podeMedicar = false;
-                        let estaAtrasado = false;
-                        let jaMedicado = false;
-
                         // Parse do horário da dose
                         const [horas, minutos] = medicamento.horario_dose.split(":").map(Number);
                         const horarioDose = new Date(horaAtual);
                         horarioDose.setHours(horas, minutos, 0, 0);
+
+                        let podeMedicar = false;
+                        let estaAtrasado = false;
+                        let jaMedicado = false;
 
                         // Se já foi medicado, verificar se já passou o intervalo
                         if (medicamento.medicado && medicamento.updated_at && medicamento.intervalo_horas) {
                             const ultimaMed = new Date(medicamento.updated_at);
                             const proximaDose = new Date(ultimaMed.getTime() + medicamento.intervalo_horas * 60 * 60 * 1000);
                             if (horaAtual >= proximaDose) {
-                                // Já passou o intervalo, pode medicar novamente
+                                // Após o intervalo, pode medicar novamente
                                 podeMedicar = true;
                                 jaMedicado = false;
                             } else {
-                                // Ainda não passou o intervalo, considerar como já medicado
                                 jaMedicado = true;
                             }
                         } else if (!medicamento.medicado) {
@@ -89,6 +87,18 @@ const PacienteList = () => {
                                 estaAtrasado = true;
                             }
                         }
+
+                        // --- NOVO: sempre permitir que doses futuras do mesmo medicamento apareçam ---
+                        // Se o horário da dose for maior que a hora atual, e já passou o intervalo, pode medicar novamente
+                        if (medicamento.medicado && medicamento.updated_at && medicamento.intervalo_horas) {
+                            const ultimaMed = new Date(medicamento.updated_at);
+                            const proximaDose = new Date(ultimaMed.getTime() + medicamento.intervalo_horas * 60 * 60 * 1000);
+                            if (horarioDose > horaAtual && horaAtual >= proximaDose) {
+                                podeMedicar = true;
+                                jaMedicado = false;
+                            }
+                        }
+                        // --- FIM NOVO ---
 
                         if (podeMedicar) {
                             medicamentosParaMedicar.push(medicamento);
