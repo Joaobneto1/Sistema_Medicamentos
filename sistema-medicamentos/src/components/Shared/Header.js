@@ -1,14 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import HorarioAtual from "../Horario/horarioAtual";
 import "./Header.css";
 
-const Header = ({ user, handleLogout }) => {
+const Header = ({ user, handleLogout, hasAlert }) => {
+    useEffect(() => {
+        if (hasAlert) {
+            document.title = "🔴 Sistema de Medicamentos - ALERTA";
+        } else {
+            document.title = "Sistema de Medicamentos";
+        }
+    }, [hasAlert]);
+
     return (
         <header className="app-header">
             <div className="header-container">
                 <div className="header-left">
                     <HorarioAtual /> {/* Exibe o horário atual no canto esquerdo */}
+                  
                 </div>
                 <nav>
                     <ul>
