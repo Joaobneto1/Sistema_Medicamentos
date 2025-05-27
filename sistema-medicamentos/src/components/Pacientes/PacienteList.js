@@ -199,24 +199,6 @@ const PacienteList = () => {
     };
 
     const marcarComoMedicado = async (pacienteId, medicamentoId, isAtrasado = false) => {
-        console.log(`Marcando como medicado: Paciente ID ${pacienteId}, Medicamento ID ${medicamentoId}`);
-
-        // Atualiza o status do medicamento para "medicado" e define o updated_at manualmente
-        const { error: updateError } = await supabase
-            .from("paciente_medicamentos")
-            .update({
-                medicado: true,
-                updated_at: new Date().toISOString(), // Define o valor de updated_at manualmente
-            })
-            .match({ paciente_id: pacienteId, medicamento_id: medicamentoId });
-
-        if (updateError) {
-            console.error("Erro ao registrar medicação:", updateError);
-            return;
-        }
-
-        console.log("Medicação registrada com sucesso!");
-
         // Busca o valor atual do estoque na tabela estoque_medicamentos
         const { data: estoqueData, error: fetchError } = await supabase
             .from("estoque_medicamentos")
@@ -225,15 +207,46 @@ const PacienteList = () => {
             .single();
 
         if (fetchError) {
-            console.error("Erro ao buscar o estoque do medicamento:", fetchError);
+            setAlertaMensagem("Erro ao buscar o estoque do medicamento.");
+            setAlertaVisivel(true);
+            if (alertaTimeout.current) clearTimeout(alertaTimeout.current);
+            alertaTimeout.current = setTimeout(() => setAlertaVisivel(false), 4000);
             return;
         }
 
         const estoqueAtual = estoqueData.quantidade;
 
-        // Verifica se há estoque disponível
+        // Se não há estoque, alerta e bloqueia
         if (estoqueAtual <= 0) {
-            console.error("Estoque insuficiente para o medicamento.");
+            setAlertaMensagem("Não é possível medicar: medicamento sem estoque!");
+            setAlertaVisivel(true);
+            if (alertaTimeout.current) clearTimeout(alertaTimeout.current);
+            alertaTimeout.current = setTimeout(() => setAlertaVisivel(false), 4000);
+            return;
+        }
+
+        // Se é o último, alerta visual
+        if (estoqueAtual === 1) {
+            setAlertaMensagem("Atenção: esse é o último medicamento em estoque!");
+            setAlertaVisivel(true);
+            if (alertaTimeout.current) clearTimeout(alertaTimeout.current);
+            alertaTimeout.current = setTimeout(() => setAlertaVisivel(false), 4000);
+        }
+
+        // Atualiza o status do medicamento para "medicado" e define o updated_at manualmente
+        const { error: updateError } = await supabase
+            .from("paciente_medicamentos")
+            .update({
+                medicado: true,
+                updated_at: new Date().toISOString(),
+            })
+            .match({ paciente_id: pacienteId, medicamento_id: medicamentoId });
+
+        if (updateError) {
+            setAlertaMensagem("Erro ao registrar medicação.");
+            setAlertaVisivel(true);
+            if (alertaTimeout.current) clearTimeout(alertaTimeout.current);
+            alertaTimeout.current = setTimeout(() => setAlertaVisivel(false), 4000);
             return;
         }
 
@@ -244,11 +257,12 @@ const PacienteList = () => {
             .match({ medicamento_id: medicamentoId });
 
         if (estoqueError) {
-            console.error("Erro ao atualizar o estoque do medicamento:", estoqueError);
+            setAlertaMensagem("Erro ao atualizar o estoque do medicamento.");
+            setAlertaVisivel(true);
+            if (alertaTimeout.current) clearTimeout(alertaTimeout.current);
+            alertaTimeout.current = setTimeout(() => setAlertaVisivel(false), 4000);
             return;
         }
-
-        console.log("Estoque do medicamento atualizado com sucesso!");
 
         // Atualiza o estado local
         if (isAtrasado) {
