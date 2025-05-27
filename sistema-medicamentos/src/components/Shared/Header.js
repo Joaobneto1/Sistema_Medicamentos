@@ -17,7 +17,6 @@ const Header = ({ user, handleLogout, hasAlert }) => {
             <div className="header-container">
                 <div className="header-left">
                     <HorarioAtual /> {/* Exibe o horário atual no canto esquerdo */}
-                  
                 </div>
                 <nav>
                     <ul>

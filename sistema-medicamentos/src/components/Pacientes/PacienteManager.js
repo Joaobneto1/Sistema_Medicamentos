@@ -67,6 +67,9 @@ const PacienteManager = () => {
                                     <div className="paciente-card-subtitle">
                                         Data de Nascimento: {paciente.data_nascimento}
                                     </div>
+                                    <div className="paciente-card-subtitle">
+                                        quarto: {paciente.quarto}
+                                    </div>
                                 </div>
                                 {paciente.foto_url && (
                                     <img
