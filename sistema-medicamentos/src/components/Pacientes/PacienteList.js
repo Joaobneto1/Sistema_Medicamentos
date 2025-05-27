@@ -52,7 +52,7 @@ const PacienteList = () => {
                 console.error("Erro ao buscar pacientes:", error);
             } else {
                 const horaAtual = new Date();
-                const margemMinutos = 15;
+                const margemMinutos = 5;
 
                 const pacientesParaMedicar = [];
                 const pacientesMedicados = [];
