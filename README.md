@@ -1,6 +1,6 @@
-# 💊 Sistema de Gerenciamento de Medicamentos
+# 💊 AlertaMed
 
-Bem-vindo ao **Sistema_Medicamentos**!  
+Bem-vindo ao **AlertaMed**!  
 Este projeto é uma aplicação web desenvolvida para auxiliar no controle de pacientes e administração de medicamentos em casas de repouso principalmente e posteriormente podendo subir para ambientes hospitalares.
 
 ---
