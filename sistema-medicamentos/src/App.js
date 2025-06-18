@@ -11,6 +11,7 @@ import HistoricoMedicados from "./components/Historico/HistoricoMedicados";
 import Login from "./components/Auth/login";
 import SignUp from "./components/Auth/signUp";
 import supabase from "./services/supabaseClient";
+import { Analytics } from "@vercel/analytics/react";
 
 const App = () => {
   const [user, setUser] = useState(null); // Estado para armazenar o usuário logado
@@ -63,6 +64,7 @@ const App = () => {
           )}
         </Routes>
       </div>
+      <Analytics />
     </Router>
   );
 };
