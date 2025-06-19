@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model pacientes {
+  id              String   @id @default(uuid())
+  nome            String
+  data_nascimento DateTime
+  criado_em       DateTime @default(now())
+  idade           Float
+  quarto          String
+  foto_url        String?
+  paciente_medicamentos paciente_medicamentos[]
+  historico_doses historico_doses[]
+}
+
+model medicamentos {
+  id                   String   @id @default(uuid())
+  nome                 String
+  descricao            String
+  dose_mg              Float
+  criado_em            DateTime @default(now())
+  ingredientes_alergicos String?
+  paciente_medicamentos paciente_medicamentos[]
+  estoque_medicamentos  estoque_medicamentos[]
+  historico_doses       historico_doses[]
+}
+
+model estoque_medicamentos {
+  id             String   @id @default(uuid())
+  medicamento_id String
+  quantidade     Int
+  atualizado_em  DateTime
+
+  medicamento    medicamentos @relation(fields: [medicamento_id], references: [id])
+}
+
+model paciente_medicamentos {
+  id                  String   @id @default(uuid())
+  paciente_id         String
+  medicamento_id      String
+  horario_dose        String   // Prisma não tem tipo 'time', use String
+  criado_em           DateTime @default(now())
+  intervalo_horas     Int
+  proximo_medicamento Boolean
+  medicado            Boolean
+  updated_at          DateTime
+  data_inicio         DateTime
+  dias_tratamento     Int
+  uso_cronico         Boolean
+
+  paciente            pacientes   @relation(fields: [paciente_id], references: [id])
+  medicamento         medicamentos @relation(fields: [medicamento_id], references: [id])
+}
+
+model historico_doses {
+  id                String   @id @default(uuid())
+  paciente_id       String
+  medicamento_id    String
+  date_hora_tomada  DateTime
+  quantidade_usada  Int
+  observacoes       String?
+
+  paciente          pacientes   @relation(fields: [paciente_id], references: [id])
+  medicamento       medicamentos @relation(fields: [medicamento_id], references: [id])
+}
