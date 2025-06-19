@@ -33,9 +33,13 @@ app.use(async (req, res, next) => {
 // Importa rotas organizadas
 const pacientesRoutes = require('./routes/pacientes');
 const adminRoutes = require('./routes/admin');
+const estoqueRoutes = require('./routes/estoque');
+const medicamentosRoutes = require('./routes/medicamentos');
 
 app.use('/pacientes', pacientesRoutes);
 app.use('/admin', adminRoutes);
+app.use('/estoque', estoqueRoutes);
+app.use('/medicamentos', medicamentosRoutes);
 
 // Iniciar servidor
 const PORT = process.env.PORT || 3001;

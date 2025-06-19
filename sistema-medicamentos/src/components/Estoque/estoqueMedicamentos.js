@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import supabase from "../../services/supabaseClient";
+import api from "../../services/api";
 import "./estoqueMedicamentos.css";
 
 const EstoqueMedicamentos = () => {
@@ -24,23 +24,20 @@ const EstoqueMedicamentos = () => {
 
     useEffect(() => {
         const fetchEstoque = async () => {
-            const { data, error } = await supabase
-                .from("estoque_medicamentos")
-                .select("id, quantidade, atualizado_em, medicamento_id, medicamento:medicamento_id(nome, descricao, dose_mg)");
-
-            if (error) {
-                console.error("Erro ao buscar estoque:", error);
-            } else {
+            try {
+                const { data } = await api.get("/estoque");
                 setEstoque(data);
+            } catch (error) {
+                console.error("Erro ao buscar estoque:", error);
             }
         };
 
         const fetchMedicamentos = async () => {
-            const { data, error } = await supabase.from("medicamentos").select("id, nome, descricao, dose_mg");
-            if (error) {
-                console.error("Erro ao buscar medicamentos:", error);
-            } else {
+            try {
+                const { data } = await api.get("/medicamentos");
                 setMedicamentos(data);
+            } catch (error) {
+                console.error("Erro ao buscar medicamentos:", error);
             }
         };
 
@@ -55,23 +52,20 @@ const EstoqueMedicamentos = () => {
             return;
         }
 
-        const { error } = await supabase
-            .from("medicamentos")
-            .insert([{
+        try {
+            await api.post("/medicamentos", {
                 nome: novoMedicamento.nome,
                 descricao: novoMedicamento.descricao,
                 dose_mg: novoMedicamento.dose
-            }]);
-
-        if (error) {
-            console.error("Erro ao adicionar medicamento:", error);
-            alert("Erro ao adicionar medicamento.");
-        } else {
+            });
             alert("Medicamento adicionado com sucesso!");
             setShowMedicamentoModal(false);
             setNovoMedicamento({ nome: "", descricao: "", dose: 0 });
-            const { data: updatedMedicamentos } = await supabase.from("medicamentos").select("id, nome");
+            const { data: updatedMedicamentos } = await api.get("/medicamentos");
             setMedicamentos(updatedMedicamentos);
+        } catch (error) {
+            console.error("Erro ao adicionar medicamento:", error);
+            alert("Erro ao adicionar medicamento.");
         }
     };
 
@@ -82,25 +76,20 @@ const EstoqueMedicamentos = () => {
             return;
         }
 
-        const { error } = await supabase
-            .from("estoque_medicamentos")
-            .insert([{
+        try {
+            await api.post("/estoque", {
                 medicamento_id: novoEstoque.medicamento_id,
                 quantidade: novoEstoque.quantidade,
                 atualizado_em: novoEstoque.atualizado_em
-            }]);
-
-        if (error) {
-            console.error("Erro ao adicionar ao estoque:", error);
-            alert("Erro ao adicionar ao estoque.");
-        } else {
+            });
             alert("Estoque adicionado com sucesso!");
             setShowEstoqueModal(false);
             setNovoEstoque({ medicamento_id: "", quantidade: 0, atualizado_em: "" });
-            const { data: estoqueData } = await supabase
-                .from("estoque_medicamentos")
-                .select("id, quantidade, atualizado_em, medicamento:medicamento_id(nome, descricao, dose_mg)");
+            const { data: estoqueData } = await api.get("/estoque");
             setEstoque(estoqueData);
+        } catch (error) {
+            console.error("Erro ao adicionar ao estoque:", error);
+            alert("Erro ao adicionar ao estoque.");
         }
     };
 
@@ -111,37 +100,34 @@ const EstoqueMedicamentos = () => {
             return;
         }
 
-        const { error } = await supabase
-            .from("estoque_medicamentos")
-            .update({ quantidade: editarEstoque.quantidade, atualizado_em: new Date().toISOString() })
-            .eq("id", editarEstoque.id);
-
-        if (error) {
-            console.error("Erro ao editar estoque:", error);
-            alert("Erro ao editar estoque.");
-        } else {
+        try {
+            await api.put(`/estoque/${editarEstoque.id}`, {
+                quantidade: editarEstoque.quantidade,
+                atualizado_em: new Date().toISOString()
+            });
             alert("Estoque atualizado com sucesso!");
             setEditarEstoque(null);
-            const { data: estoqueData } = await supabase
-                .from("estoque_medicamentos")
-                .select("id, quantidade, atualizado_em, medicamento:medicamento_id(nome, descricao, dose_mg)");
+            const { data: estoqueData } = await api.get("/estoque");
             setEstoque(estoqueData);
+        } catch (error) {
+            console.error("Erro ao editar estoque:", error);
+            alert("Erro ao editar estoque.");
         }
     };
 
     const handleDelete = async () => {
         if (!medicamentoParaExcluir) return;
 
-        console.log("ID do medicamento para excluir:", medicamentoParaExcluir.id); // Adicione este log
+        console.log("ID do medicamento para excluir:", medicamentoParaExcluir.id);
 
-        const { error } = await supabase.from("medicamentos").delete().eq("id", medicamentoParaExcluir.id);
-        if (error) {
-            console.error("Erro ao deletar medicamento:", error);
-            setFeedbackMessage("Erro ao deletar medicamento.");
-        } else {
+        try {
+            await api.delete(`/medicamentos/${medicamentoParaExcluir.id}`);
             setMedicamentos(medicamentos.filter((medicamento) => medicamento.id !== medicamentoParaExcluir.id));
             setEstoque(estoque.filter((item) => item.medicamento_id !== medicamentoParaExcluir.id));
             setFeedbackMessage(`Medicamento "${medicamentoParaExcluir.nome}" deletado com sucesso!`);
+        } catch (error) {
+            console.error("Erro ao deletar medicamento:", error);
+            setFeedbackMessage("Erro ao deletar medicamento.");
         }
         setMedicamentoParaExcluir(null);
 

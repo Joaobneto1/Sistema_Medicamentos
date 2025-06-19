@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import supabase from '../../services/supabaseClient';
+import api from '../../services/api';
 import './estoqueMedicamentos.css';
 
 const EstoqueMedicamentos = () => {
     const [medicamentos, setMedicamentos] = useState([]);
 
     const fetchMedicamentos = async () => {
-        const { data, error } = await supabase.from('medicamentos').select('id, nome, estoque');
-        if (error) {
-            console.error('Erro ao buscar medicamentos:', error);
-        } else {
+        try {
+            const { data } = await api.get('/medicamentos');
             setMedicamentos(data);
+        } catch (error) {
+            console.error('Erro ao buscar medicamentos:', error);
         }
     };
 

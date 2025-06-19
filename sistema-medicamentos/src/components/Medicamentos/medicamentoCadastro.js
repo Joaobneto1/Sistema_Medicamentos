@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import supabase from '../../services/supabaseClient';
+import api from '../../services/api';
 import './medicamentoCadastro.css';
 
 const MedicamentoCadastro = () => {
@@ -13,12 +13,12 @@ const MedicamentoCadastro = () => {
     });
 
     const handleAdd = async () => {
-        const { error } = await supabase.from('medicamentos').insert([novoMedicamento]);
-        if (error) {
-            console.error('Erro ao adicionar medicamento:', error);
-        } else {
+        try {
+            await api.post('/medicamentos', novoMedicamento);
             alert('Medicamento cadastrado com sucesso!');
             setNovoMedicamento({ nome: '', dosagem: '', descricao: '', horarios: '', estoque: 0, frequencia: 0 });
+        } catch (error) {
+            console.error('Erro ao adicionar medicamento:', error);
         }
     };
 
