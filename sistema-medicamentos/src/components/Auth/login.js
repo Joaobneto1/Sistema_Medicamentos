@@ -23,6 +23,7 @@ function Login({ setUser, setIsSignUp }) {
       setLoginError("Erro ao fazer login. Verifique suas credenciais.");
     } else {
       setUser(data.user);
+      console.log("Access token:", data.session?.access_token);
       setLoginError("");
     }
   };
