@@ -15,7 +15,7 @@ function SignUp({ setIsSignUp }) {
 
   const handleSignUpSubmit = async (e) => {
     e.preventDefault();
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: signUpData.email,
       password: signUpData.password,
       options: {
@@ -29,6 +29,10 @@ function SignUp({ setIsSignUp }) {
     } else {
       setSuccessMessage("Conta criada com sucesso! Verifique seu email para confirmar.");
       setSignUpError("");
+      // Salva o access_token no localStorage se disponível
+      if (data.session?.access_token) {
+        localStorage.setItem("supabaseToken", data.session.access_token);
+      }
     }
   };
 

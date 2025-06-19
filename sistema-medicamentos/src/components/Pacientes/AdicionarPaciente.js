@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../services/api"; // Novo client axios
 import supabase from "../../services/supabaseClient";
 import "./PacienteManager.css";
 
@@ -9,6 +10,7 @@ const AdicionarPaciente = () => {
     const [associacoes, setAssociacoes] = useState([
         { medicamento_id: "", horario_dose: "", intervalo_horas: "", uso_cronico: false, dias_tratamento: "" }
     ]);
+    const [uploadingFoto, setUploadingFoto] = useState(false);
     const navigate = useNavigate();
 
     const diasSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
@@ -25,15 +27,15 @@ const AdicionarPaciente = () => {
     }
 
     useEffect(() => {
+        // Busca medicamentos via backend
         const fetchMedicamentos = async () => {
-            const { data, error } = await supabase.from("medicamentos").select("*");
-            if (error) {
-                console.error("Erro ao buscar medicamentos:", error);
-            } else {
+            try {
+                const { data } = await api.get("/medicamentos");
                 setMedicamentos(data);
+            } catch (error) {
+                console.error("Erro ao buscar medicamentos:", error);
             }
         };
-
         fetchMedicamentos();
     }, []);
 
@@ -44,48 +46,28 @@ const AdicionarPaciente = () => {
             return;
         }
 
-        // Insere o paciente na tabela "pacientes"
-        const { data: pacienteData, error: pacienteError } = await supabase
-            .from("pacientes")
-            .insert([novoPaciente])
-            .select();
+        // Converte data_nascimento para YYYY-MM-DD se vier em formato brasileiro
+        let dataNascimento = novoPaciente.data_nascimento;
+        if (dataNascimento && dataNascimento.includes("/")) {
+            const [dia, mes, ano] = dataNascimento.split("/").map(s => s.trim());
+            dataNascimento = `${ano}-${mes.padStart(2, "0")}-${dia.padStart(2, "0")}`;
+        }
 
-        if (pacienteError) {
-            console.error("Erro ao adicionar paciente:", pacienteError);
+        try {
+            // Envia paciente e associações para o backend
+            await api.post("/pacientes", {
+                ...novoPaciente,
+                data_nascimento: dataNascimento,
+                medicamentos: associacoes.filter(
+                    (associacao) => associacao.medicamento_id && associacao.horario_dose && associacao.intervalo_horas > 0
+                ),
+            });
+            alert("Paciente adicionado com sucesso!");
+            navigate("/pacientes");
+        } catch (error) {
+            console.error("Erro ao adicionar paciente:", error);
             alert("Erro ao adicionar paciente. Verifique os dados e tente novamente.");
-            return;
         }
-
-        // Obtém o ID do paciente recém-criado
-        const pacienteId = pacienteData[0].id;
-
-        // Insere os medicamentos associados ao paciente
-        const associacoesValidas = associacoes.filter(
-            (associacao) => associacao.medicamento_id && associacao.horario_dose && associacao.intervalo_horas > 0
-        );
-
-        if (associacoesValidas.length > 0) {
-            await supabase
-                .from("paciente_medicamentos")
-                .upsert(
-                    associacoesValidas.map((associacao) => {
-                        let dias_tratamento = associacao.uso_cronico ? 365 : associacao.dias_tratamento;
-                        let uso_cronico = associacao.uso_cronico || dias_tratamento >= 365;
-                        return {
-                            paciente_id: pacienteId,
-                            medicamento_id: associacao.medicamento_id,
-                            horario_dose: associacao.horario_dose,
-                            intervalo_horas: associacao.intervalo_horas,
-                            uso_cronico,
-                            dias_tratamento,
-                        };
-                    }),
-                    { onConflict: ["paciente_id", "medicamento_id"] }
-                );
-        }
-
-        alert("Paciente adicionado com sucesso!");
-        navigate("/pacientes");
     };
 
     const handleAddAssociacao = () => {
@@ -109,14 +91,36 @@ const AdicionarPaciente = () => {
         setAssociacoes(updatedAssociacoes);
     };
 
-    const handleFotoChange = (e) => {
+    // Mantém o upload da foto no Supabase Storage
+    const handleFotoChange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setNovoPaciente((prev) => ({ ...prev, foto_url: reader.result }));
-        };
-        reader.readAsDataURL(file);
+        setUploadingFoto(true);
+        const filePath = `pacientes/${Date.now()}_${file.name}`;
+        const { data, error } = await supabase.storage
+            .from('fotos-pacientes')
+            .upload(filePath, file);
+
+        console.log("Resposta do upload Supabase:", { data, error });
+
+        if (error) {
+            console.error("Erro detalhado do Supabase Storage:", error);
+            alert("Erro ao fazer upload da foto.");
+            setUploadingFoto(false);
+            return;
+        }
+
+        // Corrigido: pega a URL pública corretamente
+        const { data: publicUrlData } = supabase
+            .storage
+            .from('fotos-pacientes')
+            .getPublicUrl(filePath);
+
+        const publicURL = publicUrlData?.publicUrl;
+        console.log("URL pública gerada:", publicURL, "filePath:", filePath);
+
+        setNovoPaciente((prev) => ({ ...prev, foto_url: publicURL }));
+        setUploadingFoto(false);
     };
 
     return (
@@ -157,7 +161,9 @@ const AdicionarPaciente = () => {
                     type="file"
                     accept="image/*"
                     onChange={handleFotoChange}
+                    disabled={uploadingFoto}
                 />
+                {uploadingFoto && <span>Enviando foto...</span>}
                 {novoPaciente.foto_url && (
                     <img src={novoPaciente.foto_url} alt="Foto do paciente" style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 8, marginBottom: 8 }} />
                 )}
@@ -246,7 +252,13 @@ const AdicionarPaciente = () => {
                 ))}
                 {/* Botão Salvar único no final do formulário */}
                 <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-                    <button type="submit" className="save-button">Salvar</button>
+                    <button
+                        type="submit"
+                        className="save-button"
+                        disabled={uploadingFoto}
+                    >
+                        Salvar
+                    </button>
                 </div>
             </form>
         </div>

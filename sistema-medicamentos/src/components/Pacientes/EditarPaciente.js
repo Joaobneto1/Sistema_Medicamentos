@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import api from "../../services/api";
 import supabase from "../../services/supabaseClient";
 import "./PacienteManager.css";
 
@@ -25,30 +26,10 @@ const EditarPaciente = () => {
     }
 
     useEffect(() => {
+        // Busca paciente e associações via backend
         const fetchPaciente = async () => {
-            const { data, error } = await supabase
-                .from("pacientes")
-                .select(`
-                    id, 
-                    nome, 
-                    idade, 
-                    data_nascimento, 
-                    quarto,
-                    foto_url,
-                    paciente_medicamentos(
-                        medicamento_id, 
-                        horario_dose,
-                        intervalo_horas,
-                        uso_cronico,
-                        dias_tratamento
-                    )
-                `)
-                .eq("id", id)
-                .single();
-
-            if (error) {
-                console.error("Erro ao buscar paciente:", error);
-            } else {
+            try {
+                const { data } = await api.get(`/pacientes/${id}`);
                 setPaciente({
                     nome: data.nome,
                     idade: data.idade,
@@ -56,25 +37,19 @@ const EditarPaciente = () => {
                     quarto: data.quarto || "",
                     foto_url: data.foto_url || ""
                 });
-
-                if (data.paciente_medicamentos.length > 0) {
-                    setAssociacoes(data.paciente_medicamentos.map((item) => ({
-                        medicamento_id: item.medicamento_id,
-                        horario_dose: item.horario_dose,
-                        intervalo_horas: item.intervalo_horas || 1,
-                        uso_cronico: item.uso_cronico || false,
-                        dias_tratamento: item.dias_tratamento || 1,
-                    })));
-                }
+                setAssociacoes(data.medicamentos || []);
+            } catch (error) {
+                console.error("Erro ao buscar paciente:", error);
             }
         };
 
+        // Busca medicamentos via backend
         const fetchMedicamentos = async () => {
-            const { data, error } = await supabase.from("medicamentos").select("*");
-            if (error) {
-                console.error("Erro ao buscar medicamentos:", error);
-            } else {
+            try {
+                const { data } = await api.get("/medicamentos");
                 setMedicamentos(data);
+            } catch (error) {
+                console.error("Erro ao buscar medicamentos:", error);
             }
         };
 
@@ -108,14 +83,25 @@ const EditarPaciente = () => {
         setHorariosCalculados(novosHorarios);
     };
 
-    const handleFotoChange = (e) => {
+    const handleFotoChange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setPaciente((prev) => ({ ...prev, foto_url: reader.result }));
-        };
-        reader.readAsDataURL(file);
+        const filePath = `pacientes/${Date.now()}_${file.name}`;
+        const { error } = await supabase.storage
+            .from('fotos-pacientes')
+            .upload(filePath, file);
+
+        if (error) {
+            alert("Erro ao fazer upload da foto.");
+            return;
+        }
+
+        const { publicURL } = supabase
+            .storage
+            .from('fotos-pacientes')
+            .getPublicUrl(filePath);
+
+        setPaciente((prev) => ({ ...prev, foto_url: publicURL }));
     };
 
     const handleEditPaciente = async (e) => {
@@ -125,96 +111,22 @@ const EditarPaciente = () => {
             return;
         }
 
-        // Atualiza dados do paciente
-        const { error: pacienteError } = await supabase
-            .from("pacientes")
-            .update({
-                nome: paciente.nome,
-                idade: paciente.idade,
-                data_nascimento: paciente.data_nascimento,
-                quarto: paciente.quarto,
-                foto_url: paciente.foto_url || null
-            })
-            .eq("id", id);
-
-        if (pacienteError) {
-            console.error("Erro ao editar paciente:", pacienteError);
-            return;
+        try {
+            // Atualiza paciente e associações via backend
+            await api.put(`/pacientes/${id}`, {
+                ...paciente,
+                medicamentos: associacoes.filter(
+                    (a) => a.medicamento_id && a.horario_dose && a.intervalo_horas > 0
+                ),
+            });
+            setFeedbackMessage("Paciente atualizado com sucesso!");
+            setTimeout(() => {
+                setFeedbackMessage("");
+                navigate("/pacientes");
+            }, 1000);
+        } catch (error) {
+            console.error("Erro ao editar paciente:", error);
         }
-
-        // Busca associações atuais do banco
-        const { data: assocAtuais, error: assocFetchError } = await supabase
-            .from("paciente_medicamentos")
-            .select("medicamento_id")
-            .eq("paciente_id", id);
-
-        if (assocFetchError) {
-            console.error("Erro ao buscar associações atuais:", assocFetchError);
-            return;
-        }
-
-        // Lista de medicamento_ids atualmente no formulário
-        const idsNoForm = associacoes
-            .filter(a => a.medicamento_id)
-            .map(a => String(a.medicamento_id));
-
-        // Lista de medicamento_ids atualmente no banco
-        const idsNoBanco = (assocAtuais || []).map(a => String(a.medicamento_id));
-
-        // Descobre quais ids foram removidos no formulário
-        const idsRemovidos = idsNoBanco.filter(idBanco => !idsNoForm.includes(idBanco));
-
-        // Remove do banco os medicamentos removidos no formulário
-        if (idsRemovidos.length > 0) {
-            const { error: delError } = await supabase
-                .from("paciente_medicamentos")
-                .delete()
-                .eq("paciente_id", id)
-                .in("medicamento_id", idsRemovidos);
-            if (delError) {
-                console.error("Erro ao remover medicamentos:", delError);
-                return;
-            }
-        }
-
-        // Upsert dos medicamentos presentes no formulário
-        const associacoesValidas = associacoes.filter(
-            (associacao) =>
-                associacao.medicamento_id &&
-                associacao.horario_dose &&
-                associacao.intervalo_horas > 0
-        );
-
-        if (associacoesValidas.length > 0) {
-            const { error: associarError } = await supabase
-                .from("paciente_medicamentos")
-                .upsert(
-                    associacoesValidas.map((associacao) => {
-                        let dias_tratamento = associacao.uso_cronico ? 365 : associacao.dias_tratamento || 1;
-                        let uso_cronico = !!associacao.uso_cronico || dias_tratamento >= 365;
-                        return {
-                            paciente_id: id,
-                            medicamento_id: associacao.medicamento_id,
-                            horario_dose: associacao.horario_dose,
-                            intervalo_horas: Number(associacao.intervalo_horas) || 1,
-                            uso_cronico,
-                            dias_tratamento,
-                        };
-                    }),
-                    { onConflict: ["paciente_id", "medicamento_id"] }
-                );
-
-            if (associarError) {
-                console.error("Erro ao atualizar medicamentos associados:", associarError);
-                return;
-            }
-        }
-
-        setFeedbackMessage("Paciente atualizado com sucesso!");
-        setTimeout(() => {
-            setFeedbackMessage("");
-            navigate("/pacientes");
-        }, 1000); // Limpa a mensagem após 1 segundo e redireciona
     };
 
     const handleAddAssociacao = () => {

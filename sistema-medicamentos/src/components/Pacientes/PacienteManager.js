@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import supabase from "../../services/supabaseClient";
+import api from "../../services/api";
 import "./PacienteManager.css";
 
 const PacienteManager = () => {
@@ -11,11 +11,11 @@ const PacienteManager = () => {
 
     useEffect(() => {
         const fetchPacientes = async () => {
-            const { data, error } = await supabase.from("pacientes").select("*");
-            if (error) {
-                console.error("Erro ao buscar pacientes:", error);
-            } else {
+            try {
+                const { data } = await api.get("/pacientes");
                 setPacientes(data);
+            } catch (error) {
+                console.error("Erro ao buscar pacientes:", error);
             }
         };
 
@@ -23,12 +23,12 @@ const PacienteManager = () => {
     }, []);
 
     const handleDeletePaciente = async (id) => {
-        const { error } = await supabase.from("pacientes").delete().eq("id", id);
-        if (error) {
-            console.error("Erro ao deletar paciente:", error);
-        } else {
+        try {
+            await api.delete(`/pacientes/${id}`);
             setPacientes(pacientes.filter((paciente) => paciente.id !== id));
             setPacienteSelecionado(null);
+        } catch (error) {
+            console.error("Erro ao deletar paciente:", error);
         }
     };
 

@@ -23,7 +23,11 @@ function Login({ setUser, setIsSignUp }) {
       setLoginError("Erro ao fazer login. Verifique suas credenciais.");
     } else {
       setUser(data.user);
-      console.log("Access token:", data.session?.access_token);
+      // Salva o access_token no localStorage para uso nas chamadas à API
+      if (data.session?.access_token) {
+        localStorage.setItem("supabaseToken", data.session.access_token);
+        console.log("Access token:", data.session.access_token); // Mantido para debug
+      }
       setLoginError("");
     }
   };
