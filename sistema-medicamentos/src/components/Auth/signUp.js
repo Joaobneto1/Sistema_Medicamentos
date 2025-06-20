@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { signUpRest } from "../../services/api";
 import supabase from "../../services/supabaseClient";
 // Importa o CSS correto para garantir o estilo
 import "./Auth.css";
@@ -15,24 +16,22 @@ function SignUp({ setIsSignUp }) {
 
   const handleSignUpSubmit = async (e) => {
     e.preventDefault();
-    const { data, error } = await supabase.auth.signUp({
-      email: signUpData.email,
-      password: signUpData.password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/`,
-        data: { display_name: signUpData.nome }
-      },
-    });
-
-    if (error) {
-      setSignUpError("Erro ao criar conta. Tente novamente.");
-    } else {
-      setSuccessMessage("Conta criada com sucesso! Verifique seu email para confirmar.");
-      setSignUpError("");
-      // Salva o access_token no localStorage se disponível
+    try {
+      const { data } = await signUpRest(signUpData.email, signUpData.password, signUpData.nome);
       if (data.session?.access_token) {
         localStorage.setItem("supabaseToken", data.session.access_token);
+        // Atualiza a sessão do supabase client para uploads funcionarem
+        await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        });
+        setSuccessMessage("Conta criada com sucesso! Verifique seu email para confirmar.");
+        setSignUpError("");
+      } else {
+        setSignUpError("Erro ao criar conta. Tente novamente.");
       }
+    } catch (error) {
+      setSignUpError("Erro ao criar conta. Tente novamente.");
     }
   };
 

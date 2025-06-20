@@ -12,4 +12,10 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+export const loginRest = (email, password) =>
+    api.post('/auth/login', { email, password });
+
+export const signUpRest = (email, password, nome) =>
+    api.post('/auth/signup', { email, password, nome });
+
 export default api;

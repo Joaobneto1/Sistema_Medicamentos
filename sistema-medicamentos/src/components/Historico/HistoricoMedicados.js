@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import supabase from "../../services/supabaseClient";
+import api from "../../services/api";
 import "./HistoricoMedicados.css";
 
 const HistoricoMedicados = () => {
@@ -14,34 +14,28 @@ const HistoricoMedicados = () => {
         medicamento: "",
     });
 
-    // Buscar pacientes existentes
+    // Buscar pacientes existentes via backend
     useEffect(() => {
         const fetchPacientes = async () => {
-            const { data, error } = await supabase
-                .from("pacientes")
-                .select("id, nome");
-
-            if (error) {
-                console.error("Erro ao buscar pacientes:", error);
-            } else {
+            try {
+                const { data } = await api.get("/pacientes");
                 setPacientes(data);
+            } catch (error) {
+                console.error("Erro ao buscar pacientes:", error);
             }
         };
 
         fetchPacientes();
     }, []);
 
-    // Buscar medicamentos existentes
+    // Buscar medicamentos existentes via backend
     useEffect(() => {
         const fetchMedicamentos = async () => {
-            const { data, error } = await supabase
-                .from("medicamentos")
-                .select("id, nome");
-
-            if (error) {
-                console.error("Erro ao buscar medicamentos:", error);
-            } else {
+            try {
+                const { data } = await api.get("/medicamentos");
                 setMedicamentos(data);
+            } catch (error) {
+                console.error("Erro ao buscar medicamentos:", error);
             }
         };
 
@@ -49,42 +43,19 @@ const HistoricoMedicados = () => {
     }, []);
 
     const fetchHistorico = async () => {
-        let query = supabase
-            .from("paciente_medicamentos")
-            .select(`
-                paciente_id,
-                medicamento_id,
-                horario_dose,
-                updated_at,
-                pacientes (nome),
-                medicamentos (nome)
-            `)
-            .eq("medicado", true)
-            .order("updated_at", { ascending: false });
+        try {
+            // Monta os parâmetros de filtro
+            const params = {};
+            if (filtros.paciente) params.paciente = filtros.paciente;
+            if (filtros.dia) params.dia = filtros.dia;
+            if (filtros.horarioInicio) params.horarioInicio = filtros.horarioInicio;
+            if (filtros.horarioFim) params.horarioFim = filtros.horarioFim;
+            if (filtros.medicamento) params.medicamento = filtros.medicamento;
 
-        // Aplicar filtros
-        if (filtros.paciente) {
-            query = query.eq("paciente_id", filtros.paciente);
-        }
-        if (filtros.dia) {
-            const diaInicio = new Date(filtros.dia).toISOString();
-            const diaFim = new Date(filtros.dia);
-            diaFim.setDate(diaFim.getDate() + 1);
-            query = query.gte("updated_at", diaInicio).lt("updated_at", diaFim.toISOString());
-        }
-        if (filtros.horarioInicio && filtros.horarioFim) {
-            query = query.gte("horario_dose", filtros.horarioInicio).lte("horario_dose", filtros.horarioFim);
-        }
-        if (filtros.medicamento) {
-            query = query.eq("medicamento_id", filtros.medicamento);
-        }
+            // Busca histórico via backend
+            const { data } = await api.get("/historico", { params });
 
-        const { data, error } = await query;
-
-        if (error) {
-            console.error("Erro ao buscar histórico de pacientes medicados:", error);
-        } else {
-            // Agrupar os dados por dia
+            // Agrupa por dia
             const agrupadoPorDia = data.reduce((acc, item) => {
                 const dataFormatada = new Date(item.updated_at).toLocaleDateString();
                 if (!acc[dataFormatada]) {
@@ -95,6 +66,8 @@ const HistoricoMedicados = () => {
             }, {});
 
             setHistorico(agrupadoPorDia);
+        } catch (error) {
+            console.error("Erro ao buscar histórico de pacientes medicados:", error);
         }
     };
 

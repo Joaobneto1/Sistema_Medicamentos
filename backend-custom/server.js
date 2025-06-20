@@ -10,7 +10,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Middleware de autenticação JWT do Supabase
+// Importa rotas organizadas
+const authRoutes = require('./routes/auth');
+app.use('/auth', authRoutes);
+
+// Middleware de autenticação JWT do Supabase (apenas para rotas protegidas)
 app.use(async (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ error: 'Token ausente' });
@@ -30,16 +34,15 @@ app.use(async (req, res, next) => {
   }
 });
 
-// Importa rotas organizadas
+// Rotas protegidas
 const pacientesRoutes = require('./routes/pacientes');
-const adminRoutes = require('./routes/admin');
-const estoqueRoutes = require('./routes/estoque');
-const medicamentosRoutes = require('./routes/medicamentos');
-
 app.use('/pacientes', pacientesRoutes);
-app.use('/admin', adminRoutes);
-app.use('/estoque', estoqueRoutes);
+const medicamentosRoutes = require('./routes/medicamentos');
 app.use('/medicamentos', medicamentosRoutes);
+const estoqueRoutes = require('./routes/estoque');
+app.use('/estoque', estoqueRoutes);
+const historicoRoutes = require('./routes/historico');
+app.use('/historico', historicoRoutes);
 
 // Iniciar servidor
 const PORT = process.env.PORT || 3001;

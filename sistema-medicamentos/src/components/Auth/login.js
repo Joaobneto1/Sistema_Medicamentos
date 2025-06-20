@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { loginRest } from "../../services/api";
 import supabase from "../../services/supabaseClient";
 // Importa o CSS correto para garantir o estilo
 import "./Auth.css";
@@ -14,21 +15,23 @@ function Login({ setUser, setIsSignUp }) {
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: loginData.email,
-      password: loginData.password,
-    });
-
-    if (error) {
-      setLoginError("Erro ao fazer login. Verifique suas credenciais.");
-    } else {
-      setUser(data.user);
-      // Salva o access_token no localStorage para uso nas chamadas à API
+    try {
+      const { data } = await loginRest(loginData.email, loginData.password);
       if (data.session?.access_token) {
         localStorage.setItem("supabaseToken", data.session.access_token);
+        setUser(data.user);
         console.log("Access token:", data.session.access_token); // Mantido para debug
+        // Atualiza a sessão do supabase client para uploads funcionarem
+        await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        });
+        setLoginError("");
+      } else {
+        setLoginError("Erro ao fazer login. Verifique suas credenciais.");
       }
-      setLoginError("");
+    } catch (error) {
+      setLoginError("Erro ao fazer login. Verifique suas credenciais.");
     }
   };
 

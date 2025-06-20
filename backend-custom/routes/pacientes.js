@@ -27,37 +27,47 @@ router.post('/', async (req, res) => {
         const { nome, idade, data_nascimento, quarto, foto_url, medicamentos } = req.body;
         const user_id = req.user.sub;
 
-        // Converte data_nascimento para Date se for string e não vazia
+        // Converte data_nascimento para Date (YYYY-MM-DD)
         let dataNascimentoDate = null;
         if (data_nascimento) {
-            dataNascimentoDate = new Date(data_nascimento);
+            if (typeof data_nascimento === "string" && data_nascimento.includes("/")) {
+                const [dia, mes, ano] = data_nascimento.split("/").map(s => s.trim());
+                dataNascimentoDate = new Date(`${ano}-${mes.padStart(2, "0")}-${dia.padStart(2, "0")}`);
+            } else {
+                dataNascimentoDate = new Date(data_nascimento);
+            }
             if (isNaN(dataNascimentoDate.getTime())) {
                 return res.status(400).json({ error: "Data de nascimento inválida" });
             }
         }
 
-        // Salva foto_url como string ou null
         const fotoUrlFinal = typeof foto_url === "string" && foto_url.trim() !== "" ? foto_url : null;
 
-        // Cria paciente
+        // Cria paciente primeiro
         const paciente = await prisma.pacientes.create({
             data: { nome, idade, data_nascimento: dataNascimentoDate, quarto, foto_url: fotoUrlFinal, user_id }
         });
 
         // Associa medicamentos, se houver
         if (Array.isArray(medicamentos) && medicamentos.length > 0) {
-            await Promise.all(medicamentos.map(assoc =>
-                prisma.paciente_medicamentos.create({
+            await Promise.all(medicamentos.map(assoc => {
+                // Converte "HH:mm" para objeto Date com data fixa 1970-01-01
+                let horarioDoseDate = null;
+                if (assoc.horario_dose && typeof assoc.horario_dose === "string") {
+                    const [h, m] = assoc.horario_dose.split(":");
+                    horarioDoseDate = new Date(Date.UTC(1970, 0, 1, parseInt(h, 10), parseInt(m, 10)));
+                }
+                return prisma.paciente_medicamentos.create({
                     data: {
                         paciente_id: paciente.id,
                         medicamento_id: assoc.medicamento_id,
-                        horario_dose: assoc.horario_dose,
+                        horario_dose: horarioDoseDate,
                         intervalo_horas: assoc.intervalo_horas,
                         uso_cronico: assoc.uso_cronico,
                         dias_tratamento: assoc.dias_tratamento,
                     }
-                })
-            ));
+                });
+            }));
         }
 
         res.status(201).json(paciente);
@@ -108,18 +118,25 @@ router.put('/:id', async (req, res) => {
 
         // Adiciona novas associações
         if (Array.isArray(medicamentos) && medicamentos.length > 0) {
-            await Promise.all(medicamentos.map(assoc =>
-                prisma.paciente_medicamentos.create({
+            await Promise.all(medicamentos.map(assoc => {
+                // Converte "20:30" para "1970-01-01T20:30:00.000Z"
+                let horarioDoseISO = null;
+                if (assoc.horario_dose && typeof assoc.horario_dose === "string") {
+                    const [h, m] = assoc.horario_dose.split(":");
+                    // Use uma data fixa, pois só o horário importa
+                    horarioDoseISO = new Date(Date.UTC(2025, 6, 19, parseInt(h, 10), parseInt(m, 10))).toISOString();
+                }
+                return prisma.paciente_medicamentos.create({
                     data: {
                         paciente_id: req.params.id,
                         medicamento_id: assoc.medicamento_id,
-                        horario_dose: assoc.horario_dose,
+                        horario_dose: horarioDoseISO,
                         intervalo_horas: assoc.intervalo_horas,
                         uso_cronico: assoc.uso_cronico,
                         dias_tratamento: assoc.dias_tratamento,
                     }
-                })
-            ));
+                });
+            }));
         }
 
         res.json(paciente);
