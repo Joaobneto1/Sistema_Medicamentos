@@ -1,7 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
+const { createClient } = require('@supabase/supabase-js');
 const prisma = new PrismaClient();
+const registrarLog = require('../logs');
+
+const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
+// Função utilitária para buscar o nome do usuário autenticado via Supabase
+async function getUserName(user_id) {
+    const { data, error } = await supabase.rpc('get_display_name_by_id', { uid: user_id });
+    if (error) {
+        console.error('Erro ao buscar nome do usuário:', error);
+        return '';
+    }
+    return data || '';
+}
 
 // GET /medicamentos - lista todos os medicamentos
 router.get('/', async (req, res) => {
@@ -33,6 +50,15 @@ router.post('/', async (req, res) => {
                 }
             });
         }
+
+        // Log de cadastro de medicamento
+        const userName = await getUserName(req.user.sub);
+        await registrarLog(req.user.sub, 'cadastrar_medicamento', {
+            id: medicamento.id,
+            nome: medicamento.nome,
+            usuario_nome: userName,
+        });
+
         res.status(201).json(medicamento);
     } catch (err) {
         res.status(500).json({ error: 'Erro ao cadastrar medicamento' });
@@ -45,6 +71,14 @@ router.delete('/:id', async (req, res) => {
         await prisma.medicamentos.delete({
             where: { id: req.params.id }
         });
+
+        // Log de deleção de medicamento
+        const userName = await getUserName(req.user.sub);
+        await registrarLog(req.user.sub, 'deletar_medicamento', {
+            id: req.params.id,
+            usuario_nome: userName,
+        });
+
         res.json({ ok: true });
     } catch (err) {
         res.status(500).json({ error: 'Erro ao deletar medicamento' });

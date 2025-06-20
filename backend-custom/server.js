@@ -44,6 +44,10 @@ app.use('/estoque', estoqueRoutes);
 const historicoRoutes = require('./routes/historico');
 app.use('/historico', historicoRoutes);
 
+// Adiciona rotas de admin
+const adminRoutes = require('./routes/admin');
+app.use('/admin', adminRoutes);
+
 // Iniciar servidor
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

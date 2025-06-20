@@ -18,4 +18,20 @@ router.get('/relatorio', async (req, res) => {
     res.json({ relatorio: 'Teste para rota apenas admin' });
 });
 
+// GET /admin/logs - retorna todos os logs de auditoria (apenas admin)
+router.get('/logs', async (req, res) => {
+    const role = await getUserRole(req.user.sub);
+    if (role !== 'admin') {
+        return res.status(403).json({ error: 'Acesso restrito' });
+    }
+    try {
+        const logs = await prisma.logs_auditoria.findMany({
+            orderBy: { criado_em: 'desc' }
+        });
+        res.json(logs);
+    } catch (err) {
+        res.status(500).json({ error: 'Erro ao buscar logs' });
+    }
+});
+
 module.exports = router;

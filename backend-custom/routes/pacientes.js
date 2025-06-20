@@ -1,12 +1,29 @@
 const express = require('express');
 const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
+const { createClient } = require('@supabase/supabase-js');
 const prisma = new PrismaClient();
+const registrarLog = require('../logs');
+
+const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY // Use a Service Role Key para acesso ao schema auth
+);
 
 // Função utilitária para buscar o role do usuário autenticado
 async function getUserRole(user_id) {
     const perfil = await prisma.perfis.findUnique({ where: { user_id } });
     return perfil?.role || 'usuario';
+}
+
+// Função utilitária para buscar o nome do usuário autenticado via tabela perfis
+async function getUserName(user_id) {
+    const { data, error } = await supabase.rpc('get_display_name_by_id', { uid: user_id });
+    if (error) {
+        console.error('Erro ao buscar nome do usuário:', error);
+        return '';
+    }
+    return data || '';
 }
 
 // GET /pacientes - lista pacientes do usuário autenticado
@@ -65,6 +82,14 @@ router.post('/', async (req, res) => {
                 });
             }));
         }
+
+        // Log de criação de paciente
+        const userName = await getUserName(user_id);
+        await registrarLog(user_id, 'criar_paciente', {
+            nome: paciente.nome,
+            id: paciente.id,
+            usuario_nome: userName,
+        });
 
         res.status(201).json(paciente);
     } catch (err) {
@@ -130,6 +155,14 @@ router.put('/:id', async (req, res) => {
             }));
         }
 
+        // Log de atualização de paciente
+        const userName = await getUserName(req.user.sub);
+        await registrarLog(req.user.sub, 'atualizar_paciente', {
+            id: paciente.id,
+            nome: paciente.nome,
+            usuario_nome: userName,
+        });
+
         res.json(paciente);
     } catch (err) {
         res.status(500).json({ error: 'Erro ao atualizar paciente' });
@@ -149,6 +182,15 @@ router.delete('/:id', async (req, res) => {
             return res.status(403).json({ error: 'Sem permissão' });
         }
         await prisma.pacientes.delete({ where: { id: req.params.id } });
+
+        // Log de deleção de paciente
+        const userName = await getUserName(req.user.sub);
+        await registrarLog(req.user.sub, 'deletar_paciente', {
+            id: paciente.id,
+            nome: paciente.nome,
+            usuario_nome: userName,
+        });
+
         res.json({ ok: true });
     } catch (err) {
         res.status(500).json({ error: 'Erro ao deletar paciente' });
@@ -191,6 +233,16 @@ router.post('/marcar-medicado', async (req, res) => {
                 quantidade: { decrement: 1 }
             }
         });
+
+        // Log de aplicação de medicamento
+        const userName = await getUserName(req.user.sub);
+        await registrarLog(req.user.sub, 'aplicar_dose', {
+            paciente_id: pacienteId,
+            medicamento_id: medicamentoId,
+            quantidade: 1,
+            usuario_nome: userName,
+        });
+
         res.json({ ok: true });
     } catch (err) {
         res.status(500).json({ error: 'Erro ao registrar medicação' });

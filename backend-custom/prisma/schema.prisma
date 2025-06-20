@@ -83,6 +83,17 @@ model historico_doses {
   @@schema("public")
 }
 
+model logs_auditoria {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id   String?   @db.Uuid
+  acao      String
+  detalhes  Json?
+  criado_em DateTime? @default(now()) @db.Timestamp(6)
+  users     users?    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("public")
+}
+
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model audit_log_entries {
@@ -393,6 +404,7 @@ model users {
   mfa_factors                 mfa_factors[]
   one_time_tokens             one_time_tokens[]
   sessions                    sessions[]
+  logs_auditoria              logs_auditoria[]
   pacientes                   pacientes[]
   perfis                      perfis?
 
