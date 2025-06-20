@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import api from "../../services/api";
 import "./HistoricoMedicados.css";
 
 const HistoricoMedicados = () => {
     const [historico, setHistorico] = useState({});
-    const [pacientes, setPacientes] = useState([]); // Lista de pacientes existentes
-    const [medicamentos, setMedicamentos] = useState([]); // Lista de medicamentos existentes
+    const [pacientes, setPacientes] = useState([]);
+    const [medicamentos, setMedicamentos] = useState([]);
     const [filtros, setFiltros] = useState({
         paciente: "",
         dia: "",
@@ -14,7 +14,6 @@ const HistoricoMedicados = () => {
         medicamento: "",
     });
 
-    // Buscar pacientes existentes via backend
     useEffect(() => {
         const fetchPacientes = async () => {
             try {
@@ -28,7 +27,6 @@ const HistoricoMedicados = () => {
         fetchPacientes();
     }, []);
 
-    // Buscar medicamentos existentes via backend
     useEffect(() => {
         const fetchMedicamentos = async () => {
             try {
@@ -42,9 +40,8 @@ const HistoricoMedicados = () => {
         fetchMedicamentos();
     }, []);
 
-    const fetchHistorico = async () => {
+    const fetchHistorico = useCallback(async () => {
         try {
-            // Monta os parâmetros de filtro
             const params = {};
             if (filtros.paciente) params.paciente = filtros.paciente;
             if (filtros.dia) params.dia = filtros.dia;
@@ -52,10 +49,8 @@ const HistoricoMedicados = () => {
             if (filtros.horarioFim) params.horarioFim = filtros.horarioFim;
             if (filtros.medicamento) params.medicamento = filtros.medicamento;
 
-            // Busca histórico via backend
             const { data } = await api.get("/historico", { params });
 
-            // Agrupa por dia
             const agrupadoPorDia = data.reduce((acc, item) => {
                 const dataFormatada = new Date(item.updated_at).toLocaleDateString();
                 if (!acc[dataFormatada]) {
@@ -69,11 +64,11 @@ const HistoricoMedicados = () => {
         } catch (error) {
             console.error("Erro ao buscar histórico de pacientes medicados:", error);
         }
-    };
+    }, [filtros]);
 
     useEffect(() => {
         fetchHistorico();
-    }, [filtros]);
+    }, [fetchHistorico]);
 
     const handleFiltroChange = (e) => {
         const { name, value } = e.target;
@@ -84,7 +79,6 @@ const HistoricoMedicados = () => {
         <div className="historico-container">
             <h1>Histórico de Pacientes Medicados</h1>
 
-            {/* Filtros */}
             <div className="filtros-container">
                 <select
                     name="paciente"
@@ -136,14 +130,13 @@ const HistoricoMedicados = () => {
                 <button onClick={fetchHistorico}>Aplicar Filtros</button>
             </div>
 
-            {/* Histórico */}
             {Object.keys(historico).length > 0 ? (
                 Object.keys(historico).map((dia) => (
                     <div key={dia} className="historico-dia">
                         <h2>{dia}</h2>
                         <ul>
-                            {historico[dia].map((item, index) => (
-                                <li key={`${item.paciente_id}-${item.medicamento_id}`} className="historico-item">
+                            {historico[dia].map((item) => (
+                                <li key={`${item.paciente_id}-${item.medicamento_id}-${item.updated_at}`} className="historico-item">
                                     <p><strong>Paciente:</strong> {item.paciente?.nome || "Desconhecido"}</p>
                                     <p><strong>Medicamento:</strong> {item.medicamento?.nome || "Desconhecido"}</p>
                                     <p><strong>Horário da Dose:</strong> {item.horario_dose}</p>

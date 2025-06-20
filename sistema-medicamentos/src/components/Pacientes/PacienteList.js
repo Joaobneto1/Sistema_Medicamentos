@@ -4,7 +4,7 @@ import supabase from "../../services/supabaseClient";
 import "./PacienteManager.css";
 
 const diasSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
-function calcularDiasSemana(dias) {
+/* function calcularDiasSemana(dias) {
     const hoje = new Date();
     let resultado = [];
     for (let i = 0; i < dias; i++) {
@@ -13,7 +13,7 @@ function calcularDiasSemana(dias) {
         resultado.push(diasSemana[dia.getDay()]);
     }
     return resultado;
-}
+} */
 
 const PacienteList = () => {
     const [pacientes, setPacientes] = useState([]);
