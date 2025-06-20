@@ -3,7 +3,7 @@ import api from "../../services/api";
 import supabase from "../../services/supabaseClient";
 import "./PacienteManager.css";
 
-const diasSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+/* const diasSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"]; */
 /* function calcularDiasSemana(dias) {
     const hoje = new Date();
     let resultado = [];
