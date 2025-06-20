@@ -22,7 +22,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+
+      - name: 🗂️ Cache de dependências (frontend)
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('sistema-medicamentos/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       # FRONTEND
       - name: 📦 Instalar dependências (frontend)
