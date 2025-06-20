@@ -51,8 +51,12 @@ jobs:
 
       - name: ✅ Prisma - Validar schema
         working-directory: backend-custom
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: npx prisma validate
 
       - name: 🎯 Prisma - Format schema
         working-directory: backend-custom
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: npx prisma format --schema prisma/schema.prisma
