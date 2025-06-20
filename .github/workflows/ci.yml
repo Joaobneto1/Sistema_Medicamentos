@@ -15,36 +15,37 @@ jobs:
         node-version: [18.x]
 
     steps:
-      - name:  Checkout do código
+      - name: 🔄 Checkout do código
         uses: actions/checkout@v3
 
-      - name:  Setup Node.js
+      - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'npm'
 
-      # Frontend
-      - name:  Instalar dependências (frontend)
+      # FRONTEND
+      - name: 📦 Instalar dependências (frontend)
         working-directory: sistema-medicamentos
         run: npm ci
 
-      - name:  Rodar testes (frontend)
+      - name: 🧪 Rodar testes (frontend)
         working-directory: sistema-medicamentos
         run: npm test -- --watchAll=false
 
-      - name:  Build (frontend)
+      - name: 🏗️ Build do frontend
         working-directory: sistema-medicamentos
         run: npm run build
 
-      # Backend
-      - name:  Instalar dependências (backend)
+      # BACKEND
+      - name: 📦 Instalar dependências (backend)
         working-directory: backend-custom
         run: npm ci
 
-      - name:  Prisma - Validar schema
+      - name: ✅ Prisma - Validar schema
         working-directory: backend-custom
         run: npx prisma validate
 
-      - name:  Prisma - Format schema
+      - name: 🎯 Prisma - Format schema
         working-directory: backend-custom
         run: npx prisma format --schema prisma/schema.prisma
