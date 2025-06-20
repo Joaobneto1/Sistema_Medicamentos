@@ -51,12 +51,8 @@ router.post('/', async (req, res) => {
         // Associa medicamentos, se houver
         if (Array.isArray(medicamentos) && medicamentos.length > 0) {
             await Promise.all(medicamentos.map(assoc => {
-                // Converte "HH:mm" para objeto Date com data fixa 1970-01-01
-                let horarioDoseDate = null;
-                if (assoc.horario_dose && typeof assoc.horario_dose === "string") {
-                    const [h, m] = assoc.horario_dose.split(":");
-                    horarioDoseDate = new Date(Date.UTC(1970, 0, 1, parseInt(h, 10), parseInt(m, 10)));
-                }
+                // Salva o horário atual
+                let horarioDoseDate = new Date();
                 return prisma.paciente_medicamentos.create({
                     data: {
                         paciente_id: paciente.id,
@@ -119,18 +115,13 @@ router.put('/:id', async (req, res) => {
         // Adiciona novas associações
         if (Array.isArray(medicamentos) && medicamentos.length > 0) {
             await Promise.all(medicamentos.map(assoc => {
-                // Converte "20:30" para "1970-01-01T20:30:00.000Z"
-                let horarioDoseISO = null;
-                if (assoc.horario_dose && typeof assoc.horario_dose === "string") {
-                    const [h, m] = assoc.horario_dose.split(":");
-                    // Use uma data fixa, pois só o horário importa
-                    horarioDoseISO = new Date(Date.UTC(2025, 6, 19, parseInt(h, 10), parseInt(m, 10))).toISOString();
-                }
+                // Salva o horário atual
+                let horarioDoseDate = new Date();
                 return prisma.paciente_medicamentos.create({
                     data: {
                         paciente_id: req.params.id,
                         medicamento_id: assoc.medicamento_id,
-                        horario_dose: horarioDoseISO,
+                        horario_dose: horarioDoseDate,
                         intervalo_horas: assoc.intervalo_horas,
                         uso_cronico: assoc.uso_cronico,
                         dias_tratamento: assoc.dias_tratamento,
@@ -144,6 +135,7 @@ router.put('/:id', async (req, res) => {
         res.status(500).json({ error: 'Erro ao atualizar paciente' });
     }
 });
+
 
 // DELETE /pacientes/:id - deleta paciente se for do usuário ou admin
 router.delete('/:id', async (req, res) => {

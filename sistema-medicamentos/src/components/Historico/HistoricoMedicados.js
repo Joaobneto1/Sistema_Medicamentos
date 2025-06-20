@@ -144,8 +144,8 @@ const HistoricoMedicados = () => {
                         <ul>
                             {historico[dia].map((item, index) => (
                                 <li key={`${item.paciente_id}-${item.medicamento_id}`} className="historico-item">
-                                    <p><strong>Paciente:</strong> {item.pacientes?.nome || "Desconhecido"}</p>
-                                    <p><strong>Medicamento:</strong> {item.medicamentos?.nome || "Desconhecido"}</p>
+                                    <p><strong>Paciente:</strong> {item.paciente?.nome || "Desconhecido"}</p>
+                                    <p><strong>Medicamento:</strong> {item.medicamento?.nome || "Desconhecido"}</p>
                                     <p><strong>Horário da Dose:</strong> {item.horario_dose}</p>
                                     <p><strong>Data de Administração:</strong> {new Date(item.updated_at).toLocaleString()}</p>
                                 </li>

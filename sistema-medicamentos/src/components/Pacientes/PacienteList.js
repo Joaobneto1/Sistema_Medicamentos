@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import api from "../../services/api";
+import supabase from "../../services/supabaseClient";
 import "./PacienteManager.css";
 
 const diasSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
@@ -28,9 +29,24 @@ const PacienteList = () => {
     useEffect(() => {
         const fetchPacientes = async () => {
             try {
-                // Buscar pacientes e medicamentos associados via backend
-                const { data } = await api.get("/pacientes/listagem-completa");
-                // Esperar que o backend já traga os pacientes com medicamentos associados
+                // Busca pacientes e medicamentos associados direto do Supabase
+                const { data, error } = await supabase
+                    .from("pacientes")
+                    .select(`
+                        *,
+                        paciente_medicamentos (
+                            *,
+                            medicamento:medicamento_id (
+                                id, nome, descricao, dose_mg
+                            )
+                        )
+                    `)
+                    .order("nome", { ascending: true });
+
+                if (error) {
+                    console.error("Erro ao buscar pacientes do Supabase:", error);
+                    return;
+                }
                 // (Manter o processamento local para separar pacientes por status)
                 const horaAtual = new Date();
                 const margemMinutos = 5;
