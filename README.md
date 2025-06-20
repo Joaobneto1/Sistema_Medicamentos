@@ -73,3 +73,5 @@ Você pode acessar a aplicação diretamente pelo link:
 - **Leonardo Lima De Vasconcelos** - [leonardorz5 ](https://github.com/leonardorz5)
 - **Lucas Daniel Alves Carneiro** - [lukitas900](https://github.com/lukitas900)
 ---
+
+![CI](https://github.com/Joaobneto1/Sistema_Medicamentos/actions/workflows/ci.yml/badge.svg)
