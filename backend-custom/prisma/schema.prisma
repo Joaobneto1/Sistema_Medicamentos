@@ -18,6 +18,7 @@ model pacientes {
   quarto                Decimal?                @db.Decimal
   foto_url              String?
   user_id               String?                 @db.Uuid
+  meta_extra            Json?
   historico_doses       historico_doses[]
   paciente_medicamentos paciente_medicamentos[]
   users                 users?                  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
