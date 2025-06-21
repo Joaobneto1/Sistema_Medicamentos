@@ -4,6 +4,7 @@ const { PrismaClient } = require('@prisma/client');
 const { createClient } = require('@supabase/supabase-js');
 const prisma = new PrismaClient();
 const registrarLog = require('../logs');
+const { sendTelegramAlert } = require('../utils/telegram');
 
 const supabase = createClient(
     process.env.SUPABASE_URL,
@@ -37,14 +38,25 @@ router.get('/', async (req, res) => {
 // POST /estoque - adiciona novo estoque
 router.post('/', async (req, res) => {
     try {
-        const { medicamento_id, quantidade, atualizado_em } = req.body;
+        const { medicamento_id, quantidade, atualizado_em, dose_mg } = req.body;
         const estoque = await prisma.estoque_medicamentos.create({
             data: {
                 medicamento_id,
                 quantidade,
+                dose_mg,
                 atualizado_em: atualizado_em ? new Date(atualizado_em) : new Date()
             }
         });
+
+        // Busca o medicamento relacionado para pegar nome
+        const medicamento = await prisma.medicamentos.findUnique({
+            where: { id: medicamento_id }
+        });
+
+        // Alerta Telegram de estoque baixo (<= 5)
+        if (quantidade <= 5) {
+            await sendTelegramAlert(`*🚨 Estoque baixo*: *${medicamento.nome}* está com apenas ${quantidade} unidade${quantidade === 1 ? '' : 's'}.`);
+        }
 
         // Log de adição de estoque
         const userName = await getUserName(req.user.sub);
@@ -85,6 +97,16 @@ router.put('/:id', async (req, res) => {
                 atualizado_em: atualizado_em ? new Date(atualizado_em) : new Date()
             }
         });
+
+        // Busca o medicamento relacionado para pegar nome
+        const medicamento = await prisma.medicamentos.findUnique({
+            where: { id: estoque.medicamento_id }
+        });
+
+        // Alerta Telegram de estoque baixo (<= 5)
+        if (estoque.quantidade <= 5) {
+            await sendTelegramAlert(`*🚨Estoque baixo*: *${medicamento.nome}* está com apenas ${estoque.quantidade} unidade${estoque.quantidade === 1 ? '' : 's'}.`);
+        }
 
         // Log de atualização de estoque
         const userName = await getUserName(req.user.sub);
