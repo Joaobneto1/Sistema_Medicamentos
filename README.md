@@ -71,7 +71,7 @@ O projeto já está pronto para ser executado com Docker e Docker Compose, facil
 Você pode acessar a aplicação diretamente pelo link:  
 👉 [https://sistema-medicamentos.vercel.app/](https://sistema-medicamentos.vercel.app/)
 
-### Rodar localmente
+### Rodar localmente (Frontend e Backend)
 
 1. Clone este repositório:
    ```bash
@@ -79,17 +79,49 @@ Você pode acessar a aplicação diretamente pelo link:
    ```
 2. Acesse o diretório do projeto:
    ```bash
-   cd sistema-medicamentos
+   cd Sistema_Medicamentos
    ```
-3. Instale as dependências:
+
+#### Backend (Express + Prisma + Supabase)
+
+3. Acesse a pasta do backend:
+   ```bash
+   cd backend-custom
+   ```
+4. Instale as dependências:
    ```bash
    npm install
    ```
-4. Inicie o servidor de desenvolvimento:
+5. Configure as variáveis de ambiente no arquivo `.env`.
+6. Gere o client do Prisma (após qualquer alteração no banco/schema):
+   ```bash
+   npx prisma generate
+   ```
+   Se precisar sincronizar o schema com o banco:
+   ```bash
+   npx prisma migrate dev
+   ```
+7. Inicie o backend:
    ```bash
    npm start
    ```
-5. Acesse o projeto no seu navegador: [http://localhost:3000](http://localhost:3000)
+   O backend ficará disponível em [http://localhost:3001](http://localhost:3001)
+
+#### Frontend (React)
+
+8. Abra um novo terminal e acesse a pasta do frontend:
+   ```bash
+   cd ../sistema-medicamentos
+   ```
+9. Instale as dependências:
+   ```bash
+   npm install
+   ```
+10. Inicie o frontend:
+    ```bash
+    npm start
+    ```
+11. Acesse o projeto no seu navegador: [http://localhost:3000](http://localhost:3000)
 
 ---
 
