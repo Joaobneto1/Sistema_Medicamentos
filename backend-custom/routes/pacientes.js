@@ -4,6 +4,9 @@ const { PrismaClient } = require('@prisma/client');
 const { createClient } = require('@supabase/supabase-js');
 const prisma = new PrismaClient();
 const registrarLog = require('../logs');
+const dayjs = require('dayjs');
+
+
 
 const supabase = createClient(
     process.env.SUPABASE_URL,
@@ -40,6 +43,7 @@ router.get('/', async (req, res) => {
 
 // POST /pacientes - cria paciente e associa medicamentos
 router.post('/', async (req, res) => {
+    console.log("Chegou na rota /pacientes"); // Teste inicial
     try {
         const { nome, idade, data_nascimento, quarto, foto_url, medicamentos } = req.body;
         const user_id = req.user.sub;
@@ -68,19 +72,28 @@ router.post('/', async (req, res) => {
         // Associa medicamentos, se houver
         if (Array.isArray(medicamentos) && medicamentos.length > 0) {
             await Promise.all(medicamentos.map(assoc => {
-                // Salva o horário atual
-                let horarioDoseDate = new Date();
+                console.log("Assoc recebido:", assoc);
+
+                const [hora, minuto] = assoc.horario_dose.split(":").map(Number);
+
+                // Garante o formato HH:mm:ss
+                const horarioDoseString = `${hora.toString().padStart(2, "0")}:${minuto.toString().padStart(2, "0")}:00`;
+
+                console.log("Salvando como horario_dose:", horarioDoseString);
+
                 return prisma.paciente_medicamentos.create({
                     data: {
                         paciente_id: paciente.id,
                         medicamento_id: assoc.medicamento_id,
-                        horario_dose: horarioDoseDate,
+                        horario_dose: horarioDoseString,
                         intervalo_horas: assoc.intervalo_horas,
                         uso_cronico: assoc.uso_cronico,
                         dias_tratamento: assoc.dias_tratamento,
                     }
                 });
             }));
+
+            
         }
 
         // Log de criação de paciente
@@ -141,20 +154,25 @@ router.put('/:id', async (req, res) => {
         if (Array.isArray(medicamentos) && medicamentos.length > 0) {
             await Promise.all(medicamentos.map(assoc => {
                 // Salva o horário atual
-                let horarioDoseDate = new Date();
+                console.log("Dados do assoc recebido:", assoc);
+                const [hora, minuto] = assoc.horario_dose.split(":").map(Number);
+                const horarioDoseString = `${hora.toString().padStart(2, "0")}:${minuto.toString().padStart(2, "0")}:00`;
+                
                 return prisma.paciente_medicamentos.create({
                     data: {
                         paciente_id: req.params.id,
                         medicamento_id: assoc.medicamento_id,
-                        horario_dose: horarioDoseDate,
+                        horario_dose: horarioDoseString,
                         intervalo_horas: assoc.intervalo_horas,
                         uso_cronico: assoc.uso_cronico,
                         dias_tratamento: assoc.dias_tratamento,
                     }
+                   
                 });
+                
             }));
         }
-
+        
         // Log de atualização de paciente
         const userName = await getUserName(req.user.sub);
         await registrarLog(req.user.sub, 'atualizar_paciente', {

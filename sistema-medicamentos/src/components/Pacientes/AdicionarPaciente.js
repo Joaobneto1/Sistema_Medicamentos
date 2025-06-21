@@ -55,6 +55,7 @@ const AdicionarPaciente = () => {
 
         try {
             // Envia paciente e associações para o backend
+            console.log("Associacoes enviadas:", associacoes);
             await api.post("/pacientes", {
                 ...novoPaciente,
                 data_nascimento: dataNascimento,
