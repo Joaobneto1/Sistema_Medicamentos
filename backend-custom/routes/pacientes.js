@@ -4,6 +4,7 @@ const { PrismaClient } = require('@prisma/client');
 const { createClient } = require('@supabase/supabase-js');
 const prisma = new PrismaClient();
 const registrarLog = require('../logs');
+const { sendTelegramAlert } = require('../utils/telegram');
 
 
 
@@ -250,6 +251,42 @@ router.post('/marcar-medicado', async (req, res) => {
                 quantidade: { decrement: 1 }
             }
         });
+
+        // Após atualizar, verifica se ainda há pacientes para medicar ou atrasados
+        const pacientes = await prisma.pacientes.findMany({
+            include: {
+                paciente_medicamentos: true
+            }
+        });
+        let pacientesParaMedicar = 0;
+        let pacientesAtrasados = 0;
+        let nomesAtrasados = [];
+        const agora = new Date();
+        pacientes.forEach(paciente => {
+            paciente.paciente_medicamentos.forEach(pm => {
+                if (!pm.medicado) {
+                    if (pm.horario_dose) {
+                        const [h, m] = pm.horario_dose.split(":").map(Number);
+                        const horarioDoseHoje = new Date(agora);
+                        horarioDoseHoje.setHours(h, m, 0, 0);
+                        if (horarioDoseHoje < agora) {
+                            pacientesAtrasados++;
+                            nomesAtrasados.push(paciente.nome + ' - ' + (pm.horario_dose || 'N/A') + ' - Horário: ' + (pm.medicamento_id || 'Medicamento'));
+                        } else {
+                            pacientesParaMedicar++;
+                        }
+                    } else {
+                        pacientesParaMedicar++;
+                    }
+                }
+            });
+        });
+        if (pacientesParaMedicar > 0) {
+            await sendTelegramAlert(`⚠️ Existem ${pacientesParaMedicar} paciente(s) disponível(is) para ser(em) medicado(s)!`);
+        }
+        if (nomesAtrasados.length > 0) {
+            await sendTelegramAlert(`🚨 Pacientes com medicamento atrasado:\n${nomesAtrasados.join('\n')}`);
+        }
 
         // Log de aplicação de medicamento
         const userName = await getUserName(req.user.sub);
