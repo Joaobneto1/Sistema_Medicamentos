@@ -116,7 +116,7 @@ const EditarPaciente = () => {
             await api.put(`/pacientes/${id}`, {
                 ...paciente,
                 medicamentos: associacoes.filter(
-                    (a) => a.medicamento_id && a.horario_dose && a.intervalo_horas > 0
+                    (a) => a.medicamento_id && a.horario_dose && a.intervalo_horas > 0 && a.dias_tratamento > 0
                 ),
             });
             setFeedbackMessage("Paciente atualizado com sucesso!");

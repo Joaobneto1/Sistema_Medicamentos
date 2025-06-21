@@ -4,7 +4,6 @@ const { PrismaClient } = require('@prisma/client');
 const { createClient } = require('@supabase/supabase-js');
 const prisma = new PrismaClient();
 const registrarLog = require('../logs');
-const dayjs = require('dayjs');
 
 
 
@@ -93,7 +92,7 @@ router.post('/', async (req, res) => {
                 });
             }));
 
-            
+
         }
 
         // Log de criação de paciente
@@ -157,7 +156,7 @@ router.put('/:id', async (req, res) => {
                 console.log("Dados do assoc recebido:", assoc);
                 const [hora, minuto] = assoc.horario_dose.split(":").map(Number);
                 const horarioDoseString = `${hora.toString().padStart(2, "0")}:${minuto.toString().padStart(2, "0")}:00`;
-                
+
                 return prisma.paciente_medicamentos.create({
                     data: {
                         paciente_id: req.params.id,
@@ -167,12 +166,12 @@ router.put('/:id', async (req, res) => {
                         uso_cronico: assoc.uso_cronico,
                         dias_tratamento: assoc.dias_tratamento,
                     }
-                   
+
                 });
-                
+
             }));
         }
-        
+
         // Log de atualização de paciente
         const userName = await getUserName(req.user.sub);
         await registrarLog(req.user.sub, 'atualizar_paciente', {
