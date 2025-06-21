@@ -4,6 +4,7 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const client = require('prom-client');
 
 const app = express();
 
@@ -13,6 +14,27 @@ app.use(express.json());
 // Importa rotas organizadas
 const authRoutes = require('./routes/auth');
 app.use('/auth', authRoutes);
+
+// Coletar métricas padrão do Node.js (CPU, heap, event loop, etc)
+client.collectDefaultMetrics();
+
+// Contador de requisições (opcional)
+const httpRequestCounter = new client.Counter({
+  name: 'app_requests_total',
+  help: 'Total de requisições recebidas'
+});
+
+// Rota de métricas — precisa vir antes do middleware de autenticação
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', client.register.contentType);
+  res.send(await client.register.metrics());
+});
+
+// Opcional: incrementa contador em cada requisição
+app.use((req, res, next) => {
+  httpRequestCounter.inc();
+  next();
+});
 
 // Middleware de autenticação JWT do Supabase (apenas para rotas protegidas)
 app.use(async (req, res, next) => {

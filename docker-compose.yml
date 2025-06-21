@@ -11,8 +11,6 @@ services:
       - NODE_ENV=production
     env_file:
       - ./backend-custom/.env
-    #   volumes:
-    #   - ./backend-custom:/app
     networks:
       - sistema-network
 
@@ -26,6 +24,26 @@ services:
       - sistema-network
     depends_on:
       - backend
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - sistema-network
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3002:3000"
+    networks:
+      - sistema-network
+    depends_on:
+      - prometheus
 
 networks:
   sistema-network:
