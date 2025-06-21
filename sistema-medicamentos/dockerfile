@@ -1,0 +1,26 @@
+# Etapa de build
+FROM node:18 AS build
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+
+RUN npm run build
+
+# Etapa final: servir com NGINX
+FROM nginx:stable-alpine
+
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Remove o default.conf do nginx
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Adiciona um novo
+COPY nginx.conf /etc/nginx/conf.d
+
+EXPOSE 3000
+
+CMD ["nginx", "-g", "daemon off;"]

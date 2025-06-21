@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend-custom
+    container_name: backend-custom
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - ./backend-custom/.env
+    #   volumes:
+    #   - ./backend-custom:/app
+    networks:
+      - sistema-network
+
+  frontend:
+    build:
+      context: ./sistema-medicamentos
+    container_name: sistema-frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - sistema-network
+    depends_on:
+      - backend
+
+networks:
+  sistema-network:
+    driver: bridge

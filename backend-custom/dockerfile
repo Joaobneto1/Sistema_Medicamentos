@@ -1,0 +1,26 @@
+# Etapa base
+FROM node:18
+
+# Define o diretório de trabalho
+WORKDIR /app
+
+# Copia os arquivos necessários
+COPY package*.json ./
+COPY prisma ./prisma
+COPY routes ./routes
+COPY utils ./utils
+COPY logs.js ./
+COPY server.js ./
+# COPY .env ./
+
+# Instala as dependências
+RUN npm ci
+
+# Gera o cliente Prisma (caso use)
+RUN npx prisma generate
+
+# Expõe a porta da API
+EXPOSE 3001
+
+# Inicia o servidor
+CMD ["node", "server.js"]
