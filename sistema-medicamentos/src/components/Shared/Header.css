@@ -4,9 +4,6 @@
     color: #fff;
     box-shadow: 0 2px 8px rgba(30, 90, 150, 0.10);
     font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     border-bottom: 2px solid #e3eaf5;
 }
 
@@ -15,25 +12,27 @@
     justify-content: space-between;
     align-items: center;
     padding: 18px 40px;
-    background: transparent;
-    color: #fff;
-    width: 100%;
     max-width: 1200px;
+    width: 100%;
     margin: 0 auto;
+    flex-wrap: wrap;
 }
 
 .header-left {
-    font-size: 24px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-align: left;
-    color: #fff;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
-.app-header nav ul,
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #fff;
+    cursor: pointer;
+}
+
 nav ul {
     list-style: none;
     display: flex;
@@ -41,45 +40,33 @@ nav ul {
     margin: 0;
     padding: 0;
     align-items: center;
-    justify-content: center;
 }
 
-.app-header nav ul li,
-nav ul li {
-    margin: 0;
-}
-
-.app-header nav ul li a,
 nav ul li a {
     color: #f4f8fb;
-    text-decoration: none !important;
+    text-decoration: none;
     font-size: 17px;
     font-weight: 500;
     padding: 8px 20px;
     border-radius: 5px;
     transition: background 0.18s, color 0.18s;
-    display: flex;
-    align-items: center;
-    letter-spacing: 0.5px;
 }
 
-.app-header nav ul li a:hover,
 nav ul li a:hover {
     background: #e3f2fd;
     color: #155fa0;
-    text-decoration: none;
 }
 
-.hide-header {
-    display: none !important;
+.header-user-area {
+    display: flex;
+    align-items: center;
+    gap: 16px;
 }
 
 .header-user-info {
     display: flex;
     align-items: center;
-    gap: 18px;
-    font-size: 16px;
-    font-weight: 500;
+    gap: 10px;
 }
 
 .header-username {
@@ -88,9 +75,7 @@ nav ul li a:hover {
     padding: 7px 18px;
     border-radius: 6px;
     font-weight: 600;
-    margin-right: 8px;
     box-shadow: 0 1px 4px rgba(30, 90, 150, 0.08);
-    letter-spacing: 0.5px;
     border: 1px solid #e3eaf5;
 }
 
@@ -98,48 +83,89 @@ nav ul li a:hover {
     background: linear-gradient(90deg, #e53935 0%, #b71c1c 100%);
     color: #fff;
     border: none;
-    border-radius: 6px;
-    padding: 8px 28px;
+    border-radius: 8px;
+    padding: 8px 22px;
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
     box-shadow: 0 1px 4px rgba(183, 28, 28, 0.10);
-    outline: none;
-    letter-spacing: 0.5px;
     border: 1px solid #b71c1c;
 }
 
 .header-logout-btn:hover {
     background: linear-gradient(90deg, #b71c1c 0%, #e53935 100%);
-    color: #fff;
     transform: translateY(-2px) scale(1.04);
     box-shadow: 0 4px 12px rgba(183, 28, 28, 0.13);
 }
 
-/* Responsivo */
+.alert-icon {
+    font-size: 22px;
+    color: #fff;
+    margin-right: 12px; /* ou ajuste conforme o espaçamento desejado */
+}
+
+/* Responsividade */
 @media (max-width: 700px) {
-    .header-container {
-        flex-direction: column;
-        gap: 18px;
-        padding: 16px 8vw;
+    .menu-toggle {
+        display: block;
     }
-    .header-left {
-        font-size: 19px;
+
+    nav {
+        display: none;
+        width: 100%;
     }
-    .app-header nav ul,
+
+    .menu-mobile-active {
+        display: block !important;
+        width: 100%;
+    }
+
     nav ul {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
         gap: 14px;
     }
+
+    nav ul li {
+        width: 100%;
+    }
+
+    nav ul li a {
+        display: block;
+        width: 100%;
+        padding: 12px 8px;
+        font-size: 16px;
+    }
+
+    .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+        padding: 10px 8vw;
+    }
+
+    .header-user-area {
+        width: 100%;
+        justify-content: flex-end;
+        
+    }
+
     .header-user-info {
-        gap: 10px;
+        flex-direction: column;
+        align-items: flex-end;
+        padding: 6px 12px;
     }
-    .header-username {
-        padding: 6px 10px;
-        font-size: 14px;
-    }
+
     .header-logout-btn {
-        padding: 7px 14px;
+        width: auto;
+        text-align: center;
+        padding: 6px 12px;
+    }
+
+    .header-username {
         font-size: 14px;
+        padding: 6px 12px;
     }
 }

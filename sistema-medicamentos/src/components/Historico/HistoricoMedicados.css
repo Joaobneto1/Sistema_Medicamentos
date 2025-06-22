@@ -105,3 +105,60 @@
 .filtros-container button:hover {
     background-color: #007bff;
 }
+
+@media (max-width: 700px) {
+    .historico-container {
+        padding: 16px 0 0 0;
+    }
+    .historico-container h1 {
+        font-size: 20px;
+        margin-bottom: 16px;
+    }
+    .filtros-container {
+        flex-direction: column;
+        gap: 10px;
+        max-width: 98vw;
+        width: 98vw;
+        align-items: stretch;
+        margin-bottom: 18px;
+    }
+    .filtros-container input,
+    .filtros-container select,
+    .filtros-container button {
+        width: 100%;
+        min-width: unset;
+        max-width: unset;
+        font-size: 15px;
+        box-sizing: border-box;
+    }
+    .historico-dia {
+        padding: 12px 2vw;
+        border-radius: 20px;
+        max-width: 98vw;
+        width: 98vw;
+        margin-bottom: 16px;
+    }
+    .historico-dia h2 {
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+    .historico-item {
+        padding: 10px 2vw;
+        border-radius: 16px;
+        font-size: 14px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .historico-item p {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 400px) {
+    .historico-container h1 {
+        font-size: 16px;
+    }
+    .historico-dia {
+        padding: 8px 1vw;
+    }
+}
