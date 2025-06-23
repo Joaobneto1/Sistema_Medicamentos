@@ -94,7 +94,17 @@ app.get('/teste', async (req, res) => {
   console.log("🚀 Rota pública /teste acessada");
   res.json({ status: 'ok', mensagem: 'API está viva 🚀' });
 });
-
+app.get('/health-db', async (req, res) => {
+  try {
+    // executa um SELECT 1 simples
+    await prisma.$queryRaw`SELECT 1`;
+    console.log('✅ HEALTH-DB: OK');
+    return res.status(200).send('DB OK');
+  } catch (err) {
+    console.error('❌ HEALTH-DB ERROR:', err.message);
+    return res.status(500).send('DB ERROR');
+  }
+});
 //
 // Inicialização do servidor
 //
