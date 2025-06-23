@@ -6,7 +6,7 @@ services:
       context: ./backend-custom
     container_name: backend-custom
     ports:
-      - "3001:3001"
+      - "10000:10000"
     environment:
       - NODE_ENV=production
     env_file:
