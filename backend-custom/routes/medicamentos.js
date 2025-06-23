@@ -10,7 +10,7 @@ const supabase = createClient(
     process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-// Função utilitária para buscar o nome do usuário autenticado via Supabase
+// Função utilitária para buscar o nome do usuário autenticado via Supabase.
 async function getUserName(user_id) {
     const { data, error } = await supabase.rpc('get_display_name_by_id', { uid: user_id });
     if (error) {
