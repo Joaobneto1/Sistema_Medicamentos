@@ -31,14 +31,19 @@ async function getUserName(user_id) {
 
 // GET /pacientes - lista pacientes do usuário autenticado
 router.get('/', async (req, res) => {
-    try {
-        const pacientes = await prisma.pacientes.findMany({
-            where: { user_id: req.user.sub },
-        });
-        res.json(pacientes);
-    } catch (err) {
-        res.status(500).json({ error: 'Erro ao buscar pacientes' });
-    }
+  console.log("📥 ROTA /pacientes acessada — req.user.sub:", req.user?.sub);
+
+  try {
+    const pacientes = await prisma.pacientes.findMany({
+      where: { user_id: req.user.sub },
+    });
+
+    console.log("✅ Pacientes encontrados:", pacientes.length);
+    res.json(pacientes);
+  } catch (err) {
+    console.error("❌ Erro ao buscar pacientes:", err);
+    res.status(500).json({ error: 'Erro ao buscar pacientes', details: err.message });
+  }
 });
 
 // POST /pacientes - cria paciente e associa medicamentos
