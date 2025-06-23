@@ -3,6 +3,10 @@ const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
+
+// **LOG PARA DEBUGAR A URL DO BANCO**
+console.log('🔑 DATABASE_URL:', process.env.DATABASE_URL);
+
 const prisma = new PrismaClient();
 const client = require('prom-client');
 
