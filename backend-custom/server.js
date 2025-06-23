@@ -7,6 +7,11 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+prisma
+  .$connect()
+  .then(() => console.log('✅ Conexão com o banco OK'))
+  .catch(err => console.error('❌ Falha ao conectar no banco:', err.message));
+
 const client = require('prom-client');
 
 const app = express();
